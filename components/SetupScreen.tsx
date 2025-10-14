@@ -6,7 +6,7 @@ import { extractTextFromUrl } from '../services/aiService';
 import AuthModal from './AuthModal';
 
 const SeoContent = () => (
-    <div className="w-full max-w-5xl mx-auto mt-20 text-slate-300">
+    <div className="w-full max-w-4xl mx-auto mt-20 text-slate-300">
         <hr className="border-slate-700 my-16" />
         <section id="why-ai-interviews" className="space-y-6 text-center">
             <h2 className="text-3xl font-bold text-slate-100">Why AI-Powered Interviews?</h2>
@@ -86,7 +86,7 @@ const TrendingJobsList: React.FC<{ jobs: Job[], isLoading: boolean }> = ({ jobs,
 
     return (
         <div className="w-full mx-auto">
-            <div className="bg-[#111827]/60 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-28 overflow-hidden relative">
+            <div className="bg-slate-800/40 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-28 overflow-hidden relative">
                 {isLoading ? (
                      <ul>
                          <JobSkeleton />
@@ -124,7 +124,7 @@ const TrendingJobsList: React.FC<{ jobs: Job[], isLoading: boolean }> = ({ jobs,
                     </div>
                 )}
                  {/* Fade-out effect at the bottom */}
-                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#111827] to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#1E293B]/40 to-transparent pointer-events-none"></div>
             </div>
         </div>
     );
@@ -261,7 +261,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser
   return (
     <>
       <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pb-20 overflow-y-auto">
-        <div className="w-full max-w-5xl mt-2">
+        <div className="w-full max-w-4xl mt-2">
           <div className="text-center mb-6">
               <h1 className="text-3xl md:text-4xl font-bold text-slate-100">AI Interview Platform</h1>
               <h2 className="text-slate-400 mt-2 text-lg">Streamline hiring with AI-powered video and chat interviews</h2>
