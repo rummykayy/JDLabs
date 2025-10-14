@@ -29,6 +29,7 @@ export interface Job {
   location: string;
   salary: string;
   posted: string;
+  skills: string[];
 }
 
 export interface InterviewSettings {

@@ -60,9 +60,18 @@ const SeoContent = () => (
 const JobSkeleton: React.FC = () => (
     <li className="flex justify-between items-center px-2 py-3 border-b border-slate-800">
         <div>
-            <div className="h-4 bg-slate-700 rounded w-3/4 mb-2 animate-pulse"></div>
-            <div className="h-3 bg-slate-700 rounded w-1/2 mb-1 animate-pulse"></div>
-            <div className="h-2 bg-slate-700 rounded w-1/3 animate-pulse"></div>
+            <div className="h-4 bg-slate-700 rounded w-48 mb-2 animate-pulse"></div>
+            <div className="h-3 bg-slate-700 rounded w-32 animate-pulse"></div>
+        </div>
+        <div>
+             <div className="flex justify-center gap-1">
+                <div className="h-4 bg-slate-700 rounded-full w-12 animate-pulse"></div>
+                <div className="h-4 bg-slate-700 rounded-full w-16 animate-pulse"></div>
+                <div className="h-4 bg-slate-700 rounded-full w-10 animate-pulse"></div>
+                <div className="h-4 bg-slate-700 rounded-full w-14 animate-pulse"></div>
+                <div className="h-4 bg-slate-700 rounded-full w-12 animate-pulse"></div>
+                <div className="h-4 bg-slate-700 rounded-full w-16 animate-pulse"></div>
+             </div>
         </div>
         <div className="text-right flex-shrink-0 ml-4">
             <div className="h-4 bg-slate-700 rounded w-16 mb-2 animate-pulse"></div>
@@ -77,7 +86,7 @@ const TrendingJobsList: React.FC<{ jobs: Job[], isLoading: boolean }> = ({ jobs,
 
     return (
         <div className="w-full mx-auto">
-            <div className="bg-[#111827]/60 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-32 overflow-hidden relative">
+            <div className="bg-[#111827]/60 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-28 overflow-hidden relative">
                 {isLoading ? (
                      <ul>
                          <JobSkeleton />
@@ -94,6 +103,15 @@ const TrendingJobsList: React.FC<{ jobs: Job[], isLoading: boolean }> = ({ jobs,
                                         <div className="flex items-baseline gap-2 mt-1">
                                             <p className="text-sm font-medium text-slate-300">{job.company}</p>
                                             <p className="text-xs text-slate-500">{job.location}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex flex-wrap gap-1 justify-center">
+                                            {job.skills.slice(0, 6).map(skill => (
+                                                <span key={skill} className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">
+                                                    {skill}
+                                                </span>
+                                            ))}
                                         </div>
                                     </div>
                                     <div className="text-right flex-shrink-0 ml-4">
@@ -278,7 +296,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                 {/* Left Column */}
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
                         <div className="text-blue-400"><PencilIcon/></div>
@@ -314,7 +332,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser
                 {/* Right Column */}
                 <div className="mt-8 md:mt-0 md:border-l md:border-slate-700 md:pl-8">
                   <div className="flex items-center gap-3 mb-4"><div className="text-blue-400"><TargetIcon /></div><h2 className="text-lg font-semibold text-slate-200">Interview Mode</h2></div>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {interviewModes.map((item) => (
                       <div key={item.mode} onClick={() => setMode(item.mode)} className={`relative p-4 rounded-lg border-2 cursor-pointer transition-colors ${mode === item.mode ? 'border-blue-500 bg-blue-500/10' : 'border-slate-600 hover:border-slate-500 bg-slate-800/50'}`}>
                         <div className="absolute top-2 right-2 flex items-center gap-1.5">

@@ -126,34 +126,4 @@ export const PLANS: Plan[] = [
     ctaClass: primaryCtaClass,
   },
   {
-    name: 'Pro',
-    price: 999,
-    description: 'For growing businesses and professional use.',
-    features: [
-      '50 AI Interviews per month',
-      'Advanced AI Analytics',
-      'Video & Audio Recording',
-      'Live Share & Coding Interviews',
-      'Priority Email Support',
-    ],
-    cta: 'Choose Plan',
-    ctaClass: primaryCtaClass,
-    popular: true,
-  },
-];
-
-// --- TRENDING JOBS DATA ---
-export const TRENDING_JOBS_DATA: Job[] = [
-  { title: 'Senior Frontend Engineer', company: 'Vercel', location: 'San Francisco, CA', salary: '$180k - $220k', posted: '2h ago' },
-  { title: 'Product Manager, AI', company: 'Google', location: 'Mountain View, CA', salary: '$160k -$180k', posted: '1d ago' },
-  { title: 'Lead DevOps Engineer', company: 'Amazon Web Services', location: 'Remote', salary: '$200k+', posted: '3h ago' },
-  { title: 'UX/UI Designer', company: 'Figma', location: 'New York, NY', salary: 'Competitive', posted: '8h ago' },
-  { title: 'Data Scientist, ML', company: 'Netflix', location: 'Los Gatos, CA', salary: '$195k - $250k', posted: '1d ago' },
-  { title: 'Backend Engineer (Go)', company: 'Stripe', location: 'Dublin, Ireland', salary: '€120k - €150k', posted: '2d ago' },
-  { title: 'Marketing Manager', company: 'HubSpot', location: 'Cambridge, MA', salary: '$110k', posted: '5h ago' },
-  { title: 'QA Automation Engineer', company: 'Microsoft', location: 'Redmond, WA', salary: '₹55 LPA', posted: '1d ago' },
-  { title: 'Cloud Solutions Architect', company: 'Oracle', location: 'Austin, TX', salary: 'Competitive', posted: '1d ago' },
-  { title: 'Cybersecurity Analyst', company: 'Palo Alto Networks', location: 'Santa Clara, CA', salary: '$150k', posted: '2d ago' },
-  { title: 'Full-Stack Developer', company: 'Shopify', location: 'Toronto, Canada', salary: '$160k CAD', posted: '3d ago' },
-  { title: 'Mobile Engineer (iOS)', company: 'Spotify', location: 'Stockholm, Sweden', salary: '€95k', posted: '4d ago' },
-];
+    name: '
