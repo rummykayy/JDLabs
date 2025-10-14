@@ -1,0 +1,20 @@
+{
+  "name": "ai-interview-platform",
+  "version": "1.0.0",
+  "description": "AI Interview Platform Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "esbuild index.tsx --bundle --outfile=public/index.js --jsx=automatic --format=esm --external:react --external:react-dom/client --external:@google/genai"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "esbuild": "^0.20.2"
+  }
+}
