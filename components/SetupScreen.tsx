@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { InterviewMode } from '../types';
 import type { InterviewSettings, User, ModelSettings, ApiProvider, View, Job } from '../types';
@@ -86,7 +88,7 @@ const TrendingJobsList: React.FC<{ jobs: Job[], isLoading: boolean }> = ({ jobs,
 
     return (
         <div className="w-full mx-auto">
-            <div className="bg-slate-800/40 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-28 overflow-hidden relative">
+            <div className="bg-slate-800/60 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-28 overflow-hidden relative">
                 {isLoading ? (
                      <ul>
                          <JobSkeleton />
@@ -292,7 +294,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser
               </div>
           )}
 
-          <div className="bg-[#111827]/60 p-6 md:p-8 rounded-lg border border-slate-700 backdrop-blur-sm">
+          <div className="bg-slate-800/60 p-6 md:p-8 rounded-lg border border-slate-700 backdrop-blur-sm">
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                 {/* Left Column */}
