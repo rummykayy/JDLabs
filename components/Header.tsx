@@ -77,10 +77,10 @@ const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, o
               <button
                 key={item.name}
                 onClick={() => onNavigate(item.view)}
-                className={`px-4 py-2 rounded-md text-base font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-xl font-medium transition-colors ${
                   currentView === item.view
-                    ? 'text-white'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-slate-700 text-white'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 {item.name}

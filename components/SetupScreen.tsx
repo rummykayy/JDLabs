@@ -268,7 +268,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser
           </div>
 
           <div className="mb-12">
-              <h3 className="text-2xl font-semibold text-white mb-4 text-center">Trending Jobs !!!</h3>
+              <h3 className="text-xl font-semibold text-white mb-4 text-center">Trending Jobs !!!</h3>
               <TrendingJobsList jobs={jobs} isLoading={isLoadingJobs} />
           </div>
 
