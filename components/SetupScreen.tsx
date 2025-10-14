@@ -262,12 +262,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser
     <>
       <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pb-20 overflow-y-auto">
         <div className="w-full max-w-5xl mt-2">
-          <div className="text-center mb-8">
-              <h1 className="text-4xl md:text-5xl font-bold text-slate-100">AI Interview Platform</h1>
-              <h2 className="text-slate-400 mt-4 text-lg">Streamline hiring with AI-powered video and chat interviews</h2>
+          <div className="text-center mb-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-100">AI Interview Platform</h1>
+              <h2 className="text-slate-400 mt-2 text-lg">Streamline hiring with AI-powered video and chat interviews</h2>
           </div>
 
-          <div className="mb-12">
+          <div className="mb-6">
               <h3 className="text-xl font-semibold text-white mb-4 text-center">Trending Jobs !!!</h3>
               <TrendingJobsList jobs={jobs} isLoading={isLoadingJobs} />
           </div>
