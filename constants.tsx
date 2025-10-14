@@ -126,4 +126,252 @@ export const PLANS: Plan[] = [
     ctaClass: primaryCtaClass,
   },
   {
-    name: '
+    name: 'Pro',
+    price: 999,
+    description: 'For businesses and power users.',
+    features: [
+      '50 AI Interviews per month',
+      'Everything in Plus',
+      'Live Share / Coding Interviews',
+      'Team Collaboration Features',
+    ],
+    cta: 'Choose Plan',
+    ctaClass: primaryCtaClass,
+    popular: true,
+  },
+];
+
+export const TRENDING_JOBS_DATA: Job[] = [
+    {
+        title: 'Senior Frontend Engineer',
+        company: 'Innovate Inc.',
+        location: 'Remote',
+        salary: '₹18 - ₹30 LPA',
+        posted: '2 days ago',
+        skills: ['React', 'TypeScript', 'GraphQL', 'Next.js', 'Vercel', 'CI/CD']
+    },
+    {
+        title: 'Product Manager, AI/ML',
+        company: 'DataDriven Co.',
+        location: 'Bengaluru, India',
+        salary: '₹24 - ₹36 LPA',
+        posted: '5 days ago',
+        skills: ['Roadmap', 'Agile', 'AI/ML', 'User Research', 'Analytics', 'JIRA']
+    },
+    {
+        title: 'Cloud DevOps Engineer',
+        company: 'ScaleUp Solutions',
+        location: 'Hybrid, Pune',
+        salary: '₹14 - ₹24 LPA',
+        posted: '1 week ago',
+        skills: ['AWS', 'Kubernetes', 'Terraform', 'Docker', 'Ansible', 'Python']
+    },
+    {
+        title: 'Lead Data Scientist',
+        company: 'QuantumLeap AI',
+        location: 'Remote',
+        salary: '₹36 - ₹54 LPA',
+        posted: '3 days ago',
+        skills: ['Python', 'PyTorch', 'TensorFlow', 'NLP', 'Computer Vision', 'Big Data']
+    },
+    {
+        title: 'UX/UI Designer',
+        company: 'Creative Pixels',
+        location: 'Mumbai, India',
+        salary: '₹9 - ₹15 LPA',
+        posted: '10 days ago',
+        skills: ['Figma', 'Sketch', 'Prototyping', 'User Testing', 'Design Systems', 'Adobe XD']
+    },
+    {
+        title: 'Digital Marketing Manager',
+        company: 'Growth Ninjas',
+        location: 'London, UK',
+        salary: '£55K - £70K /yr',
+        posted: '4 days ago',
+        skills: ['SEO', 'PPC', 'Content Marketing', 'Social Media', 'Google Analytics', 'Email Marketing']
+    },
+    {
+        title: 'Sales Development Representative',
+        company: 'LeadGen Corp',
+        location: 'New York, USA',
+        salary: '$60K - $85K /yr',
+        posted: '6 days ago',
+        skills: ['Salesforce', 'Outreach', 'Cold Calling', 'Lead Generation', 'Prospecting', 'Communication']
+    },
+    {
+        title: 'Human Resources Generalist',
+        company: 'PeopleFirst Ltd.',
+        location: 'Sydney, Australia',
+        salary: 'A$80K - A$95K /yr',
+        posted: '1 week ago',
+        skills: ['HR Policies', 'Recruitment', 'Onboarding', 'Employee Relations', 'HRIS', 'Compliance']
+    },
+    {
+        title: 'Content Strategist',
+        company: 'StoryWeavers Agency',
+        location: 'Toronto, Canada',
+        salary: 'C$75K - C$90K /yr',
+        posted: '8 days ago',
+        skills: ['Content Strategy', 'Copywriting', 'SEO', 'CMS', 'Analytics', 'Brand Voice']
+    },
+    {
+        title: 'Senior Backend Developer',
+        company: 'CodeCrafters',
+        location: 'Hyderabad, India',
+        salary: '₹25 - ₹40 LPA',
+        posted: '1 day ago',
+        skills: ['Node.js', 'Go', 'Microservices', 'PostgreSQL', 'Redis', 'Docker']
+    },
+    {
+        title: 'QA Automation Engineer',
+        company: 'Bug Busters Inc.',
+        location: 'Noida, India',
+        salary: '₹12 - ₹20 LPA',
+        posted: '6 days ago',
+        skills: ['Selenium', 'Cypress', 'Java', 'API Testing', 'Jenkins', 'Appium']
+    },
+    {
+        title: 'Business Analyst',
+        company: 'Insight Solutions',
+        location: 'Chicago, USA',
+        salary: '$75K - $95K /yr',
+        posted: '3 days ago',
+        skills: ['SQL', 'Tableau', 'Requirement Gathering', 'Agile', 'BRD', 'FRD']
+    },
+    {
+        title: 'Cybersecurity Analyst',
+        company: 'SecureNet',
+        location: 'Manchester, UK',
+        salary: '£45K - £60K /yr',
+        posted: '1 week ago',
+        skills: ['SIEM', 'Penetration Testing', 'Firewalls', 'CISSP', 'Network Security', 'Splunk']
+    },
+    {
+        title: 'iOS Developer',
+        company: 'AppMakers Co.',
+        location: 'Vancouver, Canada',
+        salary: 'C$90K - C$120K /yr',
+        posted: '5 days ago',
+        skills: ['Swift', 'SwiftUI', 'Xcode', 'Core Data', 'Combine', 'UIKit']
+    },
+    {
+        title: 'Full-Stack Developer',
+        company: 'FlexiDev',
+        location: 'Remote',
+        salary: '₹20 - ₹35 LPA',
+        posted: 'Just now',
+        skills: ['React', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'TypeScript']
+    },
+    {
+        title: 'Data Engineer',
+        company: 'Datenstrom GmbH',
+        location: 'Berlin, Germany',
+        salary: '€70K - €90K /yr',
+        posted: '10 days ago',
+        skills: ['Spark', 'Kafka', 'Airflow', 'Python', 'SQL', 'ETL']
+    },
+    {
+        title: 'Technical Writer',
+        company: 'DocuPerfect',
+        location: 'Chennai, India',
+        salary: '₹8 - ₹14 LPA',
+        posted: '2 weeks ago',
+        skills: ['Documentation', 'Markdown', 'API Docs', 'Git', 'Confluence', 'MadCap Flare']
+    },
+    {
+        title: 'Technical Recruiter',
+        company: 'TalentFind SG',
+        location: 'Singapore',
+        salary: 'S$70K - S$90K /yr',
+        posted: '4 days ago',
+        skills: ['Sourcing', 'Recruitment', 'ATS', 'LinkedIn Recruiter', 'Talent Acquisition', 'Interviewing']
+    },
+    {
+        title: 'Unity Game Developer',
+        company: 'PixelPlay Studios',
+        location: 'Austin, USA',
+        salary: '$85K - $110K /yr',
+        posted: '9 days ago',
+        skills: ['Unity', 'C#', '3D Math', 'Game Physics', 'ShaderLab', 'Blender']
+    },
+    {
+        title: 'Cloud Solutions Architect',
+        company: 'ArchiCloud Pty Ltd',
+        location: 'Melbourne, Australia',
+        salary: 'A$140K - A$180K /yr',
+        posted: '1 week ago',
+        skills: ['AWS', 'Azure', 'GCP', 'Solution Design', 'Migration', 'Security']
+    },
+    {
+        title: 'Linux Systems Administrator',
+        company: 'InfraStable',
+        location: 'Gurugram, India',
+        salary: '₹10 - ₹18 LPA',
+        posted: '12 days ago',
+        skills: ['Linux', 'Bash', 'Networking', 'Nginx', 'Apache', 'Virtualization']
+    },
+    {
+        title: 'Scrum Master',
+        company: 'AgileFlow Ltd.',
+        location: 'Bristol, UK',
+        salary: '£60K - £75K /yr',
+        posted: '6 days ago',
+        skills: ['Agile', 'Scrum', 'JIRA', 'Kanban', 'Servant Leadership', 'CSM']
+    },
+    {
+        title: 'Database Administrator',
+        company: 'DataSecure',
+        location: 'Remote',
+        salary: '₹15 - ₹25 LPA',
+        posted: '2 days ago',
+        skills: ['MySQL', 'PostgreSQL', 'Performance Tuning', 'Backup', 'Replication', 'Oracle']
+    },
+    {
+        title: 'IT Support Specialist',
+        company: 'HelpDesk Heroes',
+        location: 'Remote, USA',
+        salary: '$55K - $70K /yr',
+        posted: '8 days ago',
+        skills: ['Active Directory', 'O365', 'Troubleshooting', 'Help Desk', 'Networking', 'Hardware']
+    },
+    {
+        title: 'Machine Learning Engineer',
+        company: 'PredictAI',
+        location: 'Bengaluru, India',
+        salary: '₹28 - ₹45 LPA',
+        posted: '4 days ago',
+        skills: ['Scikit-learn', 'Keras', 'MLOps', 'Docker', 'Kubeflow', 'Python']
+    },
+    {
+        title: 'Graphic Designer',
+        company: 'VisualVibe',
+        location: 'Montreal, Canada',
+        salary: 'C$60K - C$75K /yr',
+        posted: '11 days ago',
+        skills: ['Adobe Illustrator', 'Photoshop', 'InDesign', 'Branding', 'Typography', 'UI/UX']
+    },
+    {
+        title: 'Financial Analyst',
+        company: 'Quantum Analytics',
+        location: 'London, UK',
+        salary: '£50K - £65K /yr',
+        posted: '1 week ago',
+        skills: ['Excel', 'Financial Modeling', 'Valuation', 'SQL', 'FP&A', 'Power BI']
+    },
+    {
+        title: 'Operations Project Manager',
+        company: 'Streamline Ops',
+        location: 'Perth, Australia',
+        salary: 'A$100K - A$120K /yr',
+        posted: '9 days ago',
+        skills: ['Project Management', 'PMP', 'Stakeholder Management', 'Budgeting', 'Risk Analysis', 'MS Project']
+    },
+    {
+        title: 'Senior Android Developer',
+        company: 'MobileFirst Tech',
+        location: 'Hyderabad, India',
+        salary: '₹22 - ₹38 LPA',
+        posted: '3 days ago',
+        skills: ['Kotlin', 'Jetpack Compose', 'Coroutines', 'Dagger', 'Retrofit', 'MVVM']
+    }
+];

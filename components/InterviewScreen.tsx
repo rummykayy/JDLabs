@@ -208,8 +208,6 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
             await new Promise(resolve => setTimeout(resolve, delay));
             return withRetries(apiCall, retries - 1, delay * 2);
         }
-        // FIX: The original code threw `new Error(error as string)`, which is incorrect as `error` is `unknown`.
-        // This is corrected to throw an error with the parsed `message` string.
         throw new Error(message);
     }
   }
@@ -425,7 +423,6 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
     if (isEnding && mediaUrl) {
       onEndInterview({ mediaUrl, transcriptContent: createTranscriptLog() });
     }
-  // FIX: Added missing dependencies `onEndInterview` and `createTranscriptLog` to the dependency array to prevent stale closures.
   }, [isEnding, mediaUrl, onEndInterview, createTranscriptLog]);
 
   

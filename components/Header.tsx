@@ -65,27 +65,28 @@ const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, o
   return (
     <header className="sticky top-0 z-30 w-full bg-slate-900/70 backdrop-blur-md border-b border-slate-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-6">
+        <div className="relative flex items-center justify-between h-16">
+          <div className="flex items-center">
             <button onClick={() => onNavigate('setup')} className="flex-shrink-0">
               <Logo />
             </button>
-            <nav className="hidden md:flex md:items-center md:gap-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => onNavigate(item.view)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentView === item.view
-                      ? 'text-white'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  {item.name}
-                </button>
-              ))}
-            </nav>
           </div>
+
+          <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-2">
+            {navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => onNavigate(item.view)}
+                className={`px-4 py-2 rounded-md text-base font-medium transition-colors ${
+                  currentView === item.view
+                    ? 'text-white'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                {item.name}
+              </button>
+            ))}
+          </nav>
 
           <div className="flex items-center gap-3">
             {currentUser ? (
