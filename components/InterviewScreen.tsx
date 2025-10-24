@@ -6,7 +6,7 @@ import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { useVideoRecorder } from '../hooks/useVideoRecorder';
 import { useScreenShare } from '../hooks/useScreenShare';
 import { createChatSession } from '../services/aiService';
-import { MicOffIcon, MicOnIcon, SendIcon, SettingsIcon } from '../constants';
+import { MicOffIcon, MicOnIcon, SendIcon, SettingsIcon, ClockIcon, UserCircleIcon } from '../constants';
 import VideoPanel from './VideoPanel';
 import ImageSlider from './ImageSlider';
 import { AI_INTERVIEWER_IMAGES, LANGUAGES } from '../constants/media';
@@ -67,7 +67,7 @@ function createBlob(data: Float32Array): Blob {
 
 interface InterviewScreenProps {
   settings: InterviewSettings;
-  onEndInterview: (result: { mediaUrl: string | null, transcriptContent: string | null }) => void;
+  onEndInterview: (result: { mediaUrl: string | null, transcriptContent: string | null, malpracticeReport: string | null }) => void;
 }
 
 interface ApiErrorDetails {
@@ -145,7 +145,12 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const { showToast } = useToast();
+  const cameraVideoRef = useRef<HTMLVideoElement>(null);
+  const screenShareVideoRef = useRef<HTMLVideoElement>(null);
   
+  const INTERVIEW_DURATION = 180; // 3 minutes
+  const [timeLeft, setTimeLeft] = useState(INTERVIEW_DURATION);
+
   const chatRef = useRef<AiChatSession | null>(null);
   const sessionPromiseRef = useRef<Promise<Session> | null>(null);
   const aiRef = useRef<GoogleGenAI | null>(null);
@@ -158,6 +163,9 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
   const currentInputTranscriptionRef = useRef('');
   const currentOutputTranscriptionRef = useRef('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  const malpracticeLogRef = useRef<{ type: string; details: string; timestamp: string }[]>([]);
+  const lastActivityTimeRef = useRef<number>(Date.now());
 
   const isVideoMode = settings.mode === InterviewMode.VIDEO;
   const isAudioMode = settings.mode === InterviewMode.AUDIO;
@@ -166,15 +174,27 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
   const isAudioEnabled = isVideoMode || isAudioMode || isLiveShareMode;
   const currentQuestion = questions[currentQuestionIndex]?.text || (isAiThinking ? 'Thinking...' : 'Ready for your response.');
   
-  const { videoRef: cameraVideoRef, stream: userMediaStream, error: cameraError } = useUserMedia({
+  const { stream: userMediaStream, error: cameraError } = useUserMedia({
     enabled: isVideoMode || isAudioMode,
     video: isVideoMode,
     audio: true,
   });
 
-  const { videoRef: screenShareVideoRef, stream: screenShareStream, error: screenShareError } = useScreenShare({
+  useEffect(() => {
+    if (cameraVideoRef.current && userMediaStream) {
+        cameraVideoRef.current.srcObject = userMediaStream;
+    }
+  }, [userMediaStream]);
+
+  const { stream: screenShareStream, error: screenShareError } = useScreenShare({
     enabled: isLiveShareMode,
   });
+  
+  useEffect(() => {
+    if (screenShareVideoRef.current && screenShareStream) {
+        screenShareVideoRef.current.srcObject = screenShareStream;
+    }
+  }, [screenShareStream]);
 
   const streamForRecorder = useMemo(() => (isLiveShareMode ? screenShareStream : userMediaStream), [isLiveShareMode, screenShareStream, userMediaStream]);
   
@@ -203,6 +223,134 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
     }
   }, [currentMessage, isAiThinking]);
 
+  const handleEndInterview = useCallback(async () => {
+    if (isEnding) return; // Prevent multiple calls
+    setIsEnding(true);
+    showToast('Finalizing your interview...', 'info');
+
+    if (sessionPromiseRef.current) {
+      try {
+        const session = await sessionPromiseRef.current;
+        session.close();
+      } catch(e) { console.error("Error closing session on end:", e); }
+    }
+    
+    if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
+        for (const source of audioSourcesRef.current.values()) {
+          source.stop();
+        }
+        outputAudioContextRef.current.close().catch(e => {
+            if (e.message.toLowerCase().includes('closed')) return; // Ignore harmless error
+            console.error("Error closing output audio context on end:", e)
+        });
+    }
+
+    if (isAudioEnabled) {
+      if (isLiveShareMode || isVideoMode) {
+        stopVideoRecording();
+      } else {
+        stopAudioRecording();
+      }
+    }
+    
+    const formatMalpracticeReport = (): string | null => {
+        if (malpracticeLogRef.current.length === 0) {
+            return null;
+        }
+        return malpracticeLogRef.current
+            .map(log => `[${log.timestamp}] ${log.type}: ${log.details}`)
+            .join('\n');
+    };
+
+    // Give recorder time to finalize blob
+    setTimeout(() => {
+        let finalMediaUrl: string | null = null;
+        if (isLiveShareMode || isVideoMode) finalMediaUrl = videoUrl;
+        else if (isAudioMode) finalMediaUrl = audioUrl;
+        
+        const finalTranscript = isChatMode 
+            ? chatHistory.map(item => `${item.author === 'ai' ? 'Interviewer' : 'Candidate'}: ${item.text}`).join('\n\n')
+            : transcript;
+
+        const malpracticeReport = formatMalpracticeReport();
+
+        onEndInterview({ mediaUrl: finalMediaUrl, transcriptContent: finalTranscript, malpracticeReport });
+    }, 1000);
+  }, [isEnding, isAudioEnabled, isVideoMode, isLiveShareMode, isChatMode, stopVideoRecording, stopAudioRecording, videoUrl, audioUrl, chatHistory, transcript, onEndInterview, showToast]);
+
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      if (!isEnding) {
+        showToast("Time's up! Finishing the interview.", 'info');
+        handleEndInterview();
+      }
+      return;
+    }
+    if (isEnding) return;
+    const timerId = setInterval(() => {
+      setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timerId);
+  }, [timeLeft, isEnding, handleEndInterview, showToast]);
+
+  // Malpractice Detection: Screen switching
+  useEffect(() => {
+    if (isChatMode) return; // Not relevant for chat interviews
+
+    let hiddenSince: number | null = null;
+    const handleVisibilityChange = () => {
+        if (isEnding) return;
+        if (document.hidden) {
+            hiddenSince = Date.now();
+        } else {
+            if (hiddenSince) {
+                const duration = Math.round((Date.now() - hiddenSince) / 1000);
+                if (duration > 2) { // Only log if away for more than 2 seconds
+                    const logEntry = {
+                        type: 'Screen Switch',
+                        details: `Candidate switched tabs or minimized the window for ${duration} seconds.`,
+                        timestamp: new Date().toLocaleTimeString()
+                    };
+                    malpracticeLogRef.current.push(logEntry);
+                    showToast(`Activity detected: Screen switched for ${duration}s`, 'info');
+                }
+                hiddenSince = null;
+            }
+        }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [showToast, isChatMode, isEnding]);
+
+  // Malpractice Detection: Long pause
+  useEffect(() => {
+      if (isChatMode || isEnding) return;
+
+      const loggedPauses = new Set<number>(); // To avoid logging the same pause multiple times
+      const interval = setInterval(() => {
+          if (!isAiSpeaking) {
+              const silenceDuration = Math.round((Date.now() - lastActivityTimeRef.current) / 1000);
+              const pauseTimestamp = lastActivityTimeRef.current;
+              
+              if (silenceDuration > 15 && !loggedPauses.has(pauseTimestamp)) {
+                  const logEntry = {
+                      type: 'Long Pause',
+                      details: `Candidate was unresponsive for over 15 seconds.`,
+                      timestamp: new Date().toLocaleTimeString()
+                  };
+                  malpracticeLogRef.current.push(logEntry);
+                  showToast(`Activity detected: Long pause`, 'info');
+                  loggedPauses.add(pauseTimestamp);
+              }
+          }
+      }, 5000); // Check every 5 seconds
+
+      return () => clearInterval(interval);
+  }, [isAiSpeaking, showToast, isChatMode, isEnding]);
+
   useEffect(() => {
     if (!process.env.API_KEY) {
       setInitError("API key is not configured. Please set it up to start the interview.");
@@ -213,7 +361,18 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
     let retryCount = 0;
     const maxRetries = 3;
 
-    const systemInstruction = `You are an expert interviewer conducting a ${settings.difficulty} level interview for a "${settings.position}" role. The job description is: "${settings.jobDescription}". Start with a greeting and the first question. Keep your responses concise and focused on the interview. Your language should be ${LANGUAGES.find(l => l.code === settings.language)?.name || 'English'}. Do not use markdown. Ask one question at a time.`;
+    const systemInstruction = `You are an expert AI interviewer. Your sole purpose is to conduct a professional, ${settings.difficulty} level interview for a "${settings.position}" role, based on this job description: "${settings.jobDescription}".
+
+Your persona is that of a focused and objective hiring manager.
+
+Your instructions are:
+1.  **Start the interview:** Begin with a brief greeting and then immediately ask the first relevant interview question.
+2.  **Stay On-Topic:** All your questions and responses must be directly related to assessing the candidate's skills and experience for the specified job.
+3.  **One Question at a Time:** Ask only one question at a time and wait for the candidate's full response.
+4.  **Handle Off-Topic Conversation:** If the candidate attempts to divert the conversation to topics not relevant to the interview (e.g., small talk, personal opinions on unrelated matters), you MUST politely but firmly redirect them back. When you do this, your response text MUST start with the exact tag "[DIVERSION_DETECTED]". Do not speak the tag itself, only use it in the text transcript. For example: "[DIVERSION_DETECTED] That's an interesting point, but for the purpose of this interview, let's focus on your technical skills."
+5.  **Maintain Professionalism:** Do not engage in casual chat, tell jokes, or offer personal opinions. Your tone should be professional and neutral.
+6.  **Language:** Conduct the interview in ${LANGUAGES.find(l => l.code === settings.language)?.name || 'English'}.
+7.  **Formatting:** Do not use markdown in your responses.`;
 
     const startInterview = async () => {
       try {
@@ -280,16 +439,33 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
                   audioSourcesRef.current.add(source);
                 }
                 
-                if (message.serverContent?.inputTranscription) currentInputTranscriptionRef.current += message.serverContent.inputTranscription.text;
+                if (message.serverContent?.inputTranscription?.text) {
+                    lastActivityTimeRef.current = Date.now();
+                    currentInputTranscriptionRef.current += message.serverContent.inputTranscription.text;
+                }
                 if (message.serverContent?.outputTranscription) currentOutputTranscriptionRef.current += message.serverContent.outputTranscription.text;
+                
                 if (message.serverContent?.turnComplete) {
                     const fullInput = currentInputTranscriptionRef.current.trim();
-                    const fullOutput = currentOutputTranscriptionRef.current.trim();
+                    let fullOutput = currentOutputTranscriptionRef.current.trim();
+                    
                     if (fullInput) setTranscript(prev => `${prev}\n\nCandidate: ${fullInput}`);
+                    
                     if (fullOutput) {
+                        if (fullOutput.startsWith('[DIVERSION_DETECTED]')) {
+                            const logEntry = {
+                                type: 'Topic Diversion',
+                                details: 'Candidate attempted to divert the conversation from the interview topic.',
+                                timestamp: new Date().toLocaleTimeString()
+                            };
+                            malpracticeLogRef.current.push(logEntry);
+                            showToast('Activity detected: Topic diversion', 'info');
+                            fullOutput = fullOutput.replace('[DIVERSION_DETECTED]', '').trim();
+                        }
                         setTranscript(prev => `${prev}\n\nInterviewer: ${fullOutput}`);
                         setQuestions(prev => [...prev, { id: prev.length + 1, text: fullOutput }]);
                         setCurrentQuestionIndex(prev => prev + 1);
+                        lastActivityTimeRef.current = Date.now();
                     }
                     currentInputTranscriptionRef.current = '';
                     currentOutputTranscriptionRef.current = '';
@@ -357,48 +533,11 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
     }
   }, [chatHistory]);
 
-  const handleEndInterview = useCallback(async () => {
-    setIsEnding(true);
-    showToast('Finalizing your interview...', 'info');
-
-    if (sessionPromiseRef.current) {
-      try {
-        const session = await sessionPromiseRef.current;
-        session.close();
-      } catch(e) { console.error("Error closing session on end:", e); }
-    }
-    
-    if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
-        for (const source of audioSourcesRef.current.values()) {
-          source.stop();
-        }
-        outputAudioContextRef.current.close().catch(e => {
-            if (e.message.toLowerCase().includes('closed')) return; // Ignore harmless error
-            console.error("Error closing output audio context on end:", e)
-        });
-    }
-
-    if (isAudioEnabled) {
-      if (isLiveShareMode || isVideoMode) {
-        stopVideoRecording();
-      } else {
-        stopAudioRecording();
-      }
-    }
-    
-    // Give recorder time to finalize blob
-    setTimeout(() => {
-        let finalMediaUrl: string | null = null;
-        if (isLiveShareMode || isVideoMode) finalMediaUrl = videoUrl;
-        else if (isAudioMode) finalMediaUrl = audioUrl;
-        
-        const finalTranscript = isChatMode 
-            ? chatHistory.map(item => `${item.author === 'ai' ? 'Interviewer' : 'Candidate'}: ${item.text}`).join('\n\n')
-            : transcript;
-
-        onEndInterview({ mediaUrl: finalMediaUrl, transcriptContent: finalTranscript });
-    }, 1000);
-  }, [isAudioEnabled, isVideoMode, isLiveShareMode, isChatMode, stopVideoRecording, stopAudioRecording, videoUrl, audioUrl, chatHistory, transcript, onEndInterview, showToast]);
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+  };
 
   const mediaError = cameraError || screenShareError;
   if (mediaError) return <div className="flex-1 flex items-center justify-center p-4"><MediaErrorDisplay error={mediaError} /></div>;
@@ -414,50 +553,65 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
     );
   }
 
+  const renderMainContent = () => {
+    if (isChatMode) {
+      return (
+        <div className="bg-slate-800 rounded-lg h-full flex flex-col border border-slate-700">
+          <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto space-y-4">
+            {chatHistory.map((msg, index) => (
+              <div key={index} className={`flex ${msg.author === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`p-3 rounded-lg max-w-[80%] ${msg.author === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-200'}`}>
+                  <p className="text-sm">{msg.text}</p>
+                </div>
+              </div>
+            ))}
+            {isAiThinking && (
+               <div className="flex justify-start"><div className="p-3 rounded-lg bg-slate-700"><div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></span>
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
+              </div></div></div>
+            )}
+          </div>
+          <div className="p-4 border-t border-slate-700">
+            <div className="flex items-center gap-2">
+              <textarea value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendChatMessage(); } }} placeholder="Type your answer..." rows={1} className="flex-1 bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" disabled={isAiThinking} />
+              <button onClick={handleSendChatMessage} disabled={!currentMessage.trim() || isAiThinking} className="bg-blue-600 hover:bg-blue-500 text-white rounded-md p-3 disabled:opacity-50 disabled:cursor-not-allowed"><SendIcon /></button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {/* AI Panel */}
+        <div className="w-full h-full">
+            {isAudioMode ? (
+            <AudioVisualizer isSpeaking={isAiSpeaking} status={isAiThinking ? 'Thinking...' : 'Listening...'} />
+            ) : (
+            <VideoPanel name="AI Interviewer" isSpeaking={isAiSpeaking} status={isAiThinking ? 'Thinking...' : 'Listening...'} avatarNode={<ImageSlider images={AI_INTERVIEWER_IMAGES} />} />
+            )}
+        </div>
+
+        {/* User Panel */}
+        <div className="w-full h-full">
+            {isAudioMode ? (
+                <VideoPanel name={settings.candidateName} avatarNode={<UserCircleIcon />} isMuted={isMuted} status={'You'} />
+            ) : (
+                <VideoPanel name={settings.candidateName} videoRef={isLiveShareMode ? screenShareVideoRef : cameraVideoRef} isMuted={isMuted} status={isLiveShareMode ? 'Sharing Screen' : 'You'} />
+            )}
+        </div>
+      </>
+    );
+  };
+
+
   return (
     <div className="flex-1 flex h-screen overflow-hidden bg-slate-950">
       <div className="flex-1 flex flex-col relative">
-        <div className="flex-1 p-4 grid gap-4 grid-cols-1 md:grid-cols-2 h-[calc(100%-150px)]">
-          {isAudioEnabled && (
-            <div className="w-full h-full">
-              {isAudioMode ? (
-                <AudioVisualizer isSpeaking={isAiSpeaking} status={isAiThinking ? 'Thinking...' : 'Listening...'} />
-              ) : (
-                <VideoPanel name="AI Interviewer" isSpeaking={isAiSpeaking} status={isAiThinking ? 'Thinking...' : 'Listening...'} avatarNode={<ImageSlider images={AI_INTERVIEWER_IMAGES} />} />
-              )}
-            </div>
-          )}
-
-          <div className="w-full h-full">
-            {isChatMode ? (
-              <div className="bg-slate-800 rounded-lg h-full flex flex-col border border-slate-700">
-                <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto space-y-4">
-                  {chatHistory.map((msg, index) => (
-                    <div key={index} className={`flex ${msg.author === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`p-3 rounded-lg max-w-[80%] ${msg.author === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-200'}`}>
-                        <p className="text-sm">{msg.text}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {isAiThinking && (
-                     <div className="flex justify-start"><div className="p-3 rounded-lg bg-slate-700"><div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></span>
-                        <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
-                        <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
-                    </div></div></div>
-                  )}
-                </div>
-                <div className="p-4 border-t border-slate-700">
-                  <div className="flex items-center gap-2">
-                    <textarea value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendChatMessage(); } }} placeholder="Type your answer..." rows={1} className="flex-1 bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" disabled={isAiThinking} />
-                    <button onClick={handleSendChatMessage} disabled={!currentMessage.trim() || isAiThinking} className="bg-blue-600 hover:bg-blue-500 text-white rounded-md p-3 disabled:opacity-50 disabled:cursor-not-allowed"><SendIcon /></button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <VideoPanel name={settings.candidateName} videoRef={isLiveShareMode ? screenShareVideoRef : cameraVideoRef} isMuted={isMuted} status={isLiveShareMode ? 'Sharing Screen' : 'You'} />
-            )}
-          </div>
+        <div className={`flex-1 p-4 h-[calc(100%-150px)] ${isChatMode ? 'grid' : 'grid gap-4 grid-cols-1 md:grid-cols-2'}`}>
+           {renderMainContent()}
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
@@ -473,10 +627,17 @@ const InterviewScreen: React.FC<InterviewScreenProps> = ({ settings, onEndInterv
       <aside className={`bg-slate-800 border-l border-slate-700 transition-all duration-300 ease-in-out ${isSidePanelCollapsed ? 'w-0' : 'w-80'}`}>
           <div className={`p-4 h-full flex flex-col ${isSidePanelCollapsed ? 'hidden' : 'block'}`}>
             <h2 className="text-xl font-bold mb-4">Interview Details</h2>
-            <div className="text-sm space-y-2 text-slate-400 mb-4">
+            <div className="text-sm space-y-3 text-slate-400 mb-4">
                 <p><strong className="text-slate-300">Position:</strong> {settings.position}</p>
                 <p><strong className="text-slate-300">Mode:</strong> {settings.mode}</p>
                 <p><strong className="text-slate-300">Difficulty:</strong> {settings.difficulty}</p>
+                <div className="pt-2">
+                    <strong className="text-slate-300 block mb-1">Time Remaining:</strong>
+                    <div className={`flex items-center gap-2 bg-slate-700/50 p-2 rounded-md border transition-colors duration-300 ${timeLeft < 30 ? 'border-red-500/50' : 'border-slate-600'}`}>
+                        <ClockIcon className={`h-5 w-5 transition-colors duration-300 ${timeLeft < 30 ? 'text-red-400' : 'text-slate-400'}`} />
+                        <span className={`text-lg font-mono font-semibold transition-colors duration-300 ${timeLeft < 30 ? 'text-red-300' : 'text-slate-200'}`}>{formatTime(timeLeft)}</span>
+                    </div>
+                </div>
             </div>
             <label htmlFor="notes" className="block text-lg font-bold mb-2 border-t border-slate-700 pt-4">Notes</label>
             <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Jot down your thoughts here..." className="flex-1 w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />

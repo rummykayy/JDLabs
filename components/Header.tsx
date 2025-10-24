@@ -22,9 +22,21 @@ const navItems: { name: string; view: View }[] = [
 
 const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, onLoginClick, onLogout }) => {
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const shareRef = useRef<HTMLButtonElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = 'auto';
+    }
+    return () => {
+        document.body.style.overflow = 'auto';
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -162,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, o
             )}
             
             <div className="md:hidden">
-              <button className="text-slate-300 hover:text-white">
+              <button onClick={() => setIsMobileMenuOpen(true)} className="text-slate-300 hover:text-white">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
@@ -171,6 +183,39 @@ const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, o
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900 md:hidden animate-fade-in">
+            <div className="absolute top-0 right-0 p-4">
+                <button onClick={() => setIsMobileMenuOpen(false)} className="text-slate-400 hover:text-white" aria-label="Close menu">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+            </div>
+            <div className="flex flex-col items-center justify-center h-full">
+                <nav className="flex flex-col items-center gap-6">
+                    {navItems.map((item) => (
+                        <button key={item.name} onClick={() => { onNavigate(item.view); setIsMobileMenuOpen(false); }} className="text-2xl font-semibold text-slate-200 hover:text-blue-400 transition-colors">{item.name}</button>
+                    ))}
+                    {currentUser && (
+                        <button onClick={() => { onNavigate('history'); setIsMobileMenuOpen(false); }} className="text-2xl font-semibold text-slate-200 hover:text-blue-400 transition-colors">History</button>
+                    )}
+                </nav>
+                <div className="mt-12 pt-8 border-t border-slate-700 w-full max-w-xs flex flex-col items-center gap-4">
+                    {currentUser ? (
+                         <button onClick={() => { onLogout(); setIsMobileMenuOpen(false); }} className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-3 px-6 rounded-md transition-colors text-lg">Logout</button>
+                    ) : (
+                        <>
+                            <button onClick={() => { onNavigate('register'); setIsMobileMenuOpen(false); }} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-6 rounded-md transition-all">Register</button>
+                            <button onClick={() => { onLoginClick(); setIsMobileMenuOpen(false); }} className="w-full bg-transparent hover:bg-slate-800 text-slate-200 font-medium py-3 px-6 rounded-md transition-colors border border-slate-600">Login</button>
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
+      )}
     </header>
   );
 };

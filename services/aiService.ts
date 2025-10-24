@@ -46,12 +46,13 @@ interface GenerateFeedbackParams {
     model: string;
     transcript: string;
     settings: InterviewSettings;
+    malpracticeReport: string | null;
 }
 
 const feedbackSchema = {
     type: Type.OBJECT,
     properties: {
-        overallRating: { type: Type.INTEGER, description: 'An overall rating for the candidate from 1 to 10.' },
+        overallRating: { type: Type.INTEGER, description: 'An overall rating for the candidate from 1 (poor) to 10 (excellent).' },
         overallReasoning: { type: Type.STRING, description: 'A brief, one-sentence reasoning for the overall rating.' },
         recommendation: { type: Type.STRING, description: "A final hiring recommendation. Must be one of: 'Recommended for Hire', 'Needs Improvement', 'Not a Fit'." },
         metrics: {
@@ -60,9 +61,10 @@ const feedbackSchema = {
                 type: Type.OBJECT,
                 properties: {
                     name: { type: Type.STRING, description: 'Name of the skill being assessed (e.g., "Clarity & Communication", "Technical Depth", "Problem-Solving").' },
-                    rating: { type: Type.INTEGER, description: 'A rating for this specific skill from 1 to 10.' },
+                    rating: { type: Type.INTEGER, description: 'A rating for this specific skill from 1 (poor) to 10 (excellent).' },
                     reasoning: { type: Type.STRING, description: 'A brief, one-sentence reasoning for this skill rating.' },
                 },
+                required: ['name', 'rating', 'reasoning'],
             },
         },
         strengths: {
@@ -76,20 +78,68 @@ const feedbackSchema = {
             description: 'A list of 2-3 specific, actionable areas for improvement.',
         },
     },
+    required: ['overallRating', 'overallReasoning', 'recommendation', 'metrics', 'strengths', 'areasForImprovement'],
 };
 
 
-export const generateFeedback = async ({ model, transcript, settings }: GenerateFeedbackParams): Promise<any> => {
-    const basePrompt = `Analyze the interview transcript for a candidate applying for the "${settings.position}" role. The interview was conducted at a '${settings.difficulty}' difficulty level. Provide a detailed, graphical-friendly analysis based on this difficulty. Transcript:\n---\n${transcript}\n---`;
+export const generateFeedback = async ({ model, transcript, settings, malpracticeReport }: GenerateFeedbackParams): Promise<any> => {
+    let prompt = `
+You are an expert hiring manager. Your task is to evaluate a candidate based on an interview transcript.
+
+Role: "${settings.position}"
+Difficulty: "${settings.difficulty}"
+
+Analyze the provided transcript and generate a feedback report. The report must be in JSON format and strictly follow the provided schema. For the 'recommendation' field, you must choose one of these exact values: 'Recommended for Hire', 'Needs Improvement', or 'Not a Fit'.
+`;
+
+    if (malpracticeReport) {
+        prompt += `
+Additionally, consider the following malpractice report logged during the session. These events may indicate a lack of focus or preparation. Factor these into your evaluation, particularly for metrics like 'Professionalism' or 'Engagement', and mention them in the 'Areas for Improvement' if relevant.
+
+--- MALPRACTICE REPORT ---
+${malpracticeReport}
+---
+`;
+    }
+
+    prompt += `
+Do not add any commentary or text outside of the JSON object.
+
+Transcript:
+---
+${transcript}
+---
+`;
     
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
         model: model,
-        contents: basePrompt,
+        contents: prompt,
         config: {
             responseMimeType: "application/json",
             responseSchema: feedbackSchema,
         }
     });
-    return JSON.parse(response.text.trim());
+    
+    const text = response.text?.trim();
+    if (!text) {
+        const blockReason = response.candidates?.[0]?.finishReason;
+        const safetyRatings = response.candidates?.[0]?.safetyRatings;
+        let errorMessage = "The AI's response was empty.";
+        if (blockReason) {
+            errorMessage = `The AI's response was blocked. Reason: ${blockReason}.`;
+            if (safetyRatings) {
+                 errorMessage += ` Safety ratings: ${JSON.stringify(safetyRatings)}`;
+            }
+        }
+        console.error(errorMessage, { blockReason, safetyRatings });
+        throw new Error(errorMessage);
+    }
+    
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        console.error("Failed to parse AI feedback JSON:", text, e);
+        throw new Error("The AI returned an invalid JSON format. Please try again.");
+    }
 };

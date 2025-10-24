@@ -10,21 +10,14 @@ export const useUserMedia = (options: { enabled: boolean, video: boolean, audio:
   const { enabled, video, audio } = options;
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<MediaError | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  // Using a ref to hold the stream is crucial. It's a stable container that survives
-  // re-renders, preventing race conditions where a stream is acquired but a reference to it is lost.
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    // If the hook is disabled, we must clean up any existing stream.
     if (!enabled) {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
         streamRef.current = null;
         setStream(null);
-        if (videoRef.current) {
-          videoRef.current.srcObject = null;
-        }
       }
       return;
     }
@@ -36,20 +29,12 @@ export const useUserMedia = (options: { enabled: boolean, video: boolean, audio:
       if (!video && !audio) return;
 
       try {
-        // Reset error state on new attempt
         setError(null);
         const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-
-        // Check if the component is still mounted and this effect is still active
-        // before updating state. This prevents state updates on an unmounted component.
         if (isEffectActive) {
-            streamRef.current = mediaStream; // Store the stream in our stable ref
+            streamRef.current = mediaStream;
             setStream(mediaStream);
-            if (videoRef.current) {
-              videoRef.current.srcObject = mediaStream;
-            }
         } else {
-            // If the effect was cleaned up before we got the stream, we must stop the tracks.
             mediaStream.getTracks().forEach(track => track.stop());
         }
       } catch (err) {
@@ -92,8 +77,6 @@ export const useUserMedia = (options: { enabled: boolean, video: boolean, audio:
 
     getMedia();
 
-    // The cleanup function is critical. It runs when the component unmounts or
-    // when the dependencies change.
     return () => {
       isEffectActive = false;
       if (streamRef.current) {
@@ -103,5 +86,6 @@ export const useUserMedia = (options: { enabled: boolean, video: boolean, audio:
     };
   }, [enabled, video, audio]);
 
-  return { videoRef, stream, error };
+
+  return { stream, error };
 };

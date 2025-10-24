@@ -6,6 +6,7 @@ import { fetchInterviewSummary } from '../services/uploadService';
 import { VideoCameraIcon, MicOnIcon, ChatBubbleIcon, ShareIcon, DocumentDuplicateIcon } from '../constants';
 import { useToast } from '../contexts/ToastContext';
 import FeedbackPanel from './FeedbackPanel';
+import MalpracticeReportPanel from './MalpracticeReportPanel';
 
 interface HistoryScreenProps {
   currentUser: User | null;
@@ -51,7 +52,12 @@ const TranscriptModal: React.FC<{ transcript: string; onClose: () => void; }> = 
     );
 };
 
-const FeedbackModal: React.FC<{ feedback: FeedbackData; onClose: () => void; }> = ({ feedback, onClose }) => {
+const ReportModal: React.FC<{ 
+    item: InterviewHistoryItem;
+    feedback: FeedbackData | null;
+    isLoading: boolean;
+    onClose: () => void; 
+}> = ({ item, feedback, isLoading, onClose }) => {
     return (
         <div 
             className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" 
@@ -64,13 +70,21 @@ const FeedbackModal: React.FC<{ feedback: FeedbackData; onClose: () => void; }> 
                 onClick={e => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center p-4 border-b border-slate-700 flex-shrink-0">
-                    <h2 className="text-xl font-bold text-slate-100">AI Feedback Report</h2>
+                    <h2 className="text-xl font-bold text-slate-100">Full Interview Report</h2>
                     <button onClick={onClose} className="p-2 rounded-full text-slate-400 hover:bg-slate-700 hover:text-slate-200 transition-colors" aria-label="Close modal">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 <div className="p-6 overflow-y-auto flex-1">
-                    <FeedbackPanel feedback={feedback} isLoading={false} error="" loadingMessage="" />
+                     <div className="space-y-6">
+                        <MalpracticeReportPanel report={item.malpracticeReport} />
+                        <FeedbackPanel 
+                            feedback={feedback} 
+                            isLoading={isLoading} 
+                            error={!isLoading && !feedback ? 'Could not load feedback.' : ''} 
+                            loadingMessage="Loading feedback report..." 
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,7 +92,7 @@ const FeedbackModal: React.FC<{ feedback: FeedbackData; onClose: () => void; }> 
 };
 
 
-const HistoryCard: React.FC<{ item: InterviewHistoryItem; onViewTranscript: (transcript: string) => void; onViewFeedback: (summaryUrl: string | null) => void; }> = ({ item, onViewTranscript, onViewFeedback }) => {
+const HistoryCard: React.FC<{ item: InterviewHistoryItem; onViewTranscript: (transcript: string) => void; onViewReport: (item: InterviewHistoryItem) => void; }> = ({ item, onViewTranscript, onViewReport }) => {
     const { settings, date, transcriptContent, recordingUrl, summaryUrl } = item;
     
     const icon = useMemo(() => {
@@ -123,11 +137,11 @@ const HistoryCard: React.FC<{ item: InterviewHistoryItem; onViewTranscript: (tra
                     </a>
                 ) : null}
                 <button 
-                    onClick={() => onViewFeedback(summaryUrl)}
+                    onClick={() => onViewReport(item)}
                     disabled={!summaryUrl}
                     className="w-full sm:w-auto text-center bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed"
                 >
-                    {summaryUrl ? 'View Feedback' : 'No Feedback'}
+                    {summaryUrl ? 'View Report' : 'No Report'}
                 </button>
                 <button 
                     onClick={() => transcriptContent && onViewTranscript(transcriptContent)}
@@ -144,7 +158,9 @@ const HistoryCard: React.FC<{ item: InterviewHistoryItem; onViewTranscript: (tra
 const HistoryScreen: React.FC<HistoryScreenProps> = ({ currentUser, onBackToHome }) => {
   const [history, setHistory] = useState<InterviewHistoryItem[]>([]);
   const [selectedTranscript, setSelectedTranscript] = useState<string | null>(null);
-  const [selectedFeedback, setSelectedFeedback] = useState<FeedbackData | null>(null);
+  const [selectedItemForReport, setSelectedItemForReport] = useState<InterviewHistoryItem | null>(null);
+  const [selectedFeedbackForReport, setSelectedFeedbackForReport] = useState<FeedbackData | null>(null);
+  const [isReportLoading, setIsReportLoading] = useState(false);
   const { showToast } = useToast();
   
   useEffect(() => {
@@ -154,14 +170,29 @@ const HistoryScreen: React.FC<HistoryScreenProps> = ({ currentUser, onBackToHome
     }
   }, [currentUser]);
 
-  const handleViewFeedback = (summaryUrl: string | null) => {
-    if (!summaryUrl) return;
-    const feedback = fetchInterviewSummary(summaryUrl);
-    if (feedback) {
-        setSelectedFeedback(feedback);
-    } else {
-        showToast('Could not load interview feedback.', 'error');
+  const handleViewReport = async (item: InterviewHistoryItem) => {
+    if (!item.summaryUrl) {
+      showToast('No feedback report is available for this interview.', 'info');
+      return;
     }
+    setIsReportLoading(true);
+    setSelectedItemForReport(item);
+    
+    // This is synchronous but we keep async structure for potential future API calls
+    const feedback = await fetchInterviewSummary(item.summaryUrl);
+    
+    if (feedback) {
+      setSelectedFeedbackForReport(feedback);
+    } else {
+      showToast('Could not load interview feedback report.', 'error');
+      setSelectedItemForReport(null);
+    }
+    setIsReportLoading(false);
+  };
+  
+  const handleCloseReport = () => {
+    setSelectedItemForReport(null);
+    setSelectedFeedbackForReport(null);
   };
 
   return (
@@ -180,7 +211,7 @@ const HistoryScreen: React.FC<HistoryScreenProps> = ({ currentUser, onBackToHome
                     key={item.id} 
                     item={item} 
                     onViewTranscript={setSelectedTranscript} 
-                    onViewFeedback={handleViewFeedback}
+                    onViewReport={handleViewReport}
                 />
               ))}
             </div>
@@ -204,8 +235,13 @@ const HistoryScreen: React.FC<HistoryScreenProps> = ({ currentUser, onBackToHome
       {selectedTranscript && (
         <TranscriptModal transcript={selectedTranscript} onClose={() => setSelectedTranscript(null)} />
       )}
-      {selectedFeedback && (
-        <FeedbackModal feedback={selectedFeedback} onClose={() => setSelectedFeedback(null)} />
+      {selectedItemForReport && (
+        <ReportModal 
+            item={selectedItemForReport}
+            feedback={selectedFeedbackForReport}
+            isLoading={isReportLoading}
+            onClose={handleCloseReport}
+        />
       )}
     </>
   );

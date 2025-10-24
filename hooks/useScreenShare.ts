@@ -5,7 +5,6 @@ export const useScreenShare = (options: { enabled: boolean }) => {
   const { enabled } = options;
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<MediaError | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
@@ -14,9 +13,6 @@ export const useScreenShare = (options: { enabled: boolean }) => {
         streamRef.current.getTracks().forEach(track => track.stop());
         streamRef.current = null;
         setStream(null);
-        if (videoRef.current) {
-          videoRef.current.srcObject = null;
-        }
       }
       return;
     }
@@ -57,9 +53,6 @@ export const useScreenShare = (options: { enabled: boolean }) => {
           const combinedStream = new MediaStream([videoTrack, audioTrack]);
           streamRef.current = combinedStream;
           setStream(combinedStream);
-          if (videoRef.current) {
-            videoRef.current.srcObject = combinedStream;
-          }
         } else {
           displayStream.getTracks().forEach(track => track.stop());
           audioStream.getTracks().forEach(track => track.stop());
@@ -100,5 +93,5 @@ export const useScreenShare = (options: { enabled: boolean }) => {
     };
   }, [enabled]);
 
-  return { videoRef, stream, error };
+  return { stream, error };
 };

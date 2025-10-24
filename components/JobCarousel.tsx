@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { Job } from '../types';
 
 const JobCard: React.FC<{ job: Job; onPractice: () => void; }> = ({ job, onPractice }) => (
-    <div className="bg-slate-800/80 backdrop-blur-sm p-4 rounded-lg border border-slate-700 flex flex-col h-full hover:border-blue-500 transition-colors group">
+    <div className="bg-slate-800/80 backdrop-blur-sm p-4 rounded-lg border border-slate-700 flex flex-col h-full hover:border-blue-500 transition-all duration-300 group transform hover:-translate-y-1">
         <div className="flex flex-wrap gap-1.5 mb-3">
             {job.skills.slice(0, 3).map(skill => (
                 <span key={skill} className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">{skill}</span>
@@ -72,7 +72,7 @@ const JobCarousel: React.FC<{
 
     return (
         <div 
-            className="relative w-full"
+            className="relative w-full group"
             onMouseEnter={resetTimeout}
             onMouseLeave={() => {
                 timeoutRef.current = setTimeout(() => {

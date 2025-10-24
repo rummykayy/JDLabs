@@ -160,8 +160,14 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-5xl mx-auto z-10 text-center pt-2 pb-12 md:pt-4 md:pb-20">         
+    <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-black">
+      <div className="text-center mb-6 animate-fade-in-down">
+        <div className="inline-block bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-full py-1.5 px-4 text-sm text-slate-300">
+            ✨ <span className="font-semibold text-blue-400">New Feature:</span> Now with Live Screen Sharing for technical interviews!
+        </div>
+      </div>
+
+      <div className="w-full max-w-5xl mx-auto z-10 text-center pt-2 pb-8 md:pt-0 md:pb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-slate-100 animate-fade-in-down" style={{ animationDelay: '0.2s' }}>
             AI Interview Platform
           </h1>
@@ -170,13 +176,13 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
           </p>
       </div>
       
-      <div className="w-full max-w-5xl mx-auto mb-12 md:mb-16 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-          <h2 className="text-2xl font-semibold text-center mb-6">Trending Jobs...</h2>
+      <div className="w-full max-w-5xl mx-auto mb-8 md:mb-12 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+          <h2 className="text-2xl font-semibold text-center mb-4">Trending Jobs...</h2>
           <JobCarousel jobs={TRENDING_JOBS_DATA} onLoadJd={handleLoadJd} onPractice={handlePracticeInterview} />
       </div>
 
       <div className="w-full max-w-5xl mx-auto">
-        <form ref={formRef} onSubmit={handleSubmit} className="bg-slate-800/60 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-2xl border border-slate-700 transition-colors duration-300 ease-out hover:border-blue-500/50 animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+        <form ref={formRef} onSubmit={handleSubmit} className="bg-slate-800/50 backdrop-blur-md p-6 sm:p-8 rounded-2xl shadow-2xl shadow-black/20 border border-slate-700 transition-colors duration-300 ease-out hover:border-blue-500/50 animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Left Column */}
                   <div className="space-y-6">
@@ -281,7 +287,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
                 >
                     <p>Engage with candidates in a realistic, face-to-face interview simulation powered by our advanced AI. Assess verbal and non-verbal cues for a complete picture.</p>
                 </FeatureCard>
-                <hr className="my-16 border-slate-800" />
+
                 <FeatureCard 
                     title="Audio Interview" 
                     icon={<MicOnIcon />}
@@ -290,7 +296,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
                 >
                     <p>Conduct voice-only interviews perfect for initial screenings or roles where verbal communication is key. Our AI provides real-time transcription and analysis.</p>
                 </FeatureCard>
-                <hr className="my-16 border-slate-800" />
+
                 <FeatureCard 
                     title="Live Screen Sharing" 
                     icon={<ShareIcon />}
@@ -298,7 +304,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
                 >
                     <p>Evaluate technical skills in real-time. Candidates can share their screen to tackle coding challenges, demonstrate software proficiency, or walk through portfolios.</p>
                 </FeatureCard>
-                <hr className="my-16 border-slate-800" />
+
                 <FeatureCard 
                     title="Chat Interview" 
                     icon={<ChatBubbleIcon />}
@@ -307,7 +313,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
                 >
                     <p>A text-based interview format ideal for assessing written communication skills and for candidates in environments where video/audio is not feasible.</p>
                 </FeatureCard>
-                <hr className="my-16 border-slate-800" />
+
                 <FeatureCard 
                     title="Performance Tracking" 
                     icon={<ChartBarIcon />}
@@ -317,25 +323,6 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettin
                 </FeatureCard>
             </div>
         </div>
-
-       <style>{`
-        @keyframes fade-in-down {
-          from { opacity: 0; transform: translateY(-20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-down {
-          animation: fade-in-down 0.8s ease-out forwards;
-          opacity: 0;
-        }
-         .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out forwards;
-          opacity: 0;
-        }
-      `}</style>
     </div>
   );
 };

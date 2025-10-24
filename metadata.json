@@ -1,5 +1,5 @@
 {
-  "name": "AI Interview Platform - Live Production - 15th oct",
+  "name": "AI Interview Platform",
   "description": "A platform to conduct AI-powered interviews with chat, audio, and video modes, featuring advanced analysis of candidate responses and fault identification.",
   "requestFramePermissions": [
     "camera",

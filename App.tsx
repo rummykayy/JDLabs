@@ -37,7 +37,7 @@ const App: React.FC = () => {
 
   const [currentView, setCurrentView] = useState<View>('setup');
   const [interviewSettings, setInterviewSettings] = useState<InterviewSettings | null>(null);
-  const [interviewResult, setInterviewResult] = useState<{ mediaUrl: string | null; transcriptContent: string | null } | null>(null);
+  const [interviewResult, setInterviewResult] = useState<{ mediaUrl: string | null; transcriptContent: string | null; malpracticeReport: string | null; } | null>(null);
   
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -59,7 +59,7 @@ const App: React.FC = () => {
     setInterviewResult(null); // Clear previous results
   };
 
-  const handleEndInterview = (result: { mediaUrl: string | null; transcriptContent: string | null }) => {
+  const handleEndInterview = (result: { mediaUrl: string | null; transcriptContent: string | null; malpracticeReport: string | null; }) => {
     setInterviewResult(result);
   };
   
@@ -78,6 +78,7 @@ const App: React.FC = () => {
             date: new Date().toISOString(),
             settings: interviewSettings,
             transcriptContent: interviewResult.transcriptContent,
+            malpracticeReport: interviewResult.malpracticeReport,
             recordingUrl: recordingUrl,
             summaryUrl: summaryUrl,
         };
@@ -155,6 +156,7 @@ const App: React.FC = () => {
         <PlaybackScreen
           mediaUrl={interviewResult.mediaUrl}
           transcriptContent={interviewResult.transcriptContent}
+          malpracticeReport={interviewResult.malpracticeReport}
           mode={interviewSettings.mode}
           settings={interviewSettings}
           onFinishReview={handleFinishReview}

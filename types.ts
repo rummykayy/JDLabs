@@ -92,4 +92,5 @@ export interface InterviewHistoryItem {
   transcriptContent: string | null;
   recordingUrl?: string | null;
   summaryUrl?: string | null;
+  malpracticeReport?: string | null;
 }

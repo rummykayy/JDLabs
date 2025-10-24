@@ -3,10 +3,12 @@ import { InterviewMode } from '../types';
 import type { InterviewSettings, ModelSettings, FeedbackData } from '../types';
 import { generateFeedback } from '../services/aiService';
 import FeedbackPanel, { getApiErrorDetails } from './FeedbackPanel';
+import MalpracticeReportPanel from './MalpracticeReportPanel';
 
 interface PlaybackScreenProps {
   mediaUrl: string | null;
   transcriptContent: string | null;
+  malpracticeReport: string | null;
   mode: InterviewMode;
   settings: InterviewSettings;
   onFinishReview: (feedback: FeedbackData | null) => void;
@@ -24,8 +26,8 @@ const TabButton: React.FC<{ title: string; active: boolean; onClick: () => void;
     </button>
 );
 
-const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptContent, mode, settings, onFinishReview, modelSettings }) => {
-  const [activeTab, setActiveTab] = useState<'transcript' | 'feedback'>('transcript');
+const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptContent, malpracticeReport, mode, settings, onFinishReview, modelSettings }) => {
+  const [activeTab, setActiveTab] = useState<'report' | 'transcript'>('report');
 
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
@@ -67,7 +69,8 @@ const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptCon
         const apiCall = () => generateFeedback({
             model: modelSettings.evaluation,
             transcript: transcriptContent,
-            settings
+            settings,
+            malpracticeReport,
         });
 
         const feedbackData = await withRetries(apiCall);
@@ -83,7 +86,7 @@ const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptCon
     };
 
     getFeedback();
-  }, [transcriptContent, settings, modelSettings.evaluation]);
+  }, [transcriptContent, settings, modelSettings.evaluation, malpracticeReport]);
 
 
   const layoutClasses = hasMedia && hasTranscript ? "grid-cols-1 lg:grid-cols-2 gap-6" : "grid-cols-1";
@@ -107,8 +110,8 @@ const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptCon
           {hasTranscript && (
             <div className="w-full flex flex-col">
                 <div className="flex border-b border-slate-700 flex-shrink-0">
+                    <TabButton title="Full Report" active={activeTab === 'report'} onClick={() => setActiveTab('report')} />
                     <TabButton title="Transcript" active={activeTab === 'transcript'} onClick={() => setActiveTab('transcript')} />
-                    <TabButton title="AI Feedback" active={activeTab === 'feedback'} onClick={() => setActiveTab('feedback')} />
                 </div>
                 <div className="flex-1 overflow-y-auto bg-slate-900 p-4 rounded-b-md border border-t-0 border-slate-700 min-h-[200px] max-h-[70vh]">
                     {activeTab === 'transcript' && (
@@ -119,13 +122,16 @@ const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptCon
                             </pre>
                         </div>
                     )}
-                    {activeTab === 'feedback' && (
-                        <FeedbackPanel 
-                          feedback={feedback}
-                          isLoading={isFeedbackLoading}
-                          error={feedbackError}
-                          loadingMessage={loadingMessage}
-                        />
+                    {activeTab === 'report' && (
+                        <div className="space-y-6">
+                            <MalpracticeReportPanel report={malpracticeReport} />
+                            <FeedbackPanel 
+                              feedback={feedback}
+                              isLoading={isFeedbackLoading}
+                              error={feedbackError}
+                              loadingMessage={loadingMessage}
+                            />
+                        </div>
                     )}
                 </div>
             </div>
