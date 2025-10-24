@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InterviewMode } from '../types';
-import type { InterviewSettings, ModelSettings, ApiProvider } from '../types';
-import FeedbackPanel from './FeedbackPanel';
+import type { InterviewSettings, ModelSettings, FeedbackData } from '../types';
+import { generateFeedback } from '../services/aiService';
+import FeedbackPanel, { getApiErrorDetails } from './FeedbackPanel';
 
 interface PlaybackScreenProps {
   mediaUrl: string | null;
   transcriptContent: string | null;
   mode: InterviewMode;
   settings: InterviewSettings;
-  onFinishReview: () => void;
-  apiKey: string;
+  onFinishReview: (feedback: FeedbackData | null) => void;
   modelSettings: ModelSettings;
-  apiProvider: ApiProvider;
 }
 
 const TabButton: React.FC<{ title: string; active: boolean; onClick: () => void; }> = ({ title, active, onClick }) => (
@@ -25,14 +24,67 @@ const TabButton: React.FC<{ title: string; active: boolean; onClick: () => void;
     </button>
 );
 
-const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptContent, mode, settings, onFinishReview, apiKey, modelSettings, apiProvider }) => {
+const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptContent, mode, settings, onFinishReview, modelSettings }) => {
   const [activeTab, setActiveTab] = useState<'transcript' | 'feedback'>('transcript');
+
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
+  const [feedbackError, setFeedbackError] = useState('');
+  const [loadingMessage, setLoadingMessage] = useState('Analyzing performance and preparing suggestions...');
 
   const isVideo = mode === InterviewMode.VIDEO || mode === InterviewMode.LIVE_SHARE;
   const isChat = mode === InterviewMode.CHAT;
   
   const hasMedia = !!mediaUrl && !isChat;
   const hasTranscript = !!transcriptContent;
+
+  async function withRetries<T>(apiCall: () => Promise<T>, retries = 3, delay = 30000): Promise<T> {
+    try {
+        setLoadingMessage('Analyzing performance and preparing suggestions...');
+        return await apiCall();
+    } catch (error) {
+        const { type, message } = getApiErrorDetails(error);
+        if (type === 'RATE_LIMIT' && retries > 0) {
+            const waitTime = delay / 1000;
+            console.log(`Rate limit hit during feedback generation. Retrying in ${waitTime}s...`);
+            setLoadingMessage(`Rate limit reached. Retrying in ${waitTime} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return withRetries(apiCall, retries - 1, delay * 2);
+        }
+        throw new Error(message);
+    }
+  }
+
+  useEffect(() => {
+    if (!transcriptContent) return;
+
+    const getFeedback = async () => {
+      setIsFeedbackLoading(true);
+      setFeedbackError('');
+      setFeedback(null);
+      
+      try {
+        const apiCall = () => generateFeedback({
+            model: modelSettings.evaluation,
+            transcript: transcriptContent,
+            settings
+        });
+
+        const feedbackData = await withRetries(apiCall);
+        setFeedback(feedbackData as FeedbackData);
+
+      } catch (e) {
+        console.error("Error generating feedback after retries:", e);
+        const errorMessage = getApiErrorDetails(e).message;
+        setFeedbackError(errorMessage);
+      } finally {
+        setIsFeedbackLoading(false);
+      }
+    };
+
+    getFeedback();
+  }, [transcriptContent, settings, modelSettings.evaluation]);
+
 
   const layoutClasses = hasMedia && hasTranscript ? "grid-cols-1 lg:grid-cols-2 gap-6" : "grid-cols-1";
 
@@ -69,11 +121,10 @@ const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptCon
                     )}
                     {activeTab === 'feedback' && (
                         <FeedbackPanel 
-                          transcript={transcriptContent} 
-                          settings={settings} 
-                          apiKey={apiKey} 
-                          model={modelSettings.evaluation} 
-                          apiProvider={apiProvider} 
+                          feedback={feedback}
+                          isLoading={isFeedbackLoading}
+                          error={feedbackError}
+                          loadingMessage={loadingMessage}
                         />
                     )}
                 </div>
@@ -82,10 +133,10 @@ const PlaybackScreen: React.FC<PlaybackScreenProps> = ({ mediaUrl, transcriptCon
         </div>
         <div className="text-center mt-8">
           <button 
-            onClick={onFinishReview}
+            onClick={() => onFinishReview(feedback)}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors"
           >
-            Finish Review & Start New Interview
+            Finish Review & Save to History
           </button>
         </div>
       </div>

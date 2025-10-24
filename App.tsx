@@ -1,5 +1,6 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
-import Header from './components/Header';
+import React, { useState, useEffect } from 'react';
+import type { View, InterviewSettings, User, ModelSettings, Plan, InterviewHistoryItem, FeedbackData } from './types';
+
 import SetupScreen from './components/SetupScreen';
 import InterviewScreen from './components/InterviewScreen';
 import PlaybackScreen from './components/PlaybackScreen';
@@ -8,232 +9,213 @@ import RegisterScreen from './components/RegisterScreen';
 import CommunityScreen from './components/CommunityScreen';
 import LearnScreen from './components/LearnScreen';
 import PricingScreen from './components/PricingScreen';
+import FeaturesScreen from './components/FeaturesScreen';
 import ContactScreen from './components/ContactScreen';
 import PrivacyScreen from './components/PrivacyScreen';
 import TermsScreen from './components/TermsScreen';
 import CheckoutScreen from './components/CheckoutScreen';
 import OrderSuccessScreen from './components/OrderSuccessScreen';
+import HistoryScreen from './components/HistoryScreen';
+import Header from './components/Header';
 import Footer from './components/Footer';
-import ApiKeySetupScreen from './components/ApiKeySetupScreen';
-import type { InterviewSettings, User, View, ModelSettings, ApiProvider, Plan } from './types';
-import { InterviewMode } from './types';
+import AuthModal from './components/AuthModal';
 import { useToast } from './contexts/ToastContext';
+import { addInterviewToHistory } from './services/historyService';
+import { uploadInterviewAssets } from './services/uploadService';
 
-const pathToView = (path: string): View => {
-  // Normalize path: remove trailing slash for non-root paths
-  const cleanPath = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
-  switch (cleanPath) {
-    case '/community': return 'community';
-    case '/learn': return 'learn';
-    case '/pricing': return 'pricing';
-    case '/contact': return 'contact';
-    case '/privacy': return 'privacy';
-    case '/terms': return 'terms';
-    case '/login': return 'login';
-    case '/register': return 'register';
-    case '/checkout': return 'checkout';
-    case '/order-success': return 'orderSuccess';
-    case '/': 
-    default: 
-      return 'setup';
-  }
+const defaultModelSettings: ModelSettings = {
+  chat: 'gemini-2.5-flash',
+  audio: 'gemini-2.5-flash-native-audio-preview-09-2025',
+  video: 'gemini-2.5-flash-native-audio-preview-09-2025',
+  liveShare: 'gemini-2.5-flash-native-audio-preview-09-2025',
+  evaluation: 'gemini-2.5-flash',
 };
 
-const viewToPath = (view: View): string => {
-  if (view === 'setup') return '/';
-  if (view === 'orderSuccess') return '/order-success';
-  return `/${view}`;
-}
+const App: React.FC = () => {
+  // --- STATE MANAGEMENT ---
+  const [modelSettings, setModelSettings] = useState<ModelSettings>(defaultModelSettings);
 
-const getApiKeyFromEnv = (): string | null => {
-    try {
-        if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-            return process.env.API_KEY;
-        }
-    } catch (e) {
-        console.warn("Could not read API_KEY from process.env", e);
-    }
-    return null;
-};
-
-
-function App() {
-  const [apiProvider, setApiProvider] = useState<ApiProvider>('gemini');
-  const [apiKey, setApiKey] = useState<string | null>(getApiKeyFromEnv());
-  const [modelSettings, setModelSettings] = useState<ModelSettings>({
-      chat: 'gemini-2.5-flash',
-      audio: 'gemini-2.5-flash-native-audio-preview-09-2025',
-      video: 'gemini-2.5-flash-native-audio-preview-09-2025',
-      liveShare: 'gemini-2.5-flash-native-audio-preview-09-2025',
-      evaluation: 'gemini-2.5-flash',
-  });
+  const [currentView, setCurrentView] = useState<View>('setup');
   const [interviewSettings, setInterviewSettings] = useState<InterviewSettings | null>(null);
-  const [recordedMediaUrl, setRecordedMediaUrl] = useState<string | null>(null);
-  const [transcriptContent, setTranscriptContent] = useState<string | null>(null);
-  const [interviewModeForPlayback, setInterviewModeForPlayback] = useState<InterviewMode | null>(null);
-  const [playbackSettings, setPlaybackSettings] = useState<InterviewSettings | null>(null);
-  const [currentView, setCurrentView] = useState<View>(() => pathToView(window.location.pathname));
+  const [interviewResult, setInterviewResult] = useState<{ mediaUrl: string | null; transcriptContent: string | null } | null>(null);
+  
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [planToPurchase, setPlanToPurchase] = useState<Plan | null>(null);
-  const footerRef = useRef<HTMLElement>(null);
-  const [footerHeight, setFooterHeight] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { showToast } = useToast();
 
-  // Effect to handle browser back/forward navigation
+  // --- EFFECT HOOKS ---
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentView(pathToView(window.location.pathname));
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+    }
   }, []);
 
-  useLayoutEffect(() => {
-    const updateFooterHeight = () => {
-      if (footerRef.current) {
-        setFooterHeight(footerRef.current.offsetHeight);
-      }
-    };
-
-    updateFooterHeight();
-    const resizeObserver = new ResizeObserver(updateFooterHeight);
-    if (footerRef.current) {
-        resizeObserver.observe(footerRef.current);
-    }
-    
-    return () => {
-        if (footerRef.current) {
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            resizeObserver.unobserve(footerRef.current);
-        }
-    };
-  }, []);
-
-  const handleNavigation = (view: View) => {
-    const path = viewToPath(view);
-    if (window.location.pathname !== path) {
-      try {
-        window.history.pushState({ view }, '', path);
-      } catch (error) {
-        console.warn("Could not push state to history (this is expected in sandboxed environments):", error);
-      }
-    }
-    setCurrentView(view);
+  // --- HANDLER FUNCTIONS ---
+  const handleStartInterview = (settings: InterviewSettings) => {
+    setInterviewSettings(settings);
+    setInterviewResult(null); // Clear previous results
   };
 
-  const handleStartInterview = (settings: InterviewSettings) => {
-    setRecordedMediaUrl(null);
-    setTranscriptContent(null);
-    setInterviewModeForPlayback(null);
-    setPlaybackSettings(null);
-    setInterviewSettings(settings);
+  const handleEndInterview = (result: { mediaUrl: string | null; transcriptContent: string | null }) => {
+    setInterviewResult(result);
   };
   
-  const handleEndInterview = (result: { mediaUrl: string | null; transcriptContent: string | null }) => {
-    setInterviewModeForPlayback(interviewSettings?.mode ?? null);
-    setPlaybackSettings(interviewSettings);
-    setRecordedMediaUrl(result.mediaUrl);
-    setTranscriptContent(result.transcriptContent);
-    if (currentUser) {
-      setCurrentUser(prevUser => prevUser ? { ...prevUser, interviewCount: (prevUser.interviewCount || 0) + 1 } : null);
+  const handleFinishReview = async (feedbackData: FeedbackData | null) => {
+    if (currentUser && interviewSettings && interviewResult) {
+        // Use the new service to "upload" assets and get back URLs
+        const { recordingUrl, summaryUrl } = await uploadInterviewAssets(
+            interviewResult.mediaUrl,
+            feedbackData,
+            currentUser,
+            interviewSettings
+        );
+
+        const historyItem: InterviewHistoryItem = {
+            id: new Date().toISOString() + Math.random(),
+            date: new Date().toISOString(),
+            settings: interviewSettings,
+            transcriptContent: interviewResult.transcriptContent,
+            recordingUrl: recordingUrl,
+            summaryUrl: summaryUrl,
+        };
+        addInterviewToHistory(currentUser.email, historyItem);
+        showToast("Interview saved to your history!", "success");
     }
+      
+    // Cleanup local blob URL if it's a blob URL
+    if (interviewResult?.mediaUrl && interviewResult.mediaUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(interviewResult.mediaUrl);
+    }
+    setInterviewResult(null);
     setInterviewSettings(null);
+    setCurrentView('setup');
+  };
+  
+  const handleNavigate = (view: View) => {
+    setCurrentView(view);
+  };
+  
+  const handleLoginSuccess = (user: User) => {
+    const userWithDefaults = { interviewCount: 0, plan: 'Free' as const, ...user };
+    setCurrentUser(userWithDefaults);
+    localStorage.setItem('currentUser', JSON.stringify(userWithDefaults));
+    setCurrentView('setup');
+    setIsAuthModalOpen(false);
+    showToast(`Welcome back, ${user.name}!`, 'success');
   };
 
-  const handleFinishReview = () => {
-    if (recordedMediaUrl) {
-      URL.revokeObjectURL(recordedMediaUrl);
-    }
-    setRecordedMediaUrl(null);
-    setTranscriptContent(null);
-    setInterviewModeForPlayback(null);
-    setPlaybackSettings(null);
-    handleNavigation('setup');
-  };
-
-  const handleLogin = (user: User) => {
-    setCurrentUser({ ...user, interviewCount: user.interviewCount || 0, plan: user.plan || 'Free' });
-    handleNavigation('setup');
-  };
-
-  const handleRegister = (user: User) => {
-    setCurrentUser({ ...user, interviewCount: 0, plan: 'Free' });
-    handleNavigation('setup');
+  const handleRegisterSuccess = (user: User) => {
+    const userWithDefaults = { interviewCount: 0, plan: 'Free' as const, ...user };
+    setCurrentUser(userWithDefaults);
+    localStorage.setItem('currentUser', JSON.stringify(userWithDefaults));
+    setCurrentView('setup');
+    setIsAuthModalOpen(false);
+    showToast(`Welcome, ${user.name}! Your account has been created.`, 'success');
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
-  };
-
-  const handleSelectPlan = (plan: Plan) => {
-    if (!currentUser) {
-      // Redirect to login/register if not logged in, but remember the plan
-      setPlanToPurchase(plan);
-      handleNavigation('login'); // Or show auth modal
-    } else {
-      setPlanToPurchase(plan);
-      handleNavigation('checkout');
-    }
-  };
-
-  const handlePurchaseSuccess = () => {
-    if (currentUser && planToPurchase) {
-      // In a real app, this would be updated after a successful payment API call
-      setCurrentUser(prev => prev ? { ...prev, plan: planToPurchase.name } : null);
-      setPlanToPurchase(null);
-      handleNavigation('orderSuccess');
-    }
-  };
-
-  const handleSetupComplete = (provider: ApiProvider, key: string, models: ModelSettings) => {
-    setApiProvider(provider);
-    setApiKey(key);
-    setModelSettings(models);
-    showToast('Configuration saved successfully!', 'success');
+    localStorage.removeItem('currentUser');
+    setCurrentView('setup');
+    showToast('You have been logged out.', 'info');
   };
   
-  if (!apiKey) {
-    return <ApiKeySetupScreen onSetupComplete={handleSetupComplete} />;
-  }
-
+  const handleSelectPlan = (plan: Plan) => {
+      if (!currentUser) {
+          setIsAuthModalOpen(true);
+          return;
+      }
+      if (plan.price === 0) {
+        const updatedUser = { ...currentUser, plan: 'Free' as const };
+        setCurrentUser(updatedUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        showToast('You are now on the Free plan!', 'success');
+      } else {
+        setSelectedPlan(plan);
+        setCurrentView('checkout');
+      }
+  };
+  
+  const handleConfirmPurchase = () => {
+    if (currentUser && selectedPlan) {
+      const updatedUser = { ...currentUser, plan: selectedPlan.name };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setCurrentView('orderSuccess');
+      showToast(`Successfully upgraded to the ${selectedPlan.name} plan!`, 'success');
+    }
+  };
+  
   const renderContent = () => {
+    if (interviewResult && interviewSettings) {
+      return (
+        <PlaybackScreen
+          mediaUrl={interviewResult.mediaUrl}
+          transcriptContent={interviewResult.transcriptContent}
+          mode={interviewSettings.mode}
+          settings={interviewSettings}
+          onFinishReview={handleFinishReview}
+          modelSettings={modelSettings}
+        />
+      );
+    }
+
     if (interviewSettings) {
-      return <InterviewScreen settings={interviewSettings} onEndInterview={handleEndInterview} apiKey={apiKey} apiProvider={apiProvider} />;
+      return <InterviewScreen settings={interviewSettings} onEndInterview={handleEndInterview} />;
     }
     
-    if ((recordedMediaUrl || transcriptContent) && interviewModeForPlayback && playbackSettings) {
-      return <PlaybackScreen mediaUrl={recordedMediaUrl} transcriptContent={transcriptContent} mode={interviewModeForPlayback} settings={playbackSettings} onFinishReview={handleFinishReview} apiKey={apiKey} modelSettings={modelSettings} apiProvider={apiProvider} />;
-    }
-
-    const handleBackToSetup = () => handleNavigation('setup');
-
     switch (currentView) {
-      case 'login': return <LoginScreen onLoginSuccess={handleLogin} onSwitchToRegister={() => handleNavigation('register')} onBackToSetup={handleBackToSetup} />;
-      case 'register': return <RegisterScreen onRegisterSuccess={handleRegister} onSwitchToLogin={() => handleNavigation('login')} onBackToSetup={handleBackToSetup} />;
-      case 'community': return <CommunityScreen onBackToHome={() => handleNavigation('setup')} />;
-      case 'learn': return <LearnScreen onBackToHome={() => handleNavigation('setup')} />;
-      case 'pricing': return <PricingScreen onBackToHome={() => handleNavigation('setup')} onSelectPlan={handleSelectPlan} onNavigate={handleNavigation} currentUser={currentUser} />;
-      case 'contact': return <ContactScreen onBackToHome={() => handleNavigation('setup')} />;
-      case 'privacy': return <PrivacyScreen onBackToHome={() => handleNavigation('setup')} />;
-      case 'terms': return <TermsScreen onBackToHome={() => handleNavigation('setup')} />;
-      case 'checkout': return <CheckoutScreen plan={planToPurchase} currentUser={currentUser} onConfirmPurchase={handlePurchaseSuccess} onBack={() => handleNavigation('pricing')} />;
-      case 'orderSuccess': return <OrderSuccessScreen onBackToHome={() => handleNavigation('setup')} />;
       case 'setup':
+        return <SetupScreen onStartInterview={handleStartInterview} modelSettings={modelSettings} currentUser={currentUser} onLoginRequired={() => setIsAuthModalOpen(true)} />;
+      case 'login':
+        return <LoginScreen onLoginSuccess={handleLoginSuccess} onSwitchToRegister={() => setCurrentView('register')} onBackToSetup={() => setCurrentView('setup')} />;
+      case 'register':
+        return <RegisterScreen onRegisterSuccess={handleRegisterSuccess} onSwitchToLogin={() => setCurrentView('login')} onBackToSetup={() => setCurrentView('setup')} />;
+      case 'community':
+        return <CommunityScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'learn':
+        return <LearnScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'features':
+        return <FeaturesScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'pricing':
+        return <PricingScreen onBackToHome={() => setCurrentView('setup')} onSelectPlan={handleSelectPlan} currentUser={currentUser} onNavigate={handleNavigate} />;
+      case 'contact':
+        return <ContactScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'privacy':
+        return <PrivacyScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'terms':
+        return <TermsScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'checkout':
+        return <CheckoutScreen plan={selectedPlan} currentUser={currentUser} onConfirmPurchase={handleConfirmPurchase} onBack={() => setCurrentView('pricing')} />;
+      case 'orderSuccess':
+        return <OrderSuccessScreen onBackToHome={() => setCurrentView('setup')} />;
+      case 'history':
+        return <HistoryScreen currentUser={currentUser} onBackToHome={() => setCurrentView('setup')} />;
       default:
-        return <SetupScreen onStartInterview={handleStartInterview} currentUser={currentUser} modelSettings={modelSettings} apiKey={apiKey} apiProvider={apiProvider} onNavigate={handleNavigation} onLogin={handleLogin} onRegister={handleRegister} />;
+        return <SetupScreen onStartInterview={handleStartInterview} modelSettings={modelSettings} currentUser={currentUser} onLoginRequired={() => setIsAuthModalOpen(true)} />;
     }
   };
 
+  const showHeaderFooter = !interviewSettings || !!interviewResult;
 
   return (
-    <div className="min-h-screen text-gray-200 flex flex-col">
-      <Header currentUser={currentUser} currentView={currentView} onNavigate={handleNavigation} onLoginClick={() => handleNavigation('login')} onLogout={handleLogout} />
+    <div className="bg-slate-900 text-slate-200 min-h-screen flex flex-col">
+      {showHeaderFooter && <Header currentUser={currentUser} currentView={currentView} onNavigate={handleNavigate} onLoginClick={() => setIsAuthModalOpen(true)} onLogout={handleLogout} />}
       <main className="flex-1 flex flex-col">
-        {renderContent()}
+          {renderContent()}
       </main>
-      <Footer onNavigate={handleNavigation} ref={footerRef} />
+      {showHeaderFooter && <Footer onNavigate={handleNavigate} />}
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        onRegisterSuccess={handleRegisterSuccess}
+      />
     </div>
   );
-}
+};
 
 export default App;

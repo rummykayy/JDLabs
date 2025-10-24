@@ -8,42 +8,52 @@ interface PricingCardProps {
   isCurrentPlan: boolean;
 }
 
-const PricingCard: React.FC<PricingCardProps> = ({ plan, onSelect, isCurrentPlan }) => (
-  <div className={`bg-slate-800 p-8 rounded-lg border-2 flex flex-col h-full ${plan.popular ? 'border-blue-500' : 'border-slate-700'}`}>
-    {plan.popular && (
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-        Most Popular
+const PricingCard: React.FC<PricingCardProps> = ({ plan, onSelect, isCurrentPlan }) => {
+  const highlightConfig = {
+    blue: { border: 'border-blue-500', badge: 'bg-blue-600' },
+    green: { border: 'border-green-500', badge: 'bg-green-600' },
+  };
+  
+  const borderColor = plan.highlight ? highlightConfig[plan.highlight.color].border : 'border-slate-700';
+  const badgeBg = plan.highlight ? highlightConfig[plan.highlight.color].badge : '';
+
+  return (
+    <div className={`bg-slate-800 p-8 rounded-lg border-2 flex flex-col h-full ${borderColor}`}>
+      {plan.highlight && (
+        <div className={`absolute -top-3 left-1/2 -translate-x-1/2 ${badgeBg} text-white px-4 py-1 rounded-full text-sm font-semibold`}>
+          {plan.highlight.text}
+        </div>
+      )}
+      <h3 className="text-2xl font-bold text-slate-100">{plan.name}</h3>
+      <p className="text-slate-400 mt-2">{plan.description}</p>
+      <div className="my-6">
+        <span className="text-5xl font-bold text-white">₹{plan.price}</span>
+        <span className="text-slate-400">/mo</span>
       </div>
-    )}
-    <h3 className="text-2xl font-bold text-slate-100">{plan.name}</h3>
-    <p className="text-slate-400 mt-2">{plan.description}</p>
-    <div className="my-6">
-      <span className="text-5xl font-bold text-white">₹{plan.price}</span>
-      <span className="text-slate-400">/mo</span>
+      <ul className="space-y-3 text-slate-300 flex-grow">
+        {plan.features.map((feature, index) => (
+          <li key={index} className="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+      <button
+        onClick={() => onSelect(plan)}
+        disabled={isCurrentPlan}
+        className={`w-full mt-8 font-bold py-3 px-4 rounded-lg transition-colors text-lg ${
+          isCurrentPlan
+            ? 'bg-slate-700 cursor-not-allowed text-slate-400'
+            : plan.ctaClass
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
+      >
+        {isCurrentPlan ? 'Current Plan' : plan.cta}
+      </button>
     </div>
-    <ul className="space-y-3 text-slate-300 flex-grow">
-      {plan.features.map((feature, index) => (
-        <li key={index} className="flex items-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <span>{feature}</span>
-        </li>
-      ))}
-    </ul>
-    <button
-      onClick={() => onSelect(plan)}
-      disabled={isCurrentPlan}
-      className={`w-full mt-8 font-bold py-3 px-4 rounded-lg transition-colors text-lg ${
-        isCurrentPlan
-          ? 'bg-slate-700 cursor-not-allowed text-slate-400'
-          : plan.ctaClass
-      } disabled:opacity-50 disabled:cursor-not-allowed`}
-    >
-      {isCurrentPlan ? 'Current Plan' : plan.cta}
-    </button>
-  </div>
-);
+  );
+};
 
 
 interface PricingScreenProps {

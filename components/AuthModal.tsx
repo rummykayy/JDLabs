@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { User } from '../types';
 import { AtSymbolIcon, LockClosedIcon, UserIcon, GoogleIcon } from '../constants';
+import Logo from './Logo';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -121,9 +122,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess, 
             
             {view === 'login' ? (
                 <div className="p-8">
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-6">
+                        <div className="inline-block mb-4"><Logo /></div>
                         <h1 className="text-2xl font-bold text-slate-100">Login to Your Account</h1>
-                        <p className="text-slate-400 mt-2">Welcome back! Please enter your details.</p>
+                        <p className="text-slate-400 mt-2">Welcome back!</p>
                     </div>
                     <form onSubmit={handleLoginSubmit} className="space-y-6">
                         <div>
@@ -156,9 +158,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess, 
                 </div>
             ) : (
                 <div className="p-8">
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-6">
+                        <div className="inline-block mb-4"><Logo /></div>
                         <h1 className="text-2xl font-bold text-slate-100">Create a New Account</h1>
-                        <p className="text-slate-400 mt-2">Join the AI Interview Platform today.</p>
+                        <p className="text-slate-400 mt-2">Join today.</p>
                     </div>
                     <form onSubmit={handleRegisterSubmit} className="space-y-6">
                         <div>

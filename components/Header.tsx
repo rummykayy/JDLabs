@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { User, View } from '../types';
 import { ShareIcon, EnvelopeIcon, DocumentDuplicateIcon } from '../constants';
 import { useToast } from '../contexts/ToastContext';
+import Logo from './Logo';
 
 interface HeaderProps {
   currentUser: User | null;
@@ -11,22 +12,10 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
-const Logo = () => (
-  <div className="flex items-center gap-2">
-    <svg viewBox="0 0 40 40" className="h-8 w-8">
-      <circle cx="20" cy="20" r="20" fill="#2563EB" />
-      <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="16" fontWeight="bold" fontFamily="Inter, sans-serif" dy=".1em">
-        JD
-      </text>
-    </svg>
-    <span className="text-xl font-bold tracking-wider text-white">LABS</span>
-  </div>
-);
-
-
 const navItems: { name: string; view: View }[] = [
     { name: 'Community', view: 'community' },
     { name: 'Learn', view: 'learn' },
+    { name: 'Features', view: 'features' },
     { name: 'Pricing', view: 'pricing' },
     { name: 'Contact', view: 'contact' },
 ];
@@ -77,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, o
               <button
                 key={item.name}
                 onClick={() => onNavigate(item.view)}
-                className={`px-4 py-2 rounded-md text-xl font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   currentView === item.view
                     ? 'bg-slate-700 text-white'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
@@ -86,6 +75,18 @@ const Header: React.FC<HeaderProps> = ({ currentUser, currentView, onNavigate, o
                 {item.name}
               </button>
             ))}
+            {currentUser && (
+                <button
+                    onClick={() => onNavigate('history')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        currentView === 'history'
+                        ? 'bg-slate-700 text-white'
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    }`}
+                >
+                    History
+                </button>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { MicOffIcon } from '../constants';
 
 interface VideoPanelProps {
@@ -9,9 +9,24 @@ interface VideoPanelProps {
   avatarNode?: React.ReactNode;
   isMuted?: boolean;
   isSpeaking?: boolean;
+  src?: string;
 }
 
-const VideoPanel: React.FC<VideoPanelProps> = ({ name, status, videoRef, avatarUrl, avatarNode, isMuted, isSpeaking }) => {
+const VideoPanel: React.FC<VideoPanelProps> = ({ name, status, videoRef, avatarUrl, avatarNode, isMuted, isSpeaking, src }) => {
+  const internalVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // This effect controls playback for videos managed internally via the `src` prop.
+    if (src && internalVideoRef.current) {
+      if (isSpeaking) {
+        // Play the video, and catch any potential errors (e.g., browser restrictions)
+        internalVideoRef.current.play().catch(e => console.error("Video play failed:", e));
+      } else {
+        internalVideoRef.current.pause();
+      }
+    }
+  }, [isSpeaking, src]);
+
   return (
     <div className={`relative w-full h-full bg-slate-950 rounded-lg overflow-hidden border-2 ${isSpeaking ? 'border-blue-500' : 'border-slate-700'} aspect-video transition-colors duration-300`}>
       {isSpeaking && (
@@ -20,7 +35,18 @@ const VideoPanel: React.FC<VideoPanelProps> = ({ name, status, videoRef, avatarU
           <div className="relative h-3 w-3 rounded-full bg-blue-500"></div>
         </div>
       )}
-      {videoRef ? (
+      {src ? (
+        <video 
+          ref={internalVideoRef} 
+          src={src}
+          loop 
+          playsInline 
+          muted 
+          className="w-full h-full object-cover"
+        >
+          Your browser does not support the video tag.
+        </video>
+      ) : videoRef ? (
         <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" muted></video>
       ) : avatarUrl ? (
         <div className="w-full h-full flex items-center justify-center bg-slate-800">

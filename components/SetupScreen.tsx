@@ -1,380 +1,342 @@
-
-
-import React, { useState, useEffect } from 'react';
-import { InterviewMode } from '../types';
-import type { InterviewSettings, User, ModelSettings, ApiProvider, View, Job } from '../types';
-import { POSITIONS, LANGUAGES, PencilIcon, TargetIcon, TRENDING_JOBS_DATA } from '../constants';
+import React, { useState, useRef, useEffect } from 'react';
 import { extractTextFromUrl } from '../services/aiService';
-import AuthModal from './AuthModal';
+import type { InterviewSettings, ModelSettings, Job, InterviewDifficulty, User, InterviewMode } from '../types';
+import { InterviewMode as InterviewModeEnum } from '../types';
+import { POSITIONS, LANGUAGES, TRENDING_JOBS_DATA, PencilIcon, TargetIcon, BriefcaseIcon, GlobeIcon, SignalIcon, VideoCameraIcon, MicOnIcon, ShareIcon, ChatBubbleIcon, ChartBarIcon } from '../constants';
+import { useToast } from '../contexts/ToastContext';
+import Logo from './Logo';
+import JobCarousel from './JobCarousel';
+import FeatureCard from './FeatureCard';
+import MediaContainer from './MediaContainer';
+import ImageSlider from './ImageSlider';
+import AudioVisualizer from './AudioVisualizer';
+import { ChatInterviewPlaceholder } from './FeaturePlaceholders';
+import { HERO_IMAGES, SCREEN_SHARE_IMAGES, PERFORMANCE_TRACKING_IMAGES } from '../constants/media';
 
-const SeoContent = () => (
-    <div className="w-full max-w-4xl mx-auto mt-20 text-slate-300">
-        <hr className="border-slate-700 my-16" />
-        <section id="why-ai-interviews" className="space-y-6 text-center">
-            <h2 className="text-3xl font-bold text-slate-100">Why AI-Powered Interviews?</h2>
-            <p className="text-lg text-slate-400 max-w-3xl mx-auto">
-                Our platform streamlines the hiring process, making it faster, more objective, and highly efficient. Leverage cutting-edge AI to conduct insightful interviews and identify the best candidates for your team.
-            </p>
-            <div className="grid md:grid-cols-3 gap-8 pt-8 text-left">
-                <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                    <h3 className="text-xl font-semibold text-white mb-2">Save Time</h3>
-                    <p className="text-slate-400">Automate initial screenings and conduct multiple interviews simultaneously. Focus your valuable time on the most promising candidates.</p>
-                </div>
-                <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                    <h3 className="text-xl font-semibold text-white mb-2">Reduce Bias</h3>
-                    <p className="text-slate-400">Standardized questions and objective, data-driven analysis help eliminate unconscious bias from the evaluation process, ensuring fair assessments.</p>
-                </div>
-                <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                    <h3 className="text-xl font-semibold text-white mb-2">In-Depth Analysis</h3>
-                    <p className="text-slate-400">Receive comprehensive feedback on candidate performance, including transcript analysis and key competency scoring, all powered by AI.</p>
-                </div>
-            </div>
-        </section>
+interface ModeButtonProps {
+    modeName: InterviewMode;
+    description: string;
+    tag: string;
+    tagClass: string;
+    activeMode: InterviewMode;
+    setMode: (mode: InterviewMode) => void;
+}
 
-        <hr className="border-slate-700 my-16" />
-
-        <section id="features">
-            <h2 className="text-3xl font-bold text-center text-slate-100">Features for Recruiters, HR, and Candidates</h2>
-            <div className="mt-10 max-w-3xl mx-auto space-y-4">
-                <details className="bg-slate-800 border border-slate-700 p-4 rounded-lg cursor-pointer" open>
-                    <summary className="font-semibold text-lg text-white">Versatile Interview Modes: Video, Voice, & Chat</summary>
-                    <p className="text-slate-400 mt-2">
-                        Choose the perfect format for any role. Conduct face-to-face video interviews, voice-only calls for focused conversation, or asynchronous chat sessions for ultimate flexibility.
-                    </p>
-                </details>
-                <details className="bg-slate-800 border border-slate-700 p-4 rounded-lg cursor-pointer">
-                    <summary className="font-semibold text-lg text-white">Smart Question Generation</summary>
-                    <p className="text-slate-400 mt-2">
-                        Our AI generates relevant questions based on the job description you provide, ensuring every interview is tailored to the specific requirements of the role.
-                    </p>
-                </details>
-                <details className="bg-slate-800 border border-slate-700 p-4 rounded-lg cursor-pointer">
-                    <summary className="font-semibold text-lg text-white">Live Share for Technical Assessments</summary>
-                    <p className="text-slate-400 mt-2">
-                        Evaluate coding skills in real-time. Our Live Share mode provides a screen-sharing environment for practical, hands-on technical challenges.
-                    </p>
-                </details>
-            </div>
-        </section>
-    </div>
+const ModeButton: React.FC<ModeButtonProps> = ({ modeName, description, tag, tagClass, activeMode, setMode }) => (
+    <button
+        type="button"
+        onClick={() => setMode(modeName)}
+        className={`w-full text-left p-3 rounded-lg border-2 transition-all duration-200 ${
+            activeMode === modeName
+                ? 'bg-blue-500/20 border-blue-500'
+                : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'
+        }`}
+    >
+        <div className="flex justify-between items-center">
+            <span className="font-semibold text-slate-200 text-sm">{modeName}</span>
+            <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${tagClass}`}>{tag}</span>
+        </div>
+        <p className="text-xs text-slate-400 mt-1">{description}</p>
+    </button>
 );
-
-const JobSkeleton: React.FC = () => (
-    <li className="flex justify-between items-center px-2 py-3 border-b border-slate-800">
-        <div>
-            <div className="h-4 bg-slate-700 rounded w-48 mb-2 animate-pulse"></div>
-            <div className="h-3 bg-slate-700 rounded w-32 animate-pulse"></div>
-        </div>
-        <div>
-             <div className="flex justify-center gap-1">
-                <div className="h-4 bg-slate-700 rounded-full w-12 animate-pulse"></div>
-                <div className="h-4 bg-slate-700 rounded-full w-16 animate-pulse"></div>
-                <div className="h-4 bg-slate-700 rounded-full w-10 animate-pulse"></div>
-                <div className="h-4 bg-slate-700 rounded-full w-14 animate-pulse"></div>
-                <div className="h-4 bg-slate-700 rounded-full w-12 animate-pulse"></div>
-                <div className="h-4 bg-slate-700 rounded-full w-16 animate-pulse"></div>
-             </div>
-        </div>
-        <div className="text-right flex-shrink-0 ml-4">
-            <div className="h-4 bg-slate-700 rounded w-16 mb-2 animate-pulse"></div>
-            <div className="h-2 bg-slate-700 rounded w-12 animate-pulse"></div>
-        </div>
-    </li>
-);
-
-const TrendingJobsList: React.FC<{ jobs: Job[], isLoading: boolean }> = ({ jobs, isLoading }) => {
-    // Duplicate the data for a seamless infinite scroll effect
-    const animatedJobs = [...jobs, ...jobs];
-
-    return (
-        <div className="w-full mx-auto">
-            <div className="bg-slate-800/60 px-4 pt-4 pb-0 rounded-lg border border-slate-700 backdrop-blur-sm h-28 overflow-hidden relative">
-                {isLoading ? (
-                     <ul>
-                         <JobSkeleton />
-                         <JobSkeleton />
-                         <JobSkeleton />
-                     </ul>
-                ) : (
-                    <div className="animate-scroll-up">
-                        <ul>
-                            {animatedJobs.map((job, index) => (
-                                <li key={index} className="flex justify-between items-center px-2 py-3 border-b border-slate-800">
-                                    <div>
-                                        <p className="font-semibold text-slate-100">{job.title}</p>
-                                        <div className="flex items-baseline gap-2 mt-1">
-                                            <p className="text-sm font-medium text-slate-300">{job.company}</p>
-                                            <p className="text-xs text-slate-500">{job.location}</p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="flex flex-wrap gap-1 justify-center">
-                                            {job.skills.slice(0, 6).map(skill => (
-                                                <span key={skill} className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div className="text-right flex-shrink-0 ml-4">
-                                        <p className="font-bold text-green-400 text-sm">{job.salary}</p>
-                                        <p className="text-xs text-slate-500">{job.posted}</p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-                 {/* Fade-out effect at the bottom */}
-                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#1E293B]/40 to-transparent pointer-events-none"></div>
-            </div>
-        </div>
-    );
-};
 
 interface SetupScreenProps {
   onStartInterview: (settings: InterviewSettings) => void;
-  currentUser: User | null;
   modelSettings: ModelSettings;
-  apiKey: string;
-  apiProvider: ApiProvider;
-  onNavigate: (view: View) => void;
-  onLogin: (user: User) => void;
-  onRegister: (user: User) => void;
+  currentUser: User | null;
+  onLoginRequired: () => void;
 }
 
-const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, currentUser, modelSettings, apiKey, apiProvider, onNavigate, onLogin, onRegister }) => {
-  const [position, setPosition] = useState(POSITIONS[0]);
-  const [jobDescription, setJobDescription] = useState('');
-  const [language, setLanguage] = useState(LANGUAGES[0].code);
-  const [mode, setMode] = useState<InterviewMode>(InterviewMode.VIDEO);
-  const [model, setModel] = useState(modelSettings.video);
+const SetupScreen: React.FC<SetupScreenProps> = ({ onStartInterview, modelSettings, currentUser, onLoginRequired }) => {
+  const [position, setPosition] = useState('Software Engineer');
+  const [jobDescription, setJobDescription] = useState('Seeking a proactive software engineer with experience in React and Node.js to build and maintain scalable web applications.');
+  const [jdUrl, setJdUrl] = useState('');
+  const [isFetchingJd, setIsFetchingJd] = useState(false);
+  const [mode, setMode] = useState<InterviewMode>(InterviewModeEnum.VIDEO);
+  const [language, setLanguage] = useState('en-US');
+  const [difficulty, setDifficulty] = useState<InterviewDifficulty>('Medium');
+
+  const { showToast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const getStorageKey = (user: User | null) => user ? `interviewSetupState_${user.email}` : 'interviewSetupState_guest';
   
-  const [isFetchingJD, setIsFetchingJD] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [isJdLocked, setIsJdLocked] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showLimitModal, setShowLimitModal] = useState(false);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [isLoadingJobs, setIsLoadingJobs] = useState(true);
-
-  // Effect to simulate fetching job data
   useEffect(() => {
-    setIsLoadingJobs(true);
-    const timer = setTimeout(() => {
-        // Shuffle the array to make it look dynamic on each load
-        const shuffledJobs = [...TRENDING_JOBS_DATA].sort(() => Math.random() - 0.5);
-        setJobs(shuffledJobs);
-        setIsLoadingJobs(false);
-    }, 1500); // Simulate network delay
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const planLimits = { Free: 3, Plus: 25, Pro: 50 };
-  const userPlan = currentUser?.plan || 'Free';
-  const interviewLimit = planLimits[userPlan as keyof typeof planLimits];
-  const interviewsUsed = currentUser?.interviewCount || 0;
-
-  const hasJD = jobDescription.trim().length > 0;
-
-  useEffect(() => {
-    switch(mode) {
-      case InterviewMode.VIDEO: setModel(modelSettings.video); break;
-      case InterviewMode.AUDIO: setModel(modelSettings.audio); break;
-      case InterviewMode.CHAT: setModel(modelSettings.chat); break;
-      case InterviewMode.LIVE_SHARE: setModel(modelSettings.liveShare); break;
-      default: setModel('gemini-2.5-flash');
+    const storageKey = getStorageKey(currentUser);
+    try {
+      const savedStateJSON = localStorage.getItem(storageKey);
+      if (savedStateJSON) {
+        const savedState = JSON.parse(savedStateJSON);
+        if (savedState.position) setPosition(savedState.position);
+        if (savedState.jobDescription) setJobDescription(savedState.jobDescription);
+        if (savedState.mode) setMode(savedState.mode);
+        if (savedState.language) setLanguage(savedState.language);
+        if (savedState.difficulty) setDifficulty(savedState.difficulty);
+      }
+    } catch (error) {
+      console.error("Failed to load interview setup state from localStorage", error);
+      localStorage.removeItem(storageKey);
     }
-  }, [mode, modelSettings]);
+  }, [currentUser]);
+
+  useEffect(() => {
+    const stateToSave = { position, jobDescription, mode, language, difficulty };
+    const storageKey = getStorageKey(currentUser);
+    localStorage.setItem(storageKey, JSON.stringify(stateToSave));
+  }, [position, jobDescription, mode, language, difficulty, currentUser]);
+
+  const clearSavedState = () => {
+      const storageKey = getStorageKey(currentUser);
+      localStorage.removeItem(storageKey);
+  };
+
+  const getModelForMode = (selectedMode: InterviewMode): string => {
+      switch (selectedMode) {
+          case InterviewModeEnum.CHAT: return modelSettings.chat;
+          case InterviewModeEnum.AUDIO: return modelSettings.audio;
+          case InterviewModeEnum.VIDEO: return modelSettings.video;
+          case InterviewModeEnum.LIVE_SHARE: return modelSettings.liveShare;
+          default: return modelSettings.chat;
+      }
+  };
+
+  const handleFetchJd = async () => {
+    if (!jdUrl.trim()) return;
+    setIsFetchingJd(true);
+    try {
+      const text = await extractTextFromUrl({ model: modelSettings.chat, url: jdUrl });
+      setJobDescription(text);
+      showToast('Job description extracted successfully!', 'success');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      showToast(`Failed to extract JD: ${errorMessage}`, 'error');
+    } finally {
+      setIsFetchingJd(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) {
-      setShowAuthModal(true);
+      onLoginRequired();
       return;
     }
-    if (interviewsUsed >= interviewLimit) {
-      setShowLimitModal(true);
-      return;
-    }
+    const model = getModelForMode(mode);
     onStartInterview({
-      candidateName: currentUser?.name || 'Guest',
+      candidateName: currentUser.name,
       position,
       jobDescription,
       mode,
       language,
+      difficulty,
       model,
     });
+    clearSavedState();
   };
 
-  const handleClearJD = () => {
-    setJobDescription('');
-    setIsJdLocked(false);
-    setFetchError(null);
+  const handleLoadJd = (job: Job) => {
+    setPosition(job.title);
+    setJobDescription(`Company: ${job.company}\nLocation: ${job.location}\nSalary: ${job.salary}\nSkills Required: ${job.skills.join(', ')}`);
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  const handleJobDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setJobDescription(value);
-    if (isJdLocked) setIsJdLocked(false);
-    setFetchError(null);
-  };
-
-  const handleJDPaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const pastedText = e.clipboardData.getData('text');
-    const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/i;
-    const potentialUrl = pastedText.trim();
-
-    if (urlRegex.test(potentialUrl)) {
-      e.preventDefault();
-      setJobDescription(`Extracting content from ${potentialUrl}...`);
-      setIsFetchingJD(true);
-      setFetchError(null);
-      try {
-        const extractedText = await extractTextFromUrl({ provider: apiProvider, apiKey, model: modelSettings.chat, url: potentialUrl });
-        if (extractedText && extractedText.length > 50) {
-          setJobDescription(extractedText);
-          setIsJdLocked(true);
-        } else {
-          setJobDescription(potentialUrl);
-          setFetchError("Could not extract a detailed job description from the link.");
-        }
-      } catch (err) {
-        setJobDescription(potentialUrl);
-        console.error("Failed to extract JD from URL:", err);
-        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-        setFetchError(errorMessage);
-      } finally {
-        setIsFetchingJD(false);
-      }
+  const handlePracticeInterview = (job: Job) => {
+    if (!currentUser) {
+      onLoginRequired();
+      return;
     }
+    const model = getModelForMode(mode);
+    const settings: InterviewSettings = {
+        candidateName: currentUser.name,
+        position: job.title,
+        jobDescription: `Company: ${job.company}\nLocation: ${job.location}\nSalary: ${job.salary}\nSkills Required: ${job.skills.join(', ')}`,
+        mode: mode,
+        language: language,
+        difficulty,
+        model: model,
+    };
+    onStartInterview(settings);
+    clearSavedState();
   };
-
-  const interviewModes = [
-    { mode: InterviewMode.VIDEO, title: 'Video Interview', description: 'Full video call with AI Interviewer', recommended: true },
-    { mode: InterviewMode.LIVE_SHARE, title: 'Live Share Interview', description: 'Live Audio with screen sharing for tasks', live: true },
-    { mode: InterviewMode.AUDIO, title: 'Audio Interview', description: 'Voice-only conversation', voice: true },
-    { mode: InterviewMode.CHAT, title: 'Chat Interview', description: 'Text-based chat session', text: true },
-  ];
-  
-  const formInputClass = "w-full bg-slate-900 border border-slate-600 rounded-md py-2.5 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-800 disabled:cursor-not-allowed";
 
   return (
-    <>
-      <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pb-20 overflow-y-auto">
-        <div className="w-full max-w-4xl mt-2">
-          <div className="text-center mb-6">
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-100">AI Interview Platform</h1>
-              <h2 className="text-slate-400 mt-2 text-lg">Streamline hiring with AI-powered video and chat interviews</h2>
-          </div>
-
-          <div className="mb-6">
-              <h3 className="text-xl font-semibold text-white mb-4 text-center">Trending Jobs !!!</h3>
-              <TrendingJobsList jobs={jobs} isLoading={isLoadingJobs} />
-          </div>
-
-          {currentUser && (
-              <div className="mb-8 bg-slate-800/50 p-4 rounded-lg border border-slate-700 max-w-3xl mx-auto">
-                  <div className="flex justify-between items-center text-sm text-slate-400 mb-2">
-                      <p>
-                          <span className="font-semibold text-slate-300">{currentUser.plan} Plan</span>
-                          {' '}Interview Usage
-                      </p>
-                      <p className="font-medium text-slate-300">
-                          {interviewsUsed} / {interviewLimit}
-                      </p>
-                  </div>
-                  <div className="w-full bg-slate-700 rounded-full h-2">
-                      <div 
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `${Math.min((interviewsUsed / interviewLimit) * 100, 100)}%` }}
-                      ></div>
-                  </div>
-              </div>
-          )}
-
-          <div className="bg-slate-800/60 p-6 md:p-8 rounded-lg border border-slate-700 backdrop-blur-sm">
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="text-blue-400"><PencilIcon/></div>
-                        <label htmlFor="jobDescription" className="text-lg font-semibold text-slate-200">Job Description (JD)</label>
-                    </div>
-                    <div className="relative">
-                      <textarea id="jobDescription" value={jobDescription} onChange={handleJobDescriptionChange} onPaste={handleJDPaste} readOnly={isJdLocked} rows={5} className={`${formInputClass} resize-none`} placeholder="Paste the job description here, or provide a link to it..."/>
-                      {isJdLocked && <button type="button" onClick={handleClearJD} className="absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold px-2 py-1 rounded-full" title="Clear and edit manually">&times; Clear</button>}
-                    </div>
-                    {isFetchingJD && <p className="text-sm text-blue-400 mt-2 animate-pulse">Extracting...</p>}
-                    {fetchError && <p className="text-sm text-red-400 mt-2">{fetchError}</p>}
-                  </div>
-                  
-                  <div className="flex items-center gap-4"><hr className="flex-1 border-slate-700" /><span className="text-slate-500 text-sm font-semibold">OR</span><hr className="flex-1 border-slate-700" /></div>
-                  
-                  <div>
-                    <label htmlFor="position" className="block text-lg font-semibold text-slate-200 mb-2">Position</label>
-                    <div className="relative" title={hasJD ? "Position is disabled when a Job Description is provided." : ""}>
-                      <select id="position" value={position} onChange={(e) => setPosition(e.target.value)} className={formInputClass} disabled={hasJD}>
-                        {POSITIONS.map((p) => <option key={p} value={p}>{p}</option>)}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="language" className="text-lg font-semibold text-slate-200 mb-2 block">Language</label>
-                    <select id="language" value={language} onChange={(e) => setLanguage(e.target.value)} className={formInputClass}>
-                      {LANGUAGES.map((lang) => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
-                    </select>
-                  </div>
-                </div>
-                
-                {/* Right Column */}
-                <div className="mt-8 md:mt-0 md:border-l md:border-slate-700 md:pl-8">
-                  <div className="flex items-center gap-3 mb-4"><div className="text-blue-400"><TargetIcon /></div><h2 className="text-lg font-semibold text-slate-200">Interview Mode</h2></div>
-                  <div className="space-y-4">
-                    {interviewModes.map((item) => (
-                      <div key={item.mode} onClick={() => setMode(item.mode)} className={`relative p-4 rounded-lg border-2 cursor-pointer transition-colors ${mode === item.mode ? 'border-blue-500 bg-blue-500/10' : 'border-slate-600 hover:border-slate-500 bg-slate-800/50'}`}>
-                        <div className="absolute top-2 right-2 flex items-center gap-1.5">
-                          {item.recommended && <span className="text-xs bg-blue-600 text-white font-bold px-2 py-0.5 rounded-full">Recommended</span>}
-                          {item.live && <span className="text-xs bg-red-600 text-white font-bold px-2 py-0.5 rounded-full">LIVE</span>}
-                          {item.voice && <span className="text-xs bg-purple-600 text-white font-bold px-2 py-0.5 rounded-full">VOICE</span>}
-                          {item.text && <span className="text-xs bg-slate-600 text-white font-bold px-2 py-0.5 rounded-full">TEXT</span>}
-                        </div>
-                        <h3 className="font-semibold text-slate-100">{item.title}</h3>
-                        <p className="text-sm text-slate-400 mt-1">{item.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-slate-700">
-                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]">Start Interview</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <SeoContent />
+    <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-5xl mx-auto z-10 text-center pt-2 pb-12 md:pt-4 md:pb-20">         
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-100 animate-fade-in-down" style={{ animationDelay: '0.2s' }}>
+            AI Interview Platform
+          </h1>
+          <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto animate-fade-in-down" style={{ animationDelay: '0.4s' }}>
+            Streamline hiring with AI-powered video, live, audio and chat interviews
+          </p>
+      </div>
+      
+      <div className="w-full max-w-5xl mx-auto mb-12 md:mb-16 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+          <h2 className="text-2xl font-semibold text-center mb-6">Trending Jobs...</h2>
+          <JobCarousel jobs={TRENDING_JOBS_DATA} onLoadJd={handleLoadJd} onPractice={handlePracticeInterview} />
       </div>
 
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={onLogin} onRegisterSuccess={onRegister} />
+      <div className="w-full max-w-5xl mx-auto">
+        <form ref={formRef} onSubmit={handleSubmit} className="bg-slate-800/60 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-2xl border border-slate-700 transition-colors duration-300 ease-out hover:border-blue-500/50 animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Left Column */}
+                  <div className="space-y-6">
+                      <div>
+                          <label htmlFor="jobDescription" className="flex items-center gap-2 text-base font-bold text-slate-300 mb-2">
+                              <span className="text-blue-400"><PencilIcon /></span>
+                              Job Description (JD)
+                          </label>
+                          <textarea id="jobDescription" value={jobDescription} onChange={e => setJobDescription(e.target.value)} rows={8} className="w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Paste the job description here..." required />
+                          <div className="flex gap-2 mt-2">
+                              <input type="url" value={jdUrl} onChange={e => setJdUrl(e.target.value)} placeholder="...or provide a link to it" className="flex-1 bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                              <button type="button" onClick={handleFetchJd} disabled={isFetchingJd} className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-wait disabled:shadow-none">
+                                  {isFetchingJd ? '...' : 'Fetch'}
+                              </button>
+                          </div>
+                      </div>
+                      <div className="relative flex items-center">
+                          <div className="flex-grow border-t border-slate-600"></div>
+                          <span className="flex-shrink mx-4 text-slate-500 text-xs font-semibold">OR</span>
+                          <div className="flex-grow border-t border-slate-600"></div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div>
+                              <label htmlFor="position" className="flex items-center gap-2 text-base font-bold text-slate-300 mb-2">
+                                  <span className="text-blue-400"><BriefcaseIcon /></span>
+                                  Position
+                              </label>
+                              <select id="position" value={position} onChange={e => setPosition(e.target.value)} className="w-full bg-slate-700/50 border border-slate-600 rounded-md py-2.5 px-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                              </select>
+                          </div>
+                          <div>
+                              <label htmlFor="language" className="flex items-center gap-2 text-base font-bold text-slate-300 mb-2">
+                                  <span className="text-blue-400"><GlobeIcon /></span>
+                                  Language
+                              </label>
+                              <select id="language" value={language} onChange={e => setLanguage(e.target.value)} className="w-full bg-slate-700/50 border border-slate-600 rounded-md py-2.5 px-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  {/* Right Column */}
+                  <div className="space-y-6">
+                    <div>
+                        <label className="flex items-center gap-2 text-base font-bold text-slate-300 mb-3">
+                            <span className="text-blue-400"><TargetIcon /></span>
+                            Interview Mode
+                        </label>
+                        <div className="space-y-3">
+                            <ModeButton modeName={InterviewModeEnum.VIDEO} description="Full video call with AI Interviewer" tag="Recommended" tagClass="bg-blue-600 text-white" activeMode={mode} setMode={setMode} />
+                            <ModeButton modeName={InterviewModeEnum.LIVE_SHARE} description="Live Audio with screen sharing for tasks" tag="LIVE" tagClass="bg-red-500 text-white" activeMode={mode} setMode={setMode} />
+                            <ModeButton modeName={InterviewModeEnum.AUDIO} description="Voice-only conversation" tag="VOICE" tagClass="bg-purple-500 text-white" activeMode={mode} setMode={setMode} />
+                            <ModeButton modeName={InterviewModeEnum.CHAT} description="Text-based chat session" tag="TEXT" tagClass="bg-gray-500 text-white" activeMode={mode} setMode={setMode} />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="flex items-center gap-2 text-base font-bold text-slate-300 mb-3">
+                             <span className="text-blue-400"><SignalIcon /></span>
+                             Interview Difficulty
+                        </label>
+                        <div className="flex w-full rounded-md bg-slate-700/50 p-1">
+                            {(['Easy', 'Medium', 'Hard'] as InterviewDifficulty[]).map(level => (
+                                <button
+                                    key={level}
+                                    type="button"
+                                    onClick={() => setDifficulty(level)}
+                                    className={`w-full rounded py-1.5 text-sm font-semibold transition-colors ${
+                                        difficulty === level
+                                            ? 'bg-blue-600 text-white shadow'
+                                            : 'text-slate-300 hover:bg-slate-600/50'
+                                    }`}
+                                >
+                                    {level}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                  </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-700">
+                  <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]">
+                    Start Interview
+                  </button>
+              </div>
+          </form>
+      </div>
 
-      {showLimitModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-8 w-full max-w-md text-center">
-            <h2 className="text-2xl font-bold text-slate-100 mb-4">Interview Limit Reached</h2>
-            <p className="text-slate-400 mb-8">You have used all your interviews for the {currentUser?.plan} plan. Please upgrade to a higher plan to continue.</p>
-            <div className="flex gap-4">
-              <button onClick={() => { onNavigate('pricing'); setShowLimitModal(false); }} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]">View Pricing</button>
-              <button onClick={() => setShowLimitModal(false)} className="flex-1 bg-slate-600 hover:bg-slate-500 text-white font-bold py-3 px-4 rounded-lg">OK</button>
+       <div className="w-full max-w-6xl mx-auto mt-16 md:mt-24">
+            <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-100">Our Features</h2>
+                <p className="text-slate-400 mt-4 text-lg max-w-3xl mx-auto">
+                   Leverage cutting-edge AI to conduct comprehensive and insightful interviews for any role.
+                </p>
             </div>
-          </div>
+            <div className="space-y-16">
+                 <FeatureCard 
+                    title="Video Interview" 
+                    icon={<VideoCameraIcon />}
+                    media={<MediaContainer><ImageSlider images={HERO_IMAGES} /></MediaContainer>}
+                >
+                    <p>Engage with candidates in a realistic, face-to-face interview simulation powered by our advanced AI. Assess verbal and non-verbal cues for a complete picture.</p>
+                </FeatureCard>
+                <hr className="my-16 border-slate-800" />
+                <FeatureCard 
+                    title="Audio Interview" 
+                    icon={<MicOnIcon />}
+                    reverseLayout={true}
+                    media={<MediaContainer><AudioVisualizer isSpeaking={true} /></MediaContainer>}
+                >
+                    <p>Conduct voice-only interviews perfect for initial screenings or roles where verbal communication is key. Our AI provides real-time transcription and analysis.</p>
+                </FeatureCard>
+                <hr className="my-16 border-slate-800" />
+                <FeatureCard 
+                    title="Live Screen Sharing" 
+                    icon={<ShareIcon />}
+                    media={<MediaContainer><ImageSlider images={SCREEN_SHARE_IMAGES} /></MediaContainer>}
+                >
+                    <p>Evaluate technical skills in real-time. Candidates can share their screen to tackle coding challenges, demonstrate software proficiency, or walk through portfolios.</p>
+                </FeatureCard>
+                <hr className="my-16 border-slate-800" />
+                <FeatureCard 
+                    title="Chat Interview" 
+                    icon={<ChatBubbleIcon />}
+                    reverseLayout={true}
+                    media={<MediaContainer><ChatInterviewPlaceholder /></MediaContainer>}
+                >
+                    <p>A text-based interview format ideal for assessing written communication skills and for candidates in environments where video/audio is not feasible.</p>
+                </FeatureCard>
+                <hr className="my-16 border-slate-800" />
+                <FeatureCard 
+                    title="Performance Tracking" 
+                    icon={<ChartBarIcon />}
+                    media={<MediaContainer><ImageSlider images={PERFORMANCE_TRACKING_IMAGES} /></MediaContainer>}
+                >
+                    <p>Receive detailed, AI-generated reports after each interview. Our analytics cover technical proficiency, communication skills, confidence levels, and more, with data-driven insights to help you make the best hiring decisions.</p>
+                </FeatureCard>
+            </div>
         </div>
-      )}
-    </>
+
+       <style>{`
+        @keyframes fade-in-down {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+          animation: fade-in-down 0.8s ease-out forwards;
+          opacity: 0;
+        }
+         .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+          opacity: 0;
+        }
+      `}</style>
+    </div>
   );
 };
 

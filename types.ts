@@ -1,8 +1,8 @@
 import type { Plan as BasePlan, User as BaseUser } from './types';
 
-export type View = 'setup' | 'login' | 'register' | 'community' | 'learn' | 'pricing' | 'contact' | 'privacy' | 'terms' | 'checkout' | 'orderSuccess';
+export type View = 'setup' | 'login' | 'register' | 'community' | 'learn' | 'pricing' | 'contact' | 'privacy' | 'terms' | 'checkout' | 'orderSuccess' | 'history' | 'features';
 
-export type ApiProvider = 'gemini' | 'perplexity';
+export type ApiProvider = 'gemini';
 
 export const InterviewMode = {
   VIDEO: 'Video Interview',
@@ -12,6 +12,7 @@ export const InterviewMode = {
 } as const;
 
 export type InterviewMode = (typeof InterviewMode)[keyof typeof InterviewMode];
+export type InterviewDifficulty = 'Easy' | 'Medium' | 'Hard';
 
 export interface Plan {
   name: 'Free' | 'Plus' | 'Pro';
@@ -20,7 +21,10 @@ export interface Plan {
   features: string[];
   cta: string;
   ctaClass: string;
-  popular?: boolean;
+  highlight?: {
+    text: string;
+    color: 'blue' | 'green';
+  };
 }
 
 export interface Job {
@@ -39,6 +43,7 @@ export interface InterviewSettings {
   mode: InterviewMode;
   language: string;
   model: string;
+  difficulty: InterviewDifficulty;
 }
 
 export interface ModelSettings {
@@ -63,4 +68,28 @@ export interface User {
 
 export interface AiChatSession {
   sendMessage: (message: string) => Promise<string>;
+}
+
+export interface Metric {
+    name: string;
+    rating: number; // 1-10
+    reasoning: string;
+}
+
+export interface FeedbackData {
+    overallRating?: number;
+    overallReasoning?: string;
+    recommendation?: 'Recommended for Hire' | 'Needs Improvement' | 'Not a Fit';
+    metrics?: Metric[];
+    strengths?: string[];
+    areasForImprovement?: string[];
+}
+
+export interface InterviewHistoryItem {
+  id: string;
+  date: string; // ISO string format
+  settings: InterviewSettings;
+  transcriptContent: string | null;
+  recordingUrl?: string | null;
+  summaryUrl?: string | null;
 }

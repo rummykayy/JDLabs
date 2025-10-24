@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { User } from '../types';
 import { AtSymbolIcon, LockClosedIcon, UserIcon } from '../constants';
+import Logo from './Logo';
 
 interface RegisterScreenProps {
   onRegisterSuccess: (user: User) => void;
@@ -29,6 +30,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onRegisterSuccess, onSw
     <div className="flex-1 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
+            <div className="inline-block mb-4">
+              <Logo />
+            </div>
             <h1 className="text-3xl font-bold text-slate-100">Create a New Account</h1>
             <p className="text-slate-400 mt-2">Join the AI Interview Platform today.</p>
         </div>

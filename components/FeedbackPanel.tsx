@@ -1,29 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { generateFeedback } from '../services/aiService';
-import type { InterviewSettings, ApiProvider } from '../types';
+import React from 'react';
+import type { FeedbackData, Metric } from '../types';
 import { LightbulbIcon, SimpleCheckIcon, ThumbsDownIcon, ThumbsUpIcon } from '../constants';
 
 interface FeedbackPanelProps {
-  transcript: string | null;
-  settings: InterviewSettings;
-  apiKey: string;
-  model: string;
-  apiProvider: ApiProvider;
-}
-
-interface Metric {
-    name: string;
-    rating: number; // 1-10
-    reasoning: string;
-}
-
-interface FeedbackData {
-    overallRating?: number;
-    overallReasoning?: string;
-    recommendation?: 'Recommended for Hire' | 'Needs Improvement' | 'Not a Fit';
-    metrics?: Metric[];
-    strengths?: string[];
-    areasForImprovement?: string[];
+  feedback: FeedbackData | null;
+  isLoading: boolean;
+  error: string;
+  loadingMessage: string;
 }
 
 interface ApiErrorDetails {
@@ -31,7 +14,7 @@ interface ApiErrorDetails {
   message: string;
 }
 
-const getApiErrorDetails = (error: unknown): ApiErrorDetails => {
+export const getApiErrorDetails = (error: unknown): ApiErrorDetails => {
   const defaultMessage = "Sorry, an error occurred while generating feedback. Please try again later.";
   const rateLimitMessage = "The AI service is currently experiencing high demand. Retrying...";
   const quotaMessage = "You have reached the daily limit for the evaluation model. To try again, please start a new interview and select a different evaluation model on the setup screen.";
@@ -104,7 +87,6 @@ const RatingCircle = ({ rating }: { rating: number }) => {
     );
 };
 
-// FIX: Explicitly define component props interface and use React.FC to prevent TypeScript from misinterpreting the `key` prop.
 interface MetricBarProps {
     metric: Metric;
 }
@@ -154,66 +136,7 @@ const RecommendationBadge = ({ recommendation }: { recommendation: FeedbackData[
 };
 
 
-const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ transcript, settings, apiKey, model, apiProvider }) => {
-  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [loadingMessage, setLoadingMessage] = useState('Analyzing performance and preparing suggestions...');
-
-  async function withRetries<T>(apiCall: () => Promise<T>, retries = 3, delay = 30000): Promise<T> {
-    try {
-        setLoadingMessage('Analyzing performance and preparing suggestions...');
-        return await apiCall();
-    } catch (error) {
-        const { type, message } = getApiErrorDetails(error);
-        if (type === 'RATE_LIMIT' && retries > 0) {
-            const waitTime = delay / 1000;
-            console.log(`Rate limit hit during feedback generation. Retrying in ${waitTime}s...`);
-            setLoadingMessage(`Rate limit reached. Retrying in ${waitTime} seconds...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-            return withRetries(apiCall, retries - 1, delay * 2);
-        }
-        throw new Error(message);
-    }
-  }
-
-  useEffect(() => {
-    if (!transcript) return;
-
-    if (!apiKey) {
-      setError("API Key is missing. Cannot generate feedback.");
-      return;
-    }
-
-    const getFeedback = async () => {
-      setIsLoading(true);
-      setError('');
-      setFeedback(null);
-      
-      try {
-        const apiCall = () => generateFeedback({
-            provider: apiProvider,
-            apiKey,
-            model,
-            transcript,
-            settings
-        });
-
-        const feedbackData = await withRetries(apiCall);
-        setFeedback(feedbackData as FeedbackData);
-
-      } catch (e) {
-        console.error("Error generating feedback after retries:", e);
-        const errorMessage = getApiErrorDetails(e).message;
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getFeedback();
-  }, [transcript, settings, apiKey, model, apiProvider]);
-
+const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ feedback, isLoading, error, loadingMessage }) => {
   if (isLoading) {
     return (
       <div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { ModelSettings, ApiProvider } from '../types';
 
 interface ApiKeySetupScreenProps {
-  onSetupComplete: (provider: ApiProvider, apiKey: string, models: ModelSettings) => void;
+  onSetupComplete: (apiKey: string, models: ModelSettings) => void;
 }
 
 const WarningIcon = () => (
@@ -54,7 +54,6 @@ const ModelConfiguration: React.FC<ModelConfigurationProps> = ({ settings, onCha
 
 
 const ApiKeySetupScreen: React.FC<ApiKeySetupScreenProps> = ({ onSetupComplete }) => {
-  const [provider, setProvider] = useState<ApiProvider>('gemini');
   const [key, setKey] = useState('');
   
   const geminiModels: ModelSettings = {
@@ -65,20 +64,7 @@ const ApiKeySetupScreen: React.FC<ApiKeySetupScreenProps> = ({ onSetupComplete }
       evaluation: 'gemini-2.5-flash',
   };
 
-  const perplexityModels: ModelSettings = {
-      chat: 'llama-3-sonar-small-32k-online',
-      audio: 'llama-3-sonar-small-32k-online',
-      video: 'llama-3-sonar-small-32k-online',
-      liveShare: 'llama-3-sonar-large-32k-online',
-      evaluation: 'llama-3-sonar-large-32k-online',
-  };
-
   const [modelSettings, setModelSettings] = useState<ModelSettings>(geminiModels);
-
-  const handleProviderChange = (newProvider: ApiProvider) => {
-    setProvider(newProvider);
-    setModelSettings(newProvider === 'gemini' ? geminiModels : perplexityModels);
-  };
   
   const handleModelChange = (mode: keyof ModelSettings, value: string) => {
     setModelSettings(prev => ({ ...prev, [mode]: value }));
@@ -87,7 +73,7 @@ const ApiKeySetupScreen: React.FC<ApiKeySetupScreenProps> = ({ onSetupComplete }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (key.trim()) {
-      onSetupComplete(provider, key.trim(), modelSettings);
+      onSetupComplete(key.trim(), modelSettings);
     }
   };
 
@@ -96,7 +82,7 @@ const ApiKeySetupScreen: React.FC<ApiKeySetupScreenProps> = ({ onSetupComplete }
       <div className="w-full max-w-4xl">
         <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-slate-100">Developer API Key & Setup</h1>
-            <p className="text-slate-400 mt-2">Please select your AI provider, provide an API key, and configure your models to continue.</p>
+            <p className="text-slate-400 mt-2">Please provide a Google Gemini API key and configure your models to continue.</p>
         </div>
 
         <div className="bg-yellow-900/30 border-2 border-yellow-500/50 rounded-lg p-6 flex items-start gap-4 mb-6" role="alert">
@@ -118,28 +104,8 @@ const ApiKeySetupScreen: React.FC<ApiKeySetupScreenProps> = ({ onSetupComplete }
         <div className="bg-slate-800 p-8 rounded-lg border border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">AI Provider</label>
-              <div className="flex rounded-md border border-slate-600 overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => handleProviderChange('gemini')}
-                  className={`flex-1 p-2 font-semibold transition-colors ${provider === 'gemini' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 hover:bg-slate-700'}`}
-                >
-                  Google Gemini
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleProviderChange('perplexity')}
-                  className={`flex-1 p-2 font-semibold transition-colors ${provider === 'perplexity' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 hover:bg-slate-700'}`}
-                >
-                  Perplexity
-                </button>
-              </div>
-            </div>
-
-            <div>
               <label htmlFor="apiKey" className="block text-sm font-medium text-slate-300 mb-2">
-                {provider === 'gemini' ? 'Gemini API Key' : 'Perplexity API Key'}
+                Gemini API Key
               </label>
               <input
                 type="password"

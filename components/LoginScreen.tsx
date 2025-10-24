@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { User } from '../types';
+import Logo from './Logo';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: User) => void;
@@ -72,8 +73,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onSwitchToReg
   return (
     <div className="flex-1 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-slate-700">
-        <h2 className="text-3xl font-bold text-white mb-2 text-center">Login to Your Account</h2>
-        <p className="text-slate-400 mb-8 text-center">Welcome back! Please enter your details.</p>
+        <div className="text-center mb-8">
+            <div className="inline-block mb-4">
+              <Logo />
+            </div>
+            <h2 className="text-3xl font-bold text-white">Login to Your Account</h2>
+            <p className="text-slate-400 mt-2">Welcome back! Please enter your details.</p>
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>

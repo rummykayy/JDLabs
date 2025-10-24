@@ -1,6 +1,11 @@
 import React from 'react';
 import Card from './Card';
 import { ClockIcon, ScalesIcon, ChartBarIcon, AlertTriangleIcon } from '../constants';
+import { 
+    COMMUNITY_EFFICIENCY_VIDEO, 
+    COMMUNITY_BIAS_VIDEO, 
+    COMMUNITY_ANALYSIS_VIDEO 
+} from '../constants/media';
 
 interface CommunityScreenProps {
   onBackToHome: () => void;
@@ -14,6 +19,25 @@ const tableData = [
     { tool: 'CodeSignal', features: 'Skill assessment and benchmarking against industry standards.' },
     { tool: 'Gainlo', features: 'Connects applicants with experienced mock interviewers.' },
 ];
+
+const BenefitCard: React.FC<{ videoSrc: string; title: string; children: React.ReactNode }> = ({ videoSrc, title, children }) => (
+    <div className="relative bg-slate-900 rounded-lg border border-slate-700 overflow-hidden group hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 h-80">
+        <video
+            key={videoSrc}
+            src={videoSrc}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+        <div className="relative h-full flex flex-col justify-end p-6">
+            <h3 className="text-xl font-bold text-white mb-2 transition-colors duration-300">{title}</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">{children}</p>
+        </div>
+    </div>
+);
 
 const CommunityScreen: React.FC<CommunityScreenProps> = ({ onBackToHome }) => {
   return (
@@ -29,15 +53,15 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onBackToHome }) => {
             <section id="why-ai" className="mb-16">
                 <h2 className="text-2xl font-bold text-slate-100 text-center mb-8">Why AI in Recruitment?</h2>
                 <div className="grid md:grid-cols-3 gap-8">
-                    <Card title="Enhanced Efficiency" icon={<ClockIcon />}>
-                        <p className="text-slate-400">AI automates scheduling and initial screenings, reducing time-to-hire from weeks to days and freeing up teams to focus on the best candidates.</p>
-                    </Card>
-                    <Card title="Reduced Bias" icon={<ScalesIcon />}>
-                        <p className="text-slate-400">By using standardized assessments, AI focuses on skills and qualifications, helping to minimize unconscious bias and promote fair evaluation.</p>
-                    </Card>
-                    <Card title="In-Depth Analysis" icon={<ChartBarIcon />}>
-                        <p className="text-slate-400">Gain objective insights into candidate performance, analyzing everything from speech clarity and confidence to technical proficiency.</p>
-                    </Card>
+                    <BenefitCard title="Enhanced Efficiency" videoSrc={COMMUNITY_EFFICIENCY_VIDEO}>
+                        AI automates scheduling and initial screenings, reducing time-to-hire from weeks to days and freeing up teams to focus on the best candidates.
+                    </BenefitCard>
+                    <BenefitCard title="Reduced Bias" videoSrc={COMMUNITY_BIAS_VIDEO}>
+                        By using standardized assessments, AI focuses on skills and qualifications, helping to minimize unconscious bias and promote fair evaluation.
+                    </BenefitCard>
+                    <BenefitCard title="In-Depth Analysis" videoSrc={COMMUNITY_ANALYSIS_VIDEO}>
+                        Gain objective insights into candidate performance, analyzing everything from speech clarity and confidence to technical proficiency.
+                    </BenefitCard>
                 </div>
             </section>
             
