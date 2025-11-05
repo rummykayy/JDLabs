@@ -2721,13 +2721,23 @@ Strengths:
 
 Areas for Improvement:
 - ${reportData.areasForImprovement?.join("\n- ")}`;
+        const recommendationMap = {
+          "Recommended for Hire": "strongly_recommend",
+          "Needs Improvement": "neutral",
+          "Not a Fit": "not_recommend"
+        };
+        const dbRecommendation = recommendationMap[reportData.recommendation] || "neutral";
+        console.log("\u{1F4CA} [finalizeInterview] Mapping recommendation:", {
+          aiRecommendation: reportData.recommendation,
+          dbRecommendation
+        });
         const { error: reportError } = await supabase.from("performance_reports").insert({
           interview_id: interviewId,
           interviewer_id: userProfile.id,
           candidate_id: userProfile.id,
           // For now, same as interviewer
           overall_score: reportData.overallRating,
-          recommendation: reportData.recommendation,
+          recommendation: dbRecommendation,
           feedback: feedbackContent,
           technical_score: reportData.metrics?.find((m) => m.name.toLowerCase().includes("technical"))?.rating || null,
           communication_score: reportData.metrics?.find((m) => m.name.toLowerCase().includes("communication"))?.rating || null,
@@ -2786,11 +2796,26 @@ var getCommentsForInterview = async (interviewId) => {
   return data2 || [];
 };
 var addComment = async (comment) => {
-  const { data: data2, error } = await supabase.from("comments").insert(comment).select().single();
-  if (error) {
-    console.error("Error adding comment:", error);
+  console.log("\u{1F4AC} [addComment] Adding comment for user_id:", comment.user_id);
+  const { data: userProfile } = await supabase.from("users").select("id").eq("userid", comment.user_id).single();
+  if (!userProfile) {
+    console.error("\u274C [addComment] User not found in users table for userid:", comment.user_id);
     return null;
   }
+  console.log("\u2705 [addComment] Mapped userid to internal id:", {
+    authUserId: comment.user_id,
+    internalUserId: userProfile.id
+  });
+  const commentWithInternalId = {
+    ...comment,
+    user_id: userProfile.id
+  };
+  const { data: data2, error } = await supabase.from("comments").insert(commentWithInternalId).select().single();
+  if (error) {
+    console.error("\u274C [addComment] Error adding comment:", error);
+    return null;
+  }
+  console.log("\u2705 [addComment] Comment added successfully");
   return data2;
 };
 var getRecordingDownloadUrl = async (mediaPath) => {

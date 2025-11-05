@@ -559,6 +559,19 @@ export const finalizeInterview = async (params: {
         const metricsText = reportData.metrics?.map((m: any) => `${m.name}: ${m.rating}/10 - ${m.reasoning}`).join('\n') || '';
         const feedbackContent = `Overall Reasoning: ${reportData.overallReasoning}\n\nMetrics:\n${metricsText}\n\nStrengths:\n- ${reportData.strengths?.join('\n- ')}\n\nAreas for Improvement:\n- ${reportData.areasForImprovement?.join('\n- ')}`;
 
+        // Map AI recommendation to database enum values
+        const recommendationMap: { [key: string]: string } = {
+          'Recommended for Hire': 'strongly_recommend',
+          'Needs Improvement': 'neutral',
+          'Not a Fit': 'not_recommend'
+        };
+        const dbRecommendation = recommendationMap[reportData.recommendation] || 'neutral';
+
+        console.log('📊 [finalizeInterview] Mapping recommendation:', {
+          aiRecommendation: reportData.recommendation,
+          dbRecommendation: dbRecommendation
+        });
+
         const { error: reportError } = await supabase
           .from('performance_reports')
           .insert({
@@ -566,7 +579,7 @@ export const finalizeInterview = async (params: {
             interviewer_id: userProfile.id,
             candidate_id: userProfile.id, // For now, same as interviewer
             overall_score: reportData.overallRating,
-            recommendation: reportData.recommendation,
+            recommendation: dbRecommendation,
             feedback: feedbackContent,
             technical_score: reportData.metrics?.find((m: any) => m.name.toLowerCase().includes('technical'))?.rating || null,
             communication_score: reportData.metrics?.find((m: any) => m.name.toLowerCase().includes('communication'))?.rating || null,
@@ -652,15 +665,44 @@ export const getCommentsForInterview = async (interviewId: string): Promise<Comm
 };
 
 export const addComment = async (comment: Omit<Comment, 'id' | 'created_at' | 'updated_at'>): Promise<Comment | null> => {
-  const { data, error } = await supabase
-    .from('comments')
-    .insert(comment)
-    .select()
+  console.log('💬 [addComment] Adding comment for user_id:', comment.user_id);
+
+  // The user_id passed in is the auth userid, but the foreign key expects the internal users.id
+  // Look up the internal ID
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('id')
+    .eq('userid', comment.user_id)
     .single();
-  if (error) {
-    console.error("Error adding comment:", error);
+
+  if (!userProfile) {
+    console.error('❌ [addComment] User not found in users table for userid:', comment.user_id);
     return null;
   }
+
+  console.log('✅ [addComment] Mapped userid to internal id:', {
+    authUserId: comment.user_id,
+    internalUserId: userProfile.id
+  });
+
+  // Use the internal ID for the foreign key
+  const commentWithInternalId = {
+    ...comment,
+    user_id: userProfile.id
+  };
+
+  const { data, error } = await supabase
+    .from('comments')
+    .insert(commentWithInternalId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("❌ [addComment] Error adding comment:", error);
+    return null;
+  }
+
+  console.log('✅ [addComment] Comment added successfully');
   return data;
 };
 
