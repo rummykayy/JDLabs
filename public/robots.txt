@@ -1,0 +1,6 @@
+# Allow all web crawlers to access the site
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://jdlabs.dev/sitemap.xml
