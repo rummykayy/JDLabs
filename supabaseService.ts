@@ -456,16 +456,36 @@ export const finalizeInterview = async (params: {
   qna: { question: string, answer: string }[];
 }): Promise<{ success: boolean; error?: string }> => {
   const { interviewId, userId, transcript, malpracticeReport, reportData, mediaBlob, qna } = params;
+
+  console.log('📊 [finalizeInterview] Starting interview finalization:', {
+    interviewId,
+    userId,
+    hasTranscript: !!transcript,
+    transcriptLength: transcript?.length || 0,
+    hasMalpracticeReport: !!malpracticeReport,
+    hasReportData: !!reportData,
+    hasMediaBlob: !!mediaBlob,
+    mediaBlobSize: mediaBlob?.size || 0,
+    qnaCount: qna?.length || 0
+  });
+
   try {
     let mediaPath: string | null = null;
     if (mediaBlob) {
+      console.log('📤 [finalizeInterview] Uploading media blob to storage...');
       const filePath = `${userId}/recordings/${interviewId}.webm`;
       const { error: uploadError } = await supabase.storage
         .from('interview-recordings')
         .upload(filePath, mediaBlob, { upsert: true });
 
-      if (uploadError) throw new Error(`Media upload failed: ${uploadError.message}`);
+      if (uploadError) {
+        console.error('❌ [finalizeInterview] Media upload failed:', uploadError);
+        throw new Error(`Media upload failed: ${uploadError.message}`);
+      }
       mediaPath = filePath;
+      console.log('✅ [finalizeInterview] Media uploaded successfully:', filePath);
+    } else {
+      console.log('ℹ️ [finalizeInterview] No media blob to upload');
     }
 
     // Calculate interview duration from the difference between now and started_at
@@ -484,6 +504,7 @@ export const finalizeInterview = async (params: {
     }
 
     // Update interview record with all necessary fields
+    console.log('💾 [finalizeInterview] Updating interview record...');
     const { error: interviewUpdateError } = await supabase
       .from('interviews')
       .update({
@@ -497,10 +518,16 @@ export const finalizeInterview = async (params: {
       })
       .eq('id', interviewId);
 
-    if (interviewUpdateError) throw new Error(`Failed to update interview: ${interviewUpdateError.message}`);
+    if (interviewUpdateError) {
+      console.error('❌ [finalizeInterview] Failed to update interview:', interviewUpdateError);
+      throw new Error(`Failed to update interview: ${interviewUpdateError.message}`);
+    }
+    console.log('✅ [finalizeInterview] Interview record updated successfully');
 
     // Insert Questions and Answers if they exist
     if (qna && qna.length > 0) {
+      console.log(`📝 [finalizeInterview] Saving ${qna.length} Q&A pairs...`);
+
       // Insert questions with proper ordering
       const questionRecordsToInsert = qna.map((pair, index) => ({
         interview_id: interviewId,
@@ -515,9 +542,11 @@ export const finalizeInterview = async (params: {
         .select('id, question_text, question_order');
 
       if (questionsError) {
-        console.error('Error saving interview questions:', questionsError.message);
+        console.error('❌ [finalizeInterview] Error saving interview questions:', questionsError.message);
         throw new Error(`Failed to save interview questions: ${questionsError.message}`);
       }
+
+      console.log(`✅ [finalizeInterview] Saved ${insertedQuestions?.length || 0} questions`);
 
       if (insertedQuestions && insertedQuestions.length > 0) {
         // Map original QnA pairs to inserted questions and create answer records
@@ -538,11 +567,14 @@ export const finalizeInterview = async (params: {
             .insert(answerRecordsToInsert);
 
           if (answersError) {
-            console.error('Error saving interview answers:', answersError.message);
+            console.error('❌ [finalizeInterview] Error saving interview answers:', answersError.message);
             throw new Error(`Failed to save interview answers: ${answersError.message}`);
           }
+          console.log(`✅ [finalizeInterview] Saved ${answerRecordsToInsert.length} answers`);
         }
       }
+    } else {
+      console.log('ℹ️ [finalizeInterview] No Q&A pairs to save');
     }
 
     // Create performance report if data exists
@@ -572,6 +604,7 @@ export const finalizeInterview = async (params: {
           dbRecommendation: dbRecommendation
         });
 
+        console.log('📈 [finalizeInterview] Creating performance report...');
         const { error: reportError } = await supabase
           .from('performance_reports')
           .insert({
@@ -587,10 +620,14 @@ export const finalizeInterview = async (params: {
             created_at: new Date().toISOString(),
           });
         if (reportError) {
-          console.error("Error creating performance report:", reportError.message);
+          console.error("❌ [finalizeInterview] Error creating performance report:", reportError.message);
           // Don't throw - continue with the process as we have core interview data saved
+        } else {
+          console.log('✅ [finalizeInterview] Performance report created successfully');
         }
       }
+    } else {
+      console.log('ℹ️ [finalizeInterview] No performance report data to save');
     }
 
     await createAuditLog(userId, 'INTERVIEW_FINALIZE', interviewId, 'interviews', {
@@ -611,9 +648,10 @@ export const finalizeInterview = async (params: {
       overallScore: reportData?.overallRating
     });
 
+    console.log('🎉 [finalizeInterview] Interview finalization completed successfully!');
     return { success: true };
   } catch (error: any) {
-    console.error('Error finalizing interview:', error);
+    console.error('❌ [finalizeInterview] Error finalizing interview:', error);
     return { success: false, error: error.message };
   }
 };

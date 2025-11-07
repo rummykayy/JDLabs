@@ -11,26 +11,60 @@ export const useVideoRecorder = (stream: MediaStream | null) => {
   // Use a dedicated stream for the recorder to isolate it from upstream changes.
   const [recorderStream, setRecorderStream] = useState<MediaStream | null>(null);
 
+  const ensureRecorderStopped = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (err) {
+        console.warn('Error stopping MediaRecorder:', err);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     // When the source stream is available, create a new MediaStream for the recorder
     // by using the source's tracks. This ensures the recorder has a stable stream.
     if (stream && stream.active) {
-      const newStream = new MediaStream(stream.getTracks());
+      // Clean up any existing recorder stream first
+      if (recorderStream) {
+        recorderStream.getTracks().forEach(track => track.stop());
+      }
+
+      // Create new stream with cloned tracks for isolation
+      const clonedTracks = stream.getTracks().map(track => track.clone());
+      const newStream = new MediaStream(clonedTracks);
+
+      // Set up track error handlers
+      clonedTracks.forEach(track => {
+        track.addEventListener('ended', () => {
+          console.warn(`Track ${track.kind} ended unexpectedly`);
+          // If recording is in progress, stop it
+          ensureRecorderStopped();
+        });
+      });
+
       setRecorderStream(newStream);
+      console.log('Created new recorder stream with tracks:',
+        clonedTracks.map(t => ({ kind: t.kind, id: t.id })));
     } else {
       setRecorderStream(null);
     }
 
-    // Cleanup function: when the source stream changes or component unmounts,
-    // stop the tracks of the dedicated recorder stream to release resources.
+    // Enhanced cleanup function
     return () => {
       if (recorderStream) {
-        recorderStream.getTracks().forEach(track => track.stop());
+        ensureRecorderStopped();
+        // Stop all tracks
+        recorderStream.getTracks().forEach(track => {
+          try {
+            track.stop();
+          } catch (err) {
+            console.warn(`Error stopping ${track.kind} track:`, err);
+          }
+        });
       }
     };
-    // The dependency on `stream` is correct. We don't want `recorderStream` in the dependency array
-    // as it would cause an infinite loop.
-  }, [stream]);
+  }, [stream, ensureRecorderStopped]);
 
 
   const startRecording = useCallback(() => {
@@ -38,7 +72,7 @@ export const useVideoRecorder = (stream: MediaStream | null) => {
     if (!recorderStream || recordingStatus !== 'idle') {
       return;
     }
-    
+
     if (recorderStream.getAudioTracks().length === 0) {
       console.warn("useVideoRecorder: The provided stream has no audio tracks. Recording video only.");
     }
@@ -88,7 +122,7 @@ export const useVideoRecorder = (stream: MediaStream | null) => {
       mediaRecorderRef.current.stop();
     }
   }, []);
-  
+
   const pauseRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
       mediaRecorderRef.current.pause();

@@ -1,0 +1,40 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: jd-labs
+  namespace: default
+  labels:
+    cloud.googleapis.com/location: us-west1
+    managed-by: developer
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "3"
+        run.googleapis.com/cpu-throttling: "true"
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: 1000733137889-compute@developer.gserviceaccount.com
+      containers:
+        - image: gcr.io/arctic-sign-472510-g1/jd-labs:latest   # <-- replace PROJECT_ID with your actual GCP project ID
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: SUPABASE_URL
+              value: "https://ctsqmhhjacigvhmhndhh.supabase.co"
+            - name: SUPABASE_KEY
+              value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0c3FtaGhqYWNpZ3ZobWhuZGhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxMTcyMTcsImV4cCI6MjA3MzY5MzIxN30.hNhSQ1qoMBOKtKz5IiwhLo8HmgSpkRZzlegCxobhTa0"
+            - name: API_KEY
+              value: "AIzaSyDDjDns0923F5lbQMp1e9P_cmj1BInE89Q"
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+  traffic:
+    - percent: 100
+      latestRevision: true

@@ -2384,7 +2384,7 @@ function useViewTransitionState(to, { relative } = {}) {
 }
 
 // App.tsx
-import { useState as useState21, useEffect as useEffect18, useCallback as useCallback9 } from "react";
+import { useState as useState22, useEffect as useEffect18, useCallback as useCallback9 } from "react";
 
 // supabaseService.ts
 import { createClient } from "@supabase/supabase-js";
@@ -2644,14 +2644,31 @@ var createInterview = async (authUserId, settings) => {
 };
 var finalizeInterview = async (params) => {
   const { interviewId, userId, transcript, malpracticeReport, reportData, mediaBlob, qna } = params;
+  console.log("\u{1F4CA} [finalizeInterview] Starting interview finalization:", {
+    interviewId,
+    userId,
+    hasTranscript: !!transcript,
+    transcriptLength: transcript?.length || 0,
+    hasMalpracticeReport: !!malpracticeReport,
+    hasReportData: !!reportData,
+    hasMediaBlob: !!mediaBlob,
+    mediaBlobSize: mediaBlob?.size || 0,
+    qnaCount: qna?.length || 0
+  });
   try {
     let mediaPath = null;
     if (mediaBlob) {
+      console.log("\u{1F4E4} [finalizeInterview] Uploading media blob to storage...");
       const filePath = `${userId}/recordings/${interviewId}.webm`;
       const { error: uploadError } = await supabase.storage.from("interview-recordings").upload(filePath, mediaBlob, { upsert: true });
-      if (uploadError)
+      if (uploadError) {
+        console.error("\u274C [finalizeInterview] Media upload failed:", uploadError);
         throw new Error(`Media upload failed: ${uploadError.message}`);
+      }
       mediaPath = filePath;
+      console.log("\u2705 [finalizeInterview] Media uploaded successfully:", filePath);
+    } else {
+      console.log("\u2139\uFE0F [finalizeInterview] No media blob to upload");
     }
     const { data: interviewData, error: fetchError } = await supabase.from("interviews").select("started_at").eq("id", interviewId).single();
     let durationMinutes = 0;
@@ -2660,6 +2677,7 @@ var finalizeInterview = async (params) => {
       const endTime = (/* @__PURE__ */ new Date()).getTime();
       durationMinutes = Math.round((endTime - startTime) / 6e4);
     }
+    console.log("\u{1F4BE} [finalizeInterview] Updating interview record...");
     const { error: interviewUpdateError } = await supabase.from("interviews").update({
       malpractice_report: malpracticeReport,
       video_url: mediaPath,
@@ -2670,9 +2688,13 @@ var finalizeInterview = async (params) => {
       transcript: transcript || null
       // Store as-is, no JSON parsing needed
     }).eq("id", interviewId);
-    if (interviewUpdateError)
+    if (interviewUpdateError) {
+      console.error("\u274C [finalizeInterview] Failed to update interview:", interviewUpdateError);
       throw new Error(`Failed to update interview: ${interviewUpdateError.message}`);
+    }
+    console.log("\u2705 [finalizeInterview] Interview record updated successfully");
     if (qna && qna.length > 0) {
+      console.log(`\u{1F4DD} [finalizeInterview] Saving ${qna.length} Q&A pairs...`);
       const questionRecordsToInsert = qna.map((pair, index) => ({
         interview_id: interviewId,
         question_text: pair.question,
@@ -2683,9 +2705,10 @@ var finalizeInterview = async (params) => {
       }));
       const { data: insertedQuestions, error: questionsError } = await supabase.from("interview_questions").insert(questionRecordsToInsert).select("id, question_text, question_order");
       if (questionsError) {
-        console.error("Error saving interview questions:", questionsError.message);
+        console.error("\u274C [finalizeInterview] Error saving interview questions:", questionsError.message);
         throw new Error(`Failed to save interview questions: ${questionsError.message}`);
       }
+      console.log(`\u2705 [finalizeInterview] Saved ${insertedQuestions?.length || 0} questions`);
       if (insertedQuestions && insertedQuestions.length > 0) {
         const answerRecordsToInsert = insertedQuestions.map((dbQuestion) => {
           const originalPair = qna.find((p) => p.question === dbQuestion.question_text);
@@ -2701,11 +2724,14 @@ var finalizeInterview = async (params) => {
         if (answerRecordsToInsert.length > 0) {
           const { error: answersError } = await supabase.from("interview_answers").insert(answerRecordsToInsert);
           if (answersError) {
-            console.error("Error saving interview answers:", answersError.message);
+            console.error("\u274C [finalizeInterview] Error saving interview answers:", answersError.message);
             throw new Error(`Failed to save interview answers: ${answersError.message}`);
           }
+          console.log(`\u2705 [finalizeInterview] Saved ${answerRecordsToInsert.length} answers`);
         }
       }
+    } else {
+      console.log("\u2139\uFE0F [finalizeInterview] No Q&A pairs to save");
     }
     if (reportData?.overallRating !== void 0 && reportData !== null) {
       const { data: userProfile } = await supabase.from("users").select("id").eq("userid", userId).single();
@@ -2731,6 +2757,7 @@ Areas for Improvement:
           aiRecommendation: reportData.recommendation,
           dbRecommendation
         });
+        console.log("\u{1F4C8} [finalizeInterview] Creating performance report...");
         const { error: reportError } = await supabase.from("performance_reports").insert({
           interview_id: interviewId,
           interviewer_id: userProfile.id,
@@ -2745,9 +2772,13 @@ Areas for Improvement:
           created_at: (/* @__PURE__ */ new Date()).toISOString()
         });
         if (reportError) {
-          console.error("Error creating performance report:", reportError.message);
+          console.error("\u274C [finalizeInterview] Error creating performance report:", reportError.message);
+        } else {
+          console.log("\u2705 [finalizeInterview] Performance report created successfully");
         }
       }
+    } else {
+      console.log("\u2139\uFE0F [finalizeInterview] No performance report data to save");
     }
     await createAuditLog(userId, "INTERVIEW_FINALIZE", interviewId, "interviews", {
       changes: {
@@ -2766,9 +2797,10 @@ Areas for Improvement:
       durationMinutes,
       overallScore: reportData?.overallRating
     });
+    console.log("\u{1F389} [finalizeInterview] Interview finalization completed successfully!");
     return { success: true };
   } catch (error) {
-    console.error("Error finalizing interview:", error);
+    console.error("\u274C [finalizeInterview] Error finalizing interview:", error);
     return { success: false, error: error.message };
   }
 };
@@ -3001,7 +3033,7 @@ var useToast = () => {
 
 // components/Logo.tsx
 import { jsx as jsx2 } from "react/jsx-runtime";
-var Logo = () => /* @__PURE__ */ jsx2("div", { className: "flex items-center gap-2", "aria-label": "JD Labs Logo", children: /* @__PURE__ */ jsx2("img", { src: "https://storage.googleapis.com/jdlabs_images/images/JDLabsLogo.jpg", alt: "JD Labs Logo Icon", className: "h-12 w-22 " }) });
+var Logo = () => /* @__PURE__ */ jsx2("div", { className: "flex items-center gap-2", "aria-label": "JD Labs Logo", children: /* @__PURE__ */ jsx2("img", { src: "https://storage.googleapis.com/jdlabs_images/images/JDLabsLogo.jpg", alt: "JD Labs Logo Icon", className: "h-12 w-auto" }) });
 var Logo_default = Logo;
 
 // components/Header.tsx
@@ -3152,8 +3184,9 @@ import { useState as useState9, useRef as useRef7, useEffect as useEffect9 } fro
 
 // services/aiService.ts
 import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 var createGeminiChatSession = (model, systemInstruction) => {
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyDDjDns0923F5lbQMp1e9P_cmj1BInE89Q" });
+  const ai = new GoogleGenAI({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
   const chat = ai.chats.create({
     model,
     config: { systemInstruction }
@@ -3170,74 +3203,65 @@ var createChatSession = ({ model, systemInstruction }) => {
 };
 var extractTextFromUrl = async ({ model, url }) => {
   const prompt = `Please extract the full, clean text of the main job description from the following URL. Respond with only the job description text, with no introductory or concluding phrases like "Here is the job description". URL: ${url}`;
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyDDjDns0923F5lbQMp1e9P_cmj1BInE89Q" });
+  const ai = new GoogleGenAI({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
   const response = await ai.models.generateContent({ model, contents: prompt });
   return response.text.trim();
 };
-var feedbackSchema = {
-  type: Type.OBJECT,
-  properties: {
-    overallRating: { type: Type.NUMBER, description: "An overall rating for the candidate from 1 (poor) to 10 (excellent), as a decimal." },
-    overallReasoning: { type: Type.STRING, description: "A brief, one-sentence reasoning for the overall rating." },
-    recommendation: { type: Type.STRING, description: "A final hiring recommendation. Must be one of: 'Recommended for Hire', 'Needs Improvement', 'Not a Fit'." },
-    metrics: {
-      type: Type.ARRAY,
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          name: { type: Type.STRING, description: 'Name of the skill being assessed (e.g., "Clarity & Communication", "Technical Depth", "Problem-Solving").' },
-          rating: { type: Type.NUMBER, description: "A rating for this specific skill from 1 (poor) to 10 (excellent), as a decimal." },
-          reasoning: { type: Type.STRING, description: "A brief, one-sentence reasoning for this skill rating, based on specific answers." }
-        },
-        required: ["name", "rating", "reasoning"]
+var generateFeedback = async ({ model, questions, answers, settings }) => {
+  const feedbackSchema = {
+    type: Type.OBJECT,
+    properties: {
+      overallRating: { type: Type.NUMBER, description: "Overall rating from 1-10" },
+      overallReasoning: { type: Type.STRING },
+      recommendation: { type: Type.STRING, description: "A final hiring recommendation. Must be one of: 'Recommended for Hire', 'Needs Improvement', 'Not a Fit'." },
+      metrics: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING },
+            rating: { type: Type.NUMBER, description: "Rating from 1-10" },
+            reasoning: { type: Type.STRING }
+          },
+          required: ["name", "rating", "reasoning"]
+        }
+      },
+      strengths: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
+      },
+      areasForImprovement: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
       }
     },
-    strengths: {
-      type: Type.ARRAY,
-      items: { type: Type.STRING },
-      description: "A list of 2-3 key strengths demonstrated by the candidate, citing evidence from their answers."
-    },
-    areasForImprovement: {
-      type: Type.ARRAY,
-      items: { type: Type.STRING },
-      description: "A list of 2-3 specific, actionable areas for improvement, citing evidence from their answers."
-    }
-  },
-  required: ["overallRating", "overallReasoning", "recommendation", "metrics", "strengths", "areasForImprovement"]
-};
-var generateFeedback = async ({ model, questions, answers, settings, malpracticeReport }) => {
-  const qaPairs = questions.map((q) => {
-    const correspondingAnswer = answers.find((a) => a.question_id === q.id);
-    return `Question: ${q.question_text}
-Answer: ${correspondingAnswer ? correspondingAnswer.answer_text : "(No answer provided)"}`;
-  }).join("\n\n---\n\n");
-  let prompt = `
-You are an expert hiring manager. Your task is to evaluate a candidate based on an interview transcript containing structured Question and Answer pairs.
+    required: ["overallRating", "overallReasoning", "recommendation", "metrics", "strengths", "areasForImprovement"]
+  };
+  const qaPairs = questions.map((q, i) => {
+    const answer = answers.find((a) => a.question_id === q.id);
+    return `Q${i + 1}: ${q.question_text}
+A${i + 1}: ${answer?.answer_text || "No answer provided"}`;
+  }).join("\n\n");
+  const prompt = `You are an AI evaluating a job interview for a "${settings.position}" role.
 
-Role: "${settings.position}"
 Job Description: "${settings.jobDescription}"
-Difficulty: "${settings.difficulty}"
+Difficulty: ${settings.difficulty}
+Interview Mode: ${settings.mode}
 
-Analyze the provided Q&A pairs and generate a feedback report. The report must be in JSON format and strictly follow the provided schema. For the 'recommendation' field, you must choose one of these exact values: 'Recommended for Hire', 'Needs Improvement', or 'Not a Fit'. Base your reasoning and scores on specific evidence from the candidate's answers.
-`;
-  if (malpracticeReport) {
-    prompt += `
-Additionally, consider the following malpractice report logged during the session. These events may indicate a lack of focus or preparation. Factor these into your evaluation, particularly for metrics like 'Professionalism' or 'Engagement', and mention them in the 'Areas for Improvement' if relevant.
+Here are the interview questions and candidate answers:
 
---- MALPRACTICE REPORT ---
-${malpracticeReport}
----
-`;
-  }
-  prompt += `
-Do not add any commentary or text outside of the JSON object.
-
-Interview Transcript:
----
 ${qaPairs}
----
-`;
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyDDjDns0923F5lbQMp1e9P_cmj1BInE89Q" });
+
+Evaluate the candidate and provide:
+1. Overall rating (1-10 scale)
+2. Overall reasoning
+3. Hiring recommendation (exactly one of: "Recommended for Hire", "Needs Improvement", "Not a Fit")
+4. At least 3 metrics with ratings and reasoning (e.g., Technical Skills, Communication, Problem-Solving)
+5. At least 2 strengths
+6. At least 2 areas for improvement
+
+Return as structured JSON.`;
+  const ai = new GoogleGenAI({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
   const response = await ai.models.generateContent({
     model,
     contents: prompt,
@@ -3246,27 +3270,16 @@ ${qaPairs}
       responseSchema: feedbackSchema
     }
   });
-  const text = response.text?.trim();
-  if (!text) {
-    const blockReason = response.candidates?.[0]?.finishReason;
-    const safetyRatings = response.candidates?.[0]?.safetyRatings;
-    let errorMessage = "The AI's response was empty.";
-    if (blockReason) {
-      errorMessage = `The AI's response was blocked. Reason: ${blockReason}.`;
-      if (safetyRatings) {
-        errorMessage += ` Safety ratings: ${JSON.stringify(safetyRatings)}`;
-      }
-    }
-    console.error(errorMessage, { blockReason, safetyRatings });
-    throw new Error(errorMessage);
-  }
   try {
-    return JSON.parse(text);
+    const feedback = JSON.parse(response.text);
+    return feedback;
   } catch (e) {
-    console.error("Failed to parse AI feedback JSON:", text, e);
-    throw new Error("The AI returned an invalid JSON format. Please try again.");
+    console.error("Failed to parse AI-generated feedback:", response.text, e);
+    throw new Error("Could not generate or parse interview feedback.");
   }
 };
+var genAI = new GoogleGenerativeAI("AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA");
+console.log("\u2705 AI Service initialized with multi-stage interview support (Gemini 2.0)");
 
 // types.ts
 var InterviewMode = {
@@ -3286,7 +3299,6 @@ var PencilIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M16.862 4.487l1.687-1
 var BriefcaseIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v1.5H3.75V6zM3.75 9h16.5v8.25A2.25 2.25 0 0118 19.5H6a2.25 2.25 0 01-2.25-2.25V9z", className: "h-6 w-6" });
 var GlobeIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a9 9 0 00-8.2 4.5M12 21a9 9 0 01-8.2-4.5", className: "h-6 w-6" });
 var SignalIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M6 20V10m4 10V4m4 16v-7", className: "h-6 w-6" });
-var ClockIcon = ({ className = "h-8 w-8" }) => /* @__PURE__ */ jsx5(SvgIcon, { d: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", className });
 var ChartBarIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z", className: "h-8 w-8" });
 var AlertTriangleIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", className: "h-8 w-8" });
 var BookOpenIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25", className: "h-8 w-8" });
@@ -3298,7 +3310,6 @@ var ThumbsDownIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M17.367 13.5c-.80
 var MicOffIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6v7.5a4.5 4.5 0 008.25-2.167.75.75 0 00-1.5 0 3 3 0 01-6 0v-7.5a3 3 0 016 0v1.833A4.456 4.456 0 0115 9.75" });
 var MicOnIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m12 5.25v-1.5m-6-6v-1.5m-6 7.5v-1.5m6 3.75v-1.5m0-11.25V4.5m0 14.25a3 3 0 003-3v-1.5m-6 0v1.5a3 3 0 003 3m-3-6a3 3 0 00-3 3v1.5m6 0v-1.5a3 3 0 00-3-3m0 0a3 3 0 00-3 3m0 0v1.5m6-4.5v-1.5a3 3 0 00-3-3m0 0a3 3 0 00-3 3", className: "h-6 w-6" });
 var SendIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" });
-var SettingsIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M10.343 3.94c.09-.542.56-1.005 1.11-1.226l.28-.1c.386-.14.796-.14 1.182 0l.28.1c.55.22.955.617 1.045 1.158l.128.784a6.73 6.73 0 012.33 2.33l.783.128c.542.09.94.495 1.158 1.045l.1.28c.14.386.14.796 0 1.182l-.1.28c-.22.55-.617.955-1.158 1.045l-.784.128a6.73 6.73 0 01-2.33 2.33l-.128.783c-.09.542-.495.94-1.045 1.158l-.28.1c-.386.14-.796.14-1.182 0l-.28-.1c-.55-.22-1.005-.617-1.11-1.158l-.128-.784a6.73 6.73 0 01-2.33-2.33l-.783-.128c-.542-.09-1.018-.56-1.226-1.11l-.1-.28c-.14-.386-.14-.796 0-1.182l.1-.28c.22-.55.617.955 1.158-1.045l.784-.128a6.73 6.73 0 012.33-2.33l.128-.783zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" });
 var UserCircleIcon = ({ className = "h-20 w-20" }) => /* @__PURE__ */ jsx5(SvgIcon, { d: "M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z", className });
 var ShareIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5", className: "h-5 w-5" });
 var DocumentDuplicateIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375v-3.375a1.125 1.125 0 00-1.125-1.125h-1.5a1.125 1.125 0 00-1.125 1.125v3.375" });
@@ -3536,12 +3547,13 @@ var ImageSlider = ({ images, interval = 5e3 }) => {
     "div",
     {
       className: `absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-100" : "opacity-0"}`,
+      "aria-hidden": index === currentIndex ? "false" : "true",
       children: /* @__PURE__ */ jsx9(
         "img",
         {
           src: image,
           alt: `Feature image ${index + 1}`,
-          className: "w-full h-full object-cover ken-burns"
+          className: "block w-full h-full object-cover ken-burns"
         }
       )
     },
@@ -3552,7 +3564,7 @@ var ImageSlider_default = ImageSlider;
 
 // components/AudioVisualizer.tsx
 import { jsx as jsx10, jsxs as jsxs8 } from "react/jsx-runtime";
-var AudioVisualizer = ({ isSpeaking, status }) => {
+var AudioVisualizer = ({ isSpeaking, status, hasError, hasAudio, errorMessage }) => {
   const ecgBeat = "l 15 0 l 5 -10 l 10 25 l 5 -30 l 5 15 l 20 0";
   const speakingWave = `M -200 100 ${ecgBeat.repeat(10)}`;
   const idleWave = "M -200 100 C -150 100, -150 100, -100 100 C -50 100, -50 100, 0 100 C 50 100, 50 100, 100 100 C 150 100, 150 100, 200 100 C 250 100, 250 100, 300 100";
@@ -3570,10 +3582,51 @@ var AudioVisualizer = ({ isSpeaking, status }) => {
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsx10("circle", { cx: "100", cy: "100", r: "80", fill: "transparent", stroke: "rgba(79, 128, 255, 0.2)", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx10("circle", { cx: "100", cy: "100", r: "60", fill: "transparent", stroke: "rgba(79, 128, 255, 0.1)", strokeWidth: "1" }),
-      /* @__PURE__ */ jsx10("circle", { cx: "100", cy: "100", r: "40", fill: "transparent", stroke: "rgba(79, 128, 255, 0.1)", strokeWidth: "1" }),
-      /* @__PURE__ */ jsx10("circle", { cx: "100", cy: "100", r: "20", fill: "transparent", stroke: "rgba(79, 128, 255, 0.1)", strokeWidth: "1" }),
+      /* @__PURE__ */ jsx10(
+        "circle",
+        {
+          cx: "100",
+          cy: "100",
+          r: "80",
+          fill: "transparent",
+          stroke: hasError ? "rgba(239, 68, 68, 0.3)" : "rgba(79, 128, 255, 0.2)",
+          strokeWidth: "1.5",
+          className: hasError ? "animate-pulse" : ""
+        }
+      ),
+      /* @__PURE__ */ jsx10(
+        "circle",
+        {
+          cx: "100",
+          cy: "100",
+          r: "60",
+          fill: "transparent",
+          stroke: hasError ? "rgba(239, 68, 68, 0.2)" : "rgba(79, 128, 255, 0.1)",
+          strokeWidth: "1"
+        }
+      ),
+      /* @__PURE__ */ jsx10(
+        "circle",
+        {
+          cx: "100",
+          cy: "100",
+          r: "40",
+          fill: "transparent",
+          stroke: hasError ? "rgba(239, 68, 68, 0.2)" : "rgba(79, 128, 255, 0.1)",
+          strokeWidth: "1"
+        }
+      ),
+      /* @__PURE__ */ jsx10(
+        "circle",
+        {
+          cx: "100",
+          cy: "100",
+          r: "20",
+          fill: "transparent",
+          stroke: hasError ? "rgba(239, 68, 68, 0.2)" : "rgba(79, 128, 255, 0.1)",
+          strokeWidth: "1"
+        }
+      ),
       /* @__PURE__ */ jsx10("g", { clipPath: "url(#circle-clip)", children: /* @__PURE__ */ jsx10(
         "path",
         {
@@ -3605,9 +3658,17 @@ var AudioVisualizer = ({ isSpeaking, status }) => {
         }
       ) })
     ] }),
+    /* @__PURE__ */ jsx10("div", { className: "absolute top-3 right-3 flex gap-2", children: hasAudio !== void 0 && /* @__PURE__ */ jsx10(
+      "div",
+      {
+        className: `h-2 w-2 rounded-full ${hasAudio ? "bg-green-500" : "bg-red-500"}`,
+        title: `Audio ${hasAudio ? "connected" : "disconnected"}`
+      }
+    ) }),
+    hasError && errorMessage && /* @__PURE__ */ jsx10("div", { className: "absolute inset-0 flex items-center justify-center z-10", children: /* @__PURE__ */ jsx10("div", { className: "bg-red-900/50 px-4 py-3 rounded-lg text-center backdrop-blur-sm", children: /* @__PURE__ */ jsx10("p", { className: "text-red-200 text-sm", children: errorMessage }) }) }),
     /* @__PURE__ */ jsxs8("div", { className: "absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent", children: [
       /* @__PURE__ */ jsx10("div", { className: "flex items-center justify-between", children: /* @__PURE__ */ jsx10("span", { className: "text-sm font-medium", children: "AI Interviewer" }) }),
-      status && /* @__PURE__ */ jsx10("span", { className: "text-xs text-slate-400", children: status })
+      status && /* @__PURE__ */ jsx10("span", { className: `text-xs ${hasError ? "text-red-400" : "text-slate-400"}`, children: status })
     ] }),
     isSpeaking && /* @__PURE__ */ jsxs8("div", { className: "absolute top-3 left-3 flex items-center justify-center", "aria-label": "AI is speaking", role: "status", children: [
       /* @__PURE__ */ jsx10("div", { className: "absolute h-4 w-4 rounded-full bg-blue-400 opacity-75 animate-ping" }),
@@ -4192,7 +4253,7 @@ var RegisterScreen = ({ onSwitchToLogin, onBackToSetup }) => {
 var RegisterScreen_default = RegisterScreen;
 
 // components/InterviewScreen.tsx
-import { useState as useState16, useEffect as useEffect15, useMemo as useMemo5, useRef as useRef13, useCallback as useCallback8 } from "react";
+import { useState as useState17, useEffect as useEffect15, useMemo as useMemo5, useRef as useRef13, useCallback as useCallback8 } from "react";
 
 // hooks/useCamera.ts
 import { useState as useState12, useEffect as useEffect10, useRef as useRef8 } from "react";
@@ -4202,34 +4263,100 @@ var useUserMedia = (options) => {
   const [error, setError] = useState12(null);
   const streamRef = useRef8(null);
   useEffect10(() => {
+    console.log("[useUserMedia] Effect triggered:", { enabled, video, audio });
     if (!enabled) {
+      console.log("[useUserMedia] Media disabled, cleaning up");
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        console.log("[useUserMedia] Stopping existing tracks");
+        streamRef.current.getTracks().forEach((track) => {
+          console.log(`[useUserMedia] Stopping ${track.kind} track:`, track.label);
+          track.stop();
+        });
         streamRef.current = null;
         setStream(null);
       }
       return;
     }
     let isEffectActive = true;
-    const getMedia = async () => {
+    const getMedia = async (retryCount = 0) => {
       const constraints = { video, audio };
-      if (!video && !audio)
+      console.log("[useUserMedia] Requesting media with constraints:", constraints);
+      if (!video && !audio) {
+        console.warn("[useUserMedia] No video or audio requested");
         return;
+      }
       try {
         setError(null);
+        console.log("[useUserMedia] Calling getUserMedia...");
         const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log("[useUserMedia] Got media stream:", mediaStream.id);
+        const videoTracks = mediaStream.getVideoTracks();
+        const audioTracks = mediaStream.getAudioTracks();
+        console.log("[useUserMedia] Video tracks:", videoTracks.length);
+        videoTracks.forEach((track, i) => {
+          console.log(`[useUserMedia]   Video track ${i}:`, {
+            id: track.id,
+            label: track.label,
+            enabled: track.enabled,
+            muted: track.muted,
+            readyState: track.readyState,
+            settings: track.getSettings()
+          });
+        });
+        console.log("[useUserMedia] Audio tracks:", audioTracks.length);
+        audioTracks.forEach((track, i) => {
+          console.log(`[useUserMedia]   Audio track ${i}:`, {
+            id: track.id,
+            label: track.label,
+            enabled: track.enabled,
+            muted: track.muted,
+            readyState: track.readyState,
+            settings: track.getSettings()
+          });
+        });
+        const hasVideo = videoTracks.length > 0;
+        const hasAudio = audioTracks.length > 0;
+        if (video && !hasVideo || audio && !hasAudio) {
+          console.error("[useUserMedia] Missing expected media tracks:", {
+            requestedVideo: video,
+            hasVideo,
+            requestedAudio: audio,
+            hasAudio
+          });
+          throw new Error("Missing expected media tracks");
+        }
+        const trackTests = mediaStream.getTracks().map(
+          (track) => new Promise((resolve, reject) => {
+            console.log(`[useUserMedia] Checking ${track.kind} track readyState:`, track.readyState);
+            if (track.readyState === "ended") {
+              reject(new Error(`Track ${track.kind} is ended`));
+            }
+            resolve(true);
+          })
+        );
+        await Promise.all(trackTests);
         if (isEffectActive) {
+          console.log("[useUserMedia] Setting stream to state");
           streamRef.current = mediaStream;
           setStream(mediaStream);
+          console.log(`[useUserMedia] \u2705 Media stream ready with ${hasVideo ? "video" : "no video"} and ${hasAudio ? "audio" : "no audio"}`);
         } else {
+          console.log("[useUserMedia] Effect is no longer active, stopping tracks");
           mediaStream.getTracks().forEach((track) => track.stop());
         }
       } catch (err) {
+        console.error("[useUserMedia] Error getting media:", err);
+        if (retryCount < 2 && (err instanceof Error && (err.message.includes("Missing expected media tracks") || err.message.includes("ended") || err.name === "NotReadableError"))) {
+          console.log(`[useUserMedia] Retrying media access (attempt ${retryCount + 1}/2)...`);
+          await new Promise((resolve) => setTimeout(resolve, 1e3));
+          return getMedia(retryCount + 1);
+        }
         if (isEffectActive) {
-          console.error("Error accessing user media:", err);
+          console.error("[useUserMedia] \u274C Fatal error accessing user media:", err);
           let title = "Media Access Error";
           let message = "An unexpected error occurred while accessing your media devices.";
           if (err instanceof DOMException) {
+            console.error("[useUserMedia] DOMException:", err.name, err.message);
             switch (err.name) {
               case "NotAllowedError":
                 title = "Permission Denied";
@@ -4255,6 +4382,7 @@ var useUserMedia = (options) => {
             }
             setError({ name: err.name, title, message });
           } else {
+            console.error("[useUserMedia] Non-DOMException error:", err);
             setError({ name: "UnknownError", title: "Unknown Error", message: "An unknown error occurred. Please ensure you are using a modern browser with camera/microphone support." });
           }
         }
@@ -4262,9 +4390,14 @@ var useUserMedia = (options) => {
     };
     getMedia();
     return () => {
+      console.log("[useUserMedia] Cleanup called");
       isEffectActive = false;
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        console.log("[useUserMedia] Stopping tracks in cleanup");
+        streamRef.current.getTracks().forEach((track) => {
+          console.log(`[useUserMedia] Stopping ${track.kind} track:`, track.label);
+          track.stop();
+        });
         streamRef.current = null;
       }
     };
@@ -4282,25 +4415,53 @@ var useAudioRecorder = (stream) => {
   const audioChunksRef = useRef9([]);
   const [dedicatedAudioStream, setDedicatedAudioStream] = useState13(null);
   useEffect11(() => {
+    console.log("[useAudioRecorder] Effect triggered with new stream:", {
+      hasStream: !!stream,
+      streamId: stream?.id,
+      audioTracks: stream?.getAudioTracks().length || 0
+    });
     if (stream && stream.getAudioTracks().length > 0) {
       const audioTracks = stream.getAudioTracks();
+      console.log("[useAudioRecorder] Creating dedicated audio stream from tracks:", audioTracks.map((t) => ({
+        id: t.id,
+        label: t.label,
+        enabled: t.enabled,
+        muted: t.muted,
+        readyState: t.readyState
+      })));
       const newAudioStream = new MediaStream(audioTracks);
+      console.log("[useAudioRecorder] \u2705 Dedicated audio stream created:", newAudioStream.id);
       setDedicatedAudioStream(newAudioStream);
     } else {
+      console.log("[useAudioRecorder] \u26A0\uFE0F No audio tracks available in source stream");
       setDedicatedAudioStream(null);
     }
     return () => {
       if (dedicatedAudioStream) {
-        dedicatedAudioStream.getTracks().forEach((track) => track.stop());
+        console.log("[useAudioRecorder] Cleanup: stopping dedicated audio stream tracks");
+        dedicatedAudioStream.getTracks().forEach((track) => {
+          console.log(`[useAudioRecorder] Stopping ${track.kind} track:`, track.label);
+          track.stop();
+        });
       }
     };
   }, [stream]);
   const startRecording = useCallback6(() => {
+    console.log("[useAudioRecorder] startRecording called", {
+      hasDedicatedStream: !!dedicatedAudioStream,
+      recordingStatus,
+      dedicatedStreamId: dedicatedAudioStream?.id
+    });
     if (!dedicatedAudioStream || recordingStatus !== "idle") {
-      console.warn("Audio recording could not start: dedicated audio stream is missing or recorder is not idle.");
+      console.warn("[useAudioRecorder] \u26A0\uFE0F Audio recording could not start:", {
+        hasDedicatedStream: !!dedicatedAudioStream,
+        recordingStatus,
+        reason: !dedicatedAudioStream ? "No dedicated stream" : "Recorder not idle"
+      });
       return;
     }
     if (audioUrl) {
+      console.log("[useAudioRecorder] Revoking previous audio URL");
       URL.revokeObjectURL(audioUrl);
       setAudioUrl(null);
     }
@@ -4308,47 +4469,108 @@ var useAudioRecorder = (stream) => {
     audioChunksRef.current = [];
     try {
       const options = { mimeType: "audio/webm;codecs=opus" };
-      const mediaRecorder = MediaRecorder.isTypeSupported(options.mimeType) ? new MediaRecorder(dedicatedAudioStream, options) : new MediaRecorder(dedicatedAudioStream);
+      const isSupported = MediaRecorder.isTypeSupported(options.mimeType);
+      console.log("[useAudioRecorder] MIME type support:", {
+        mimeType: options.mimeType,
+        supported: isSupported
+      });
+      const mediaRecorder = isSupported ? new MediaRecorder(dedicatedAudioStream, options) : new MediaRecorder(dedicatedAudioStream);
+      console.log("[useAudioRecorder] MediaRecorder created:", {
+        mimeType: mediaRecorder.mimeType,
+        state: mediaRecorder.state,
+        videoBitsPerSecond: mediaRecorder.videoBitsPerSecond,
+        audioBitsPerSecond: mediaRecorder.audioBitsPerSecond
+      });
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.ondataavailable = (event) => {
+        console.log("[useAudioRecorder] Data available:", {
+          size: event.data.size,
+          type: event.data.type
+        });
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
       mediaRecorder.onstop = () => {
+        console.log("[useAudioRecorder] Recording stopped, creating blob from chunks:", {
+          chunks: audioChunksRef.current.length,
+          totalSize: audioChunksRef.current.reduce((sum, chunk) => sum + chunk.size, 0)
+        });
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         const url = URL.createObjectURL(blob);
+        console.log("[useAudioRecorder] \u2705 Audio blob created:", {
+          blobSize: blob.size,
+          blobType: blob.type,
+          url
+        });
         setAudioUrl(url);
         setAudioBlob(blob);
         setRecordingStatus("idle");
       };
-      mediaRecorder.onstart = () => setRecordingStatus("recording");
-      mediaRecorder.onpause = () => setRecordingStatus("paused");
-      mediaRecorder.onresume = () => setRecordingStatus("recording");
+      mediaRecorder.onstart = () => {
+        console.log("[useAudioRecorder] \u2705 Recording STARTED");
+        setRecordingStatus("recording");
+      };
+      mediaRecorder.onpause = () => {
+        console.log("[useAudioRecorder] Recording PAUSED");
+        setRecordingStatus("paused");
+      };
+      mediaRecorder.onresume = () => {
+        console.log("[useAudioRecorder] Recording RESUMED");
+        setRecordingStatus("recording");
+      };
+      mediaRecorder.onerror = (event) => {
+        console.error("[useAudioRecorder] \u274C MediaRecorder error:", event);
+      };
+      console.log("[useAudioRecorder] Starting MediaRecorder...");
       mediaRecorder.start();
+      console.log("[useAudioRecorder] MediaRecorder.start() called, state:", mediaRecorder.state);
     } catch (err) {
-      console.error("Error starting audio recording:", err);
+      console.error("[useAudioRecorder] \u274C Error starting audio recording:", err);
       setRecordingStatus("idle");
     }
   }, [dedicatedAudioStream, recordingStatus, audioUrl]);
   const stopRecording = useCallback6(() => {
+    console.log("[useAudioRecorder] stopRecording called", {
+      hasRecorder: !!mediaRecorderRef.current,
+      state: mediaRecorderRef.current?.state
+    });
     if (mediaRecorderRef.current && (mediaRecorderRef.current.state === "recording" || mediaRecorderRef.current.state === "paused")) {
+      console.log("[useAudioRecorder] Stopping MediaRecorder...");
       mediaRecorderRef.current.stop();
+    } else {
+      console.warn("[useAudioRecorder] \u26A0\uFE0F Cannot stop - recorder not in recording/paused state");
     }
   }, []);
   const pauseRecording = useCallback6(() => {
+    console.log("[useAudioRecorder] pauseRecording called", {
+      hasRecorder: !!mediaRecorderRef.current,
+      state: mediaRecorderRef.current?.state
+    });
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      console.log("[useAudioRecorder] Pausing MediaRecorder...");
       mediaRecorderRef.current.pause();
+    } else {
+      console.warn("[useAudioRecorder] \u26A0\uFE0F Cannot pause - recorder not recording");
     }
   }, []);
   const resumeRecording = useCallback6(() => {
+    console.log("[useAudioRecorder] resumeRecording called", {
+      hasRecorder: !!mediaRecorderRef.current,
+      state: mediaRecorderRef.current?.state
+    });
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "paused") {
+      console.log("[useAudioRecorder] Resuming MediaRecorder...");
       mediaRecorderRef.current.resume();
+    } else {
+      console.warn("[useAudioRecorder] \u26A0\uFE0F Cannot resume - recorder not paused");
     }
   }, []);
   useEffect11(() => {
     return () => {
+      console.log("[useAudioRecorder] Component unmounting, cleaning up...");
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        console.log("[useAudioRecorder] Stopping active MediaRecorder");
         mediaRecorderRef.current.stop();
       }
     };
@@ -4365,19 +4587,49 @@ var useVideoRecorder = (stream) => {
   const mediaRecorderRef = useRef10(null);
   const videoChunksRef = useRef10([]);
   const [recorderStream, setRecorderStream] = useState14(null);
+  const ensureRecorderStopped = useCallback7(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (err) {
+        console.warn("Error stopping MediaRecorder:", err);
+      }
+    }
+  }, []);
   useEffect12(() => {
     if (stream && stream.active) {
-      const newStream = new MediaStream(stream.getTracks());
+      if (recorderStream) {
+        recorderStream.getTracks().forEach((track) => track.stop());
+      }
+      const clonedTracks = stream.getTracks().map((track) => track.clone());
+      const newStream = new MediaStream(clonedTracks);
+      clonedTracks.forEach((track) => {
+        track.addEventListener("ended", () => {
+          console.warn(`Track ${track.kind} ended unexpectedly`);
+          ensureRecorderStopped();
+        });
+      });
       setRecorderStream(newStream);
+      console.log(
+        "Created new recorder stream with tracks:",
+        clonedTracks.map((t) => ({ kind: t.kind, id: t.id }))
+      );
     } else {
       setRecorderStream(null);
     }
     return () => {
       if (recorderStream) {
-        recorderStream.getTracks().forEach((track) => track.stop());
+        ensureRecorderStopped();
+        recorderStream.getTracks().forEach((track) => {
+          try {
+            track.stop();
+          } catch (err) {
+            console.warn(`Error stopping ${track.kind} track:`, err);
+          }
+        });
       }
     };
-  }, [stream]);
+  }, [stream, ensureRecorderStopped]);
   const startRecording = useCallback7(() => {
     if (!recorderStream || recordingStatus !== "idle") {
       return;
@@ -4527,23 +4779,207 @@ var useScreenShare = (options) => {
 };
 
 // components/VideoPanel.tsx
-import { useRef as useRef12, useEffect as useEffect14 } from "react";
+import { useRef as useRef12, useEffect as useEffect14, useState as useState16 } from "react";
 import { jsx as jsx15, jsxs as jsxs13 } from "react/jsx-runtime";
-var VideoPanel = ({ name, status, videoRef, avatarUrl, avatarNode, isMuted, isSpeaking, src }) => {
+var VideoPanel = ({ name, status, videoRef, avatarUrl, avatarNode, isMuted, isSpeaking, src, stream }) => {
   const internalVideoRef = useRef12(null);
+  const [hasPlaybackError, setHasPlaybackError] = useState16(false);
+  const [trackStatus, setTrackStatus] = useState16({});
+  const [errorMessage, setErrorMessage] = useState16("");
   useEffect14(() => {
-    if (src && internalVideoRef.current) {
-      if (isSpeaking) {
-        internalVideoRef.current.play().catch((e) => console.error("Video play failed:", e));
+    console.log(`[VideoPanel:${name}] Stream attachment effect triggered`, {
+      hasVideoRef: !!videoRef,
+      hasStream: !!stream,
+      streamId: stream?.id,
+      videoRefCurrent: !!videoRef?.current,
+      internalRefCurrent: !!internalVideoRef.current
+    });
+    const videoEl = videoRef?.current || internalVideoRef.current;
+    if (!videoEl) {
+      console.warn(`[VideoPanel:${name}] No video element available yet for stream attachment`);
+      return;
+    }
+    if (stream) {
+      console.log(`[VideoPanel:${name}] \u2705 Attaching stream to video element`, {
+        streamId: stream.id,
+        videoTracks: stream.getVideoTracks().length,
+        audioTracks: stream.getAudioTracks().length
+      });
+      videoEl.srcObject = stream;
+      videoEl.play().then(() => {
+        console.log(`[VideoPanel:${name}] \u2705 Video playback started after stream attachment`);
+        setHasPlaybackError(false);
+        setErrorMessage("");
+      }).catch((err) => {
+        console.warn(`[VideoPanel:${name}] \u26A0\uFE0F Autoplay prevented:`, err);
+      });
+    } else if (videoEl.srcObject && !stream) {
+      console.log(`[VideoPanel:${name}] Stream removed, clearing srcObject`);
+      videoEl.srcObject = null;
+    }
+  }, [stream, videoRef, name]);
+  useEffect14(() => {
+    console.log(`[VideoPanel:${name}] Monitor effect triggered`, {
+      hasVideoRef: !!videoRef,
+      hasSrc: !!src,
+      hasAvatarUrl: !!avatarUrl,
+      isSpeaking
+    });
+    const videoEl = videoRef?.current || internalVideoRef.current;
+    if (!videoEl) {
+      console.warn(`[VideoPanel:${name}] No video element available for monitoring`);
+      return;
+    }
+    console.log(`[VideoPanel:${name}] Video element:`, {
+      srcObject: videoEl.srcObject,
+      src: videoEl.src,
+      readyState: videoEl.readyState,
+      networkState: videoEl.networkState,
+      paused: videoEl.paused,
+      muted: videoEl.muted,
+      autoplay: videoEl.autoplay
+    });
+    const updateTrackStatus = () => {
+      const stream2 = videoEl.srcObject;
+      if (stream2) {
+        const videoTracks = stream2.getVideoTracks();
+        const audioTracks = stream2.getAudioTracks();
+        console.log(`[VideoPanel:${name}] Track status update:`, {
+          videoTracks: videoTracks.length,
+          audioTracks: audioTracks.length
+        });
+        videoTracks.forEach((track, i) => {
+          console.log(`[VideoPanel:${name}]   Video track ${i}:`, {
+            id: track.id,
+            label: track.label,
+            enabled: track.enabled,
+            muted: track.muted,
+            readyState: track.readyState
+          });
+        });
+        audioTracks.forEach((track, i) => {
+          console.log(`[VideoPanel:${name}]   Audio track ${i}:`, {
+            id: track.id,
+            label: track.label,
+            enabled: track.enabled,
+            muted: track.muted,
+            readyState: track.readyState
+          });
+        });
+        const newStatus = {
+          video: videoTracks.some((track) => track.enabled && track.readyState === "live"),
+          audio: audioTracks.some((track) => track.enabled && track.readyState === "live")
+        };
+        console.log(`[VideoPanel:${name}] Track status:`, newStatus);
+        setTrackStatus(newStatus);
       } else {
+        console.log(`[VideoPanel:${name}] No stream attached to video element`);
+      }
+    };
+    const handlePlayError = (e) => {
+      console.error(`[VideoPanel:${name}] Video play/error failed:`, e);
+      setHasPlaybackError(true);
+      setErrorMessage(e.message || "Playback failed");
+      if (e.name === "NotAllowedError") {
+        console.log(`[VideoPanel:${name}] NotAllowedError - setting up recovery handler`);
+        const recover = async () => {
+          console.log(`[VideoPanel:${name}] Attempting recovery...`);
+          try {
+            await videoEl.play();
+            console.log(`[VideoPanel:${name}] \u2705 Recovery successful`);
+            setHasPlaybackError(false);
+            setErrorMessage("");
+          } catch (err) {
+            console.error(`[VideoPanel:${name}] \u274C Recovery failed:`, err);
+          }
+        };
+        document.addEventListener("click", recover, { once: true });
+      }
+    };
+    if (videoEl.srcObject) {
+      console.log(`[VideoPanel:${name}] Setting up track monitoring for srcObject`);
+      updateTrackStatus();
+      const stream2 = videoEl.srcObject;
+      stream2.getTracks().forEach((track) => {
+        console.log(`[VideoPanel:${name}] Adding listeners to ${track.kind} track:`, track.label);
+        track.addEventListener("ended", updateTrackStatus);
+        track.addEventListener("mute", updateTrackStatus);
+        track.addEventListener("unmute", updateTrackStatus);
+      });
+      if (videoEl.paused) {
+        console.log(`[VideoPanel:${name}] Video is paused, attempting to play...`);
+        videoEl.play().then(() => {
+          console.log(`[VideoPanel:${name}] \u2705 Video playing`);
+          setHasPlaybackError(false);
+          setErrorMessage("");
+        }).catch(handlePlayError);
+      } else {
+        console.log(`[VideoPanel:${name}] Video is already playing`);
+      }
+    } else {
+      console.log(`[VideoPanel:${name}] No srcObject on video element`);
+    }
+    if (src && internalVideoRef.current) {
+      console.log(`[VideoPanel:${name}] Handling src-based video, isSpeaking:`, isSpeaking);
+      if (isSpeaking) {
+        console.log(`[VideoPanel:${name}] Starting playback...`);
+        internalVideoRef.current.play().catch(handlePlayError);
+      } else {
+        console.log(`[VideoPanel:${name}] Pausing playback`);
         internalVideoRef.current.pause();
       }
     }
-  }, [isSpeaking, src]);
+    videoEl.addEventListener("error", handlePlayError);
+    videoEl.addEventListener("loadedmetadata", () => {
+      console.log(`[VideoPanel:${name}] Video metadata loaded:`, {
+        videoWidth: videoEl.videoWidth,
+        videoHeight: videoEl.videoHeight,
+        duration: videoEl.duration
+      });
+    });
+    videoEl.addEventListener("canplay", () => {
+      console.log(`[VideoPanel:${name}] Video can play`);
+    });
+    videoEl.addEventListener("playing", () => {
+      console.log(`[VideoPanel:${name}] Video is playing`);
+    });
+    return () => {
+      console.log(`[VideoPanel:${name}] Cleanup`);
+      if (videoEl.srcObject) {
+        const stream2 = videoEl.srcObject;
+        stream2.getTracks().forEach((track) => {
+          track.removeEventListener("ended", updateTrackStatus);
+          track.removeEventListener("mute", updateTrackStatus);
+          track.removeEventListener("unmute", updateTrackStatus);
+        });
+      }
+      videoEl.removeEventListener("error", handlePlayError);
+    };
+  }, [isSpeaking, src, videoRef, name]);
   return /* @__PURE__ */ jsxs13("div", { className: `relative w-full h-full bg-slate-950 rounded-lg overflow-hidden border-2 ${isSpeaking ? "border-blue-500" : "border-slate-700"} aspect-video transition-colors duration-300`, children: [
     isSpeaking && /* @__PURE__ */ jsxs13("div", { className: "absolute top-3 left-3 flex items-center justify-center", "aria-label": "AI is speaking", role: "status", children: [
       /* @__PURE__ */ jsx15("div", { className: "absolute h-4 w-4 rounded-full bg-blue-400 opacity-75 animate-ping" }),
       /* @__PURE__ */ jsx15("div", { className: "relative h-3 w-3 rounded-full bg-blue-500" })
+    ] }),
+    hasPlaybackError && /* @__PURE__ */ jsx15("div", { className: "absolute inset-0 bg-red-900/30 flex items-center justify-center z-10", children: /* @__PURE__ */ jsxs13("div", { className: "bg-red-900/50 p-4 rounded-lg text-center", children: [
+      /* @__PURE__ */ jsx15("p", { className: "text-red-200 text-sm", children: "Playback Error" }),
+      /* @__PURE__ */ jsx15("p", { className: "text-red-300 text-xs mt-1", children: errorMessage || "Click anywhere to retry" })
+    ] }) }),
+    (videoRef || src) && /* @__PURE__ */ jsxs13("div", { className: "absolute top-3 right-3 flex gap-2 z-20", children: [
+      trackStatus.video !== void 0 && /* @__PURE__ */ jsx15(
+        "div",
+        {
+          className: `w-2 h-2 rounded-full ${trackStatus.video ? "bg-green-500" : "bg-red-500"}`,
+          title: `Video track ${trackStatus.video ? "active" : "inactive"}`
+        }
+      ),
+      trackStatus.audio !== void 0 && /* @__PURE__ */ jsx15(
+        "div",
+        {
+          className: `w-2 h-2 rounded-full ${trackStatus.audio ? "bg-green-500" : "bg-red-500"}`,
+          title: `Audio track ${trackStatus.audio ? "active" : "inactive"}`
+        }
+      )
     ] }),
     src ? /* @__PURE__ */ jsx15(
       "video",
@@ -4554,9 +4990,28 @@ var VideoPanel = ({ name, status, videoRef, avatarUrl, avatarNode, isMuted, isSp
         playsInline: true,
         muted: true,
         className: "w-full h-full object-cover",
+        onLoadedMetadata: () => {
+          console.log(`[VideoPanel:${name}] src video metadata loaded`);
+          setHasPlaybackError(false);
+          setErrorMessage("");
+        },
         children: "Your browser does not support the video tag."
       }
-    ) : videoRef ? /* @__PURE__ */ jsx15("video", { ref: videoRef, autoPlay: true, playsInline: true, className: "w-full h-full object-cover", muted: true }) : avatarUrl ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("img", { src: avatarUrl, alt: name, className: "w-32 h-32 rounded-full" }) }) : avatarNode ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: avatarNode }) : /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("span", { className: "text-slate-500", children: "No Video" }) }),
+    ) : videoRef ? /* @__PURE__ */ jsx15(
+      "video",
+      {
+        ref: videoRef,
+        autoPlay: true,
+        playsInline: true,
+        muted: true,
+        className: "w-full h-full object-cover",
+        onLoadedMetadata: () => {
+          console.log(`[VideoPanel:${name}] videoRef metadata loaded`);
+          setHasPlaybackError(false);
+          setErrorMessage("");
+        }
+      }
+    ) : avatarUrl ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("img", { src: avatarUrl, alt: name, className: "block w-32 h-32 rounded-full" }) }) : avatarNode ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: avatarNode }) : /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("span", { className: "text-slate-500", children: "No Video" }) }),
     /* @__PURE__ */ jsxs13("div", { className: "absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent", children: [
       /* @__PURE__ */ jsxs13("div", { className: "flex items-center justify-between", children: [
         /* @__PURE__ */ jsx15("span", { className: "text-sm font-medium", children: name }),
@@ -4654,30 +5109,35 @@ var MediaErrorDisplay = ({ error, children }) => /* @__PURE__ */ jsxs14("div", {
   children && /* @__PURE__ */ jsx16("div", { className: "mt-6", children })
 ] });
 var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
-  const [questions, setQuestions] = useState16([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState16(0);
-  const [isAiThinking, setIsAiThinking] = useState16(true);
-  const [isEnding, setIsEnding] = useState16(false);
-  const [chatHistory, setChatHistory] = useState16([]);
-  const [qna, setQna] = useState16([]);
-  const [currentMessage, setCurrentMessage] = useState16("");
-  const [isSidePanelCollapsed, setIsSidePanelCollapsed] = useState16(false);
-  const [notes, setNotes] = useState16("");
-  const [isMuted, setIsMuted] = useState16(false);
-  const [initError, setInitError] = useState16(null);
-  const [retryStatus, setRetryStatus] = useState16(null);
-  const [isAiSpeaking, setIsAiSpeaking] = useState16(false);
-  const [transcript, setTranscript] = useState16("");
+  const [questions, setQuestions] = useState17([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState17(0);
+  const [isAiThinking, setIsAiThinking] = useState17(true);
+  const [isEnding, setIsEnding] = useState17(false);
+  const [chatHistory, setChatHistory] = useState17([]);
+  const [qna, setQna] = useState17([]);
+  const [currentMessage, setCurrentMessage] = useState17("");
+  const [isSidePanelCollapsed, setIsSidePanelCollapsed] = useState17(false);
+  const [notes, setNotes] = useState17("");
+  const [isMuted, setIsMuted] = useState17(false);
+  const [initError, setInitError] = useState17(null);
+  const [retryStatus, setRetryStatus] = useState17(null);
+  const [isAiSpeaking, setIsAiSpeaking] = useState17(false);
+  const [transcript, setTranscript] = useState17("");
+  const [editableTranscript, setEditableTranscript] = useState17("");
+  const [isEditingTranscript, setIsEditingTranscript] = useState17(false);
   const { showToast } = useToast();
+  const transcriptRef = useRef13(null);
   const cameraVideoRef = useRef13(null);
   const screenShareVideoRef = useRef13(null);
   const INTERVIEW_DURATION = 180;
-  const [timeLeft, setTimeLeft] = useState16(INTERVIEW_DURATION);
+  const [timeLeft, setTimeLeft] = useState17(INTERVIEW_DURATION);
+  const [isInterviewStarted, setIsInterviewStarted] = useState17(false);
   const chatRef = useRef13(null);
   const sessionPromiseRef = useRef13(null);
   const aiRef = useRef13(null);
   const inputAudioContextRef = useRef13(null);
   const outputAudioContextRef = useRef13(null);
+  const outputGainNodeRef = useRef13(null);
   const scriptProcessorRef = useRef13(null);
   const mediaStreamSourceRef = useRef13(null);
   const nextStartTimeRef = useRef13(0);
@@ -4685,6 +5145,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
   const currentInputTranscriptionRef = useRef13("");
   const currentOutputTranscriptionRef = useRef13("");
   const chatContainerRef = useRef13(null);
+  const capturedUserMediaStreamRef = useRef13(null);
   const malpracticeLogRef = useRef13([]);
   const lastActivityTimeRef = useRef13(Date.now());
   const isMutedRef = useRef13(isMuted);
@@ -4704,10 +5165,22 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     audio: true
   });
   useEffect15(() => {
-    if (cameraVideoRef.current && userMediaStream) {
-      cameraVideoRef.current.srcObject = userMediaStream;
+    console.log("[InterviewScreen] Media stream status:", {
+      hasStream: !!userMediaStream,
+      streamId: userMediaStream?.id,
+      isVideoMode,
+      isAudioMode,
+      videoTracks: userMediaStream?.getVideoTracks().length || 0,
+      audioTracks: userMediaStream?.getAudioTracks().length || 0
+    });
+    if (userMediaStream) {
+      console.log("[InterviewScreen] \u2705 User media stream available:", {
+        streamId: userMediaStream.id,
+        videoTracks: userMediaStream.getVideoTracks().map((t) => ({ id: t.id, enabled: t.enabled, muted: t.muted, label: t.label, readyState: t.readyState })),
+        audioTracks: userMediaStream.getAudioTracks().map((t) => ({ id: t.id, enabled: t.enabled, muted: t.muted, label: t.label, readyState: t.readyState }))
+      });
     }
-  }, [userMediaStream]);
+  }, [userMediaStream, isVideoMode, isAudioMode]);
   const { stream: screenShareStream, error: screenShareError } = useScreenShare({
     enabled: isLiveShareMode
   });
@@ -4740,20 +5213,33 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     }
   }, [currentMessage, isAiThinking]);
   const cleanupLiveSession = useCallback8(() => {
-    sessionPromiseRef.current?.then((s) => s.close()).catch((e) => {
-      if (!e.message.toLowerCase().includes("close")) {
-        console.error("Error closing live session:", e);
-      }
-    });
-    sessionPromiseRef.current = null;
-    scriptProcessorRef.current?.disconnect();
-    scriptProcessorRef.current = null;
-    mediaStreamSourceRef.current?.disconnect();
-    mediaStreamSourceRef.current = null;
+    console.log("[InterviewScreen] \u{1F9F9} cleanupLiveSession called");
+    console.trace("[InterviewScreen] Cleanup stack trace");
+    if (sessionPromiseRef.current) {
+      console.log("[InterviewScreen] Closing AI session...");
+      sessionPromiseRef.current.then((s) => s.close()).catch((e) => {
+        if (!e.message.toLowerCase().includes("close")) {
+          console.error("[InterviewScreen] Error closing live session:", e);
+        }
+      });
+      sessionPromiseRef.current = null;
+    }
+    if (scriptProcessorRef.current) {
+      console.log("[InterviewScreen] Disconnecting script processor...");
+      scriptProcessorRef.current.disconnect();
+      scriptProcessorRef.current = null;
+    }
+    if (mediaStreamSourceRef.current) {
+      console.log("[InterviewScreen] Disconnecting media stream source...");
+      mediaStreamSourceRef.current.disconnect();
+      mediaStreamSourceRef.current = null;
+    }
     if (inputAudioContextRef.current && inputAudioContextRef.current.state !== "closed") {
+      console.log("[InterviewScreen] Closing input audio context...");
       inputAudioContextRef.current.close().catch((e) => console.error("Error closing input audio context:", e));
     }
     if (outputAudioContextRef.current && outputAudioContextRef.current.state !== "closed") {
+      console.log("[InterviewScreen] Stopping audio sources and closing output context...");
       for (const source of audioSourcesRef.current.values()) {
         try {
           source.stop();
@@ -4763,6 +5249,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
       audioSourcesRef.current.clear();
       outputAudioContextRef.current.close().catch((e) => console.error("Error closing output audio context:", e));
     }
+    console.log("[InterviewScreen] \u2705 Cleanup complete");
   }, []);
   const handleEndInterview = useCallback8(async () => {
     if (isEnding)
@@ -4805,6 +5292,8 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     }, 1500);
   }, [isEnding, interviewId, isAudioEnabled, isVideoMode, isLiveShareMode, isChatMode, stopVideoRecording, stopAudioRecording, videoBlob, audioBlob, chatHistory, transcript, onEndInterview, showToast, cleanupLiveSession, qna]);
   useEffect15(() => {
+    if (!isInterviewStarted)
+      return;
     if (timeLeft <= 0) {
       if (!isEnding) {
         showToast("Time's up! Finishing the interview.", "info");
@@ -4818,7 +5307,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
       setTimeLeft((prevTime) => prevTime > 0 ? prevTime - 1 : 0);
     }, 1e3);
     return () => clearInterval(timerId);
-  }, [timeLeft, isEnding, handleEndInterview, showToast]);
+  }, [timeLeft, isEnding, isInterviewStarted, handleEndInterview, showToast]);
   useEffect15(() => {
     if (isChatMode)
       return;
@@ -4872,16 +5361,31 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     return () => clearInterval(interval);
   }, [isAiSpeaking, showToast, isChatMode, isEnding]);
   useEffect15(() => {
-    if (hasInitialized.current)
+    console.log("[InterviewScreen] \u{1F3AC} Interview initialization effect triggered", {
+      hasInitialized: hasInitialized.current,
+      isAudioEnabled,
+      hasUserMediaStream: !!userMediaStream
+    });
+    if (hasInitialized.current) {
+      console.log("[InterviewScreen] \u23ED\uFE0F Already initialized, skipping");
       return;
-    if (isAudioEnabled && !userMediaStream)
+    }
+    if (isAudioEnabled && !userMediaStream) {
+      console.log("[InterviewScreen] \u23F8\uFE0F Waiting for user media stream...");
       return;
+    }
     if (false) {
+      console.error("[InterviewScreen] \u274C Missing API key");
       setInitError("API key is not configured. Please set it up to start the interview.");
       return;
     }
+    if (userMediaStream) {
+      console.log("[InterviewScreen] \u{1F4F8} Capturing stream reference:", userMediaStream.id);
+      capturedUserMediaStreamRef.current = userMediaStream;
+    }
+    console.log("[InterviewScreen] \u{1F3C1} Initializing AI...");
     hasInitialized.current = true;
-    aiRef.current = new GoogleGenAI2({ apiKey: "AIzaSyDDjDns0923F5lbQMp1e9P_cmj1BInE89Q" });
+    aiRef.current = new GoogleGenAI2({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
     let retryCount = 0;
     const maxRetries = 3;
     const systemInstruction = `You are an expert AI interviewer. Your sole purpose is to conduct a professional, ${settings.difficulty} level interview for a "${settings.position}" role, based on this job description: "${settings.jobDescription}".
@@ -4898,20 +5402,57 @@ Your instructions are:
 7.  **Formatting:** Do not use markdown in your responses.`;
     const startInterview = async () => {
       try {
+        console.log("[InterviewScreen] \u{1F680} Starting interview...", {
+          mode: settings.mode,
+          model: settings.model,
+          retryCount,
+          hasUserMediaStream: !!userMediaStream
+        });
         setRetryStatus(retryCount > 0 ? `Retrying... (${retryCount}/${maxRetries})` : null);
         setIsAiThinking(true);
         setInitError(null);
         if (isChatMode) {
+          console.log("[InterviewScreen] \u{1F4AC} Initializing chat mode...");
           chatRef.current = createChatSession({
             model: settings.model,
             systemInstruction
           });
+          console.log("[InterviewScreen] Sending initial message to AI...");
           const firstQuestion = await chatRef.current.sendMessage("Hello, I am ready to start the interview.");
+          console.log("[InterviewScreen] \u2705 Received first question from AI:", firstQuestion.substring(0, 100) + "...");
           setChatHistory([{ author: "ai", text: firstQuestion }]);
           setQuestions([{ id: "1", text: firstQuestion }]);
-        } else if (isAudioEnabled && userMediaStream) {
+          setIsInterviewStarted(true);
+          console.log("[InterviewScreen] \u2705 AI ready, interview started (chat mode)");
+        } else if (isAudioEnabled) {
+          const streamToUse = capturedUserMediaStreamRef.current;
+          if (!streamToUse) {
+            console.error("[InterviewScreen] \u274C No captured stream available for audio mode");
+            throw new Error("User media stream not available");
+          }
+          console.log("[InterviewScreen] \u{1F3A4} Initializing audio-enabled mode...");
+          console.log("[InterviewScreen] Using captured stream:", {
+            id: streamToUse.id,
+            videoTracks: streamToUse.getVideoTracks().length,
+            audioTracks: streamToUse.getAudioTracks().length
+          });
+          console.log("[InterviewScreen] Creating audio contexts...");
           inputAudioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16e3 });
           outputAudioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24e3 });
+          console.log("[InterviewScreen] Audio contexts created:", {
+            inputSampleRate: inputAudioContextRef.current.sampleRate,
+            inputState: inputAudioContextRef.current.state,
+            outputSampleRate: outputAudioContextRef.current.sampleRate,
+            outputState: outputAudioContextRef.current.state
+          });
+          outputGainNodeRef.current = outputAudioContextRef.current.createGain();
+          outputGainNodeRef.current.gain.value = 1.5;
+          outputGainNodeRef.current.connect(outputAudioContextRef.current.destination);
+          console.log("[InterviewScreen] \u{1F50A} Audio output configured with gain:", outputGainNodeRef.current.gain.value);
+          console.log("[InterviewScreen] \u{1F50C} Connecting to AI live session...", {
+            model: settings.model,
+            voiceName: "Zephyr"
+          });
           sessionPromiseRef.current = aiRef.current.live.connect({
             model: settings.model,
             config: {
@@ -4923,9 +5464,19 @@ Your instructions are:
             },
             callbacks: {
               onopen: () => {
-                if (!userMediaStream || !inputAudioContextRef.current)
+                console.log("[InterviewScreen] \u2705 AI Live session OPENED successfully");
+                console.log("[InterviewScreen] Setting up audio processing pipeline...");
+                const capturedStream = capturedUserMediaStreamRef.current;
+                if (!capturedStream || !inputAudioContextRef.current) {
+                  console.error("[InterviewScreen] \u274C Cannot setup audio pipeline - missing stream or context", {
+                    hasCapturedStream: !!capturedStream,
+                    hasInputContext: !!inputAudioContextRef.current
+                  });
                   return;
-                mediaStreamSourceRef.current = inputAudioContextRef.current.createMediaStreamSource(userMediaStream);
+                }
+                console.log("[InterviewScreen] Creating media stream source from captured stream:", capturedStream.id);
+                mediaStreamSourceRef.current = inputAudioContextRef.current.createMediaStreamSource(capturedStream);
+                console.log("[InterviewScreen] Creating script processor for audio capture...");
                 scriptProcessorRef.current = inputAudioContextRef.current.createScriptProcessor(4096, 1, 1);
                 scriptProcessorRef.current.onaudioprocess = (event) => {
                   const inputData = event.inputBuffer.getChannelData(0);
@@ -4936,29 +5487,42 @@ Your instructions are:
                     }
                   });
                 };
+                console.log("[InterviewScreen] Connecting audio processing nodes...");
                 mediaStreamSourceRef.current.connect(scriptProcessorRef.current);
                 scriptProcessorRef.current.connect(inputAudioContextRef.current.destination);
+                console.log("[InterviewScreen] \u2705 Audio pipeline connected and ready");
               },
               onmessage: async (message) => {
                 const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
                 if (base64Audio) {
+                  console.log("\u{1F50A} [Interview] Received AI audio response");
                   setIsAiSpeaking(true);
                   const outCtx = outputAudioContextRef.current;
-                  if (!outCtx)
+                  const gainNode = outputGainNodeRef.current;
+                  if (!outCtx || !gainNode) {
+                    console.error("\u274C [Interview] Audio context or gain node not available");
                     return;
+                  }
+                  if (outCtx.state === "suspended") {
+                    console.log("\u{1F513} [Interview] Resuming suspended audio context");
+                    await outCtx.resume();
+                  }
                   nextStartTimeRef.current = Math.max(nextStartTimeRef.current, outCtx.currentTime);
                   const audioBuffer = await decodeAudioData(decode(base64Audio), outCtx, 24e3, 1);
                   const source = outCtx.createBufferSource();
                   source.buffer = audioBuffer;
-                  source.connect(outCtx.destination);
+                  source.connect(gainNode);
                   source.addEventListener("ended", () => {
                     audioSourcesRef.current.delete(source);
-                    if (audioSourcesRef.current.size === 0)
+                    if (audioSourcesRef.current.size === 0) {
                       setIsAiSpeaking(false);
+                      console.log("\u2705 [Interview] AI finished speaking");
+                    }
                   });
                   source.start(nextStartTimeRef.current);
                   nextStartTimeRef.current += audioBuffer.duration;
                   audioSourcesRef.current.add(source);
+                  console.log("\u25B6\uFE0F [Interview] Playing AI audio, duration:", audioBuffer.duration.toFixed(2), "s");
                 }
                 if (message.serverContent?.inputTranscription?.text) {
                   lastActivityTimeRef.current = Date.now();
@@ -5006,33 +5570,59 @@ Interviewer: ${fullOutput}`);
                   setIsAiSpeaking(false);
                 }
               },
-              onerror: (e) => console.error("Live session error:", e),
+              onerror: (e) => {
+                console.error("[InterviewScreen] \u274C Live session ERROR:", e);
+                console.error("[InterviewScreen] Error details:", {
+                  type: e.type,
+                  message: e.message,
+                  error: e.error
+                });
+              },
               onclose: () => {
+                console.log("[InterviewScreen] \u{1F50C} Live session CLOSED");
               }
             }
           });
+          console.log("[InterviewScreen] \u23F3 Awaiting AI session connection...");
           const session = await sessionPromiseRef.current;
+          console.log("[InterviewScreen] \u2705 AI session connected successfully");
+          console.log("[InterviewScreen] \u{1F4E4} Sending initial silent audio to trigger first question...");
           session.sendRealtimeInput({ media: createBlob(new Float32Array(160)) });
+          setIsInterviewStarted(true);
+          console.log("[InterviewScreen] \u2705\u2705\u2705 AI session connected, interview started successfully");
         }
       } catch (err) {
-        console.error("Error starting interview:", err);
+        console.error("[InterviewScreen] \u274C\u274C\u274C Error starting interview:", err);
+        console.error("[InterviewScreen] Error details:", {
+          name: err?.name,
+          message: err?.message,
+          stack: err?.stack,
+          cause: err?.cause
+        });
         const errorDetails = getApiErrorDetails(err);
+        console.error("[InterviewScreen] Parsed error details:", errorDetails);
         if (errorDetails.type === "RATE_LIMIT" && retryCount < maxRetries) {
           retryCount++;
-          setTimeout(startInterview, 3e4 * retryCount);
+          const retryDelay = 3e4 * retryCount;
+          console.log(`[InterviewScreen] \u{1F504} Rate limited, retrying in ${retryDelay / 1e3}s (attempt ${retryCount}/${maxRetries})`);
+          setTimeout(startInterview, retryDelay);
         } else {
+          console.error("[InterviewScreen] \u274C Fatal error, not retrying:", errorDetails.message);
           setInitError(errorDetails.message);
         }
       } finally {
-        if (!initError)
+        if (!initError) {
+          console.log("[InterviewScreen] AI thinking complete, setting isAiThinking to false");
           setIsAiThinking(false);
+        }
       }
     };
     startInterview();
     return () => {
+      console.log("[InterviewScreen] \u{1F9F9} Interview effect cleanup called");
       cleanupLiveSession();
     };
-  }, [settings, isAudioEnabled, userMediaStream, isChatMode, cleanupLiveSession]);
+  }, [settings, isAudioEnabled, userMediaStream, isChatMode]);
   useEffect15(() => {
     if (streamForRecorder && streamForRecorder.active) {
       if ((isVideoMode || isLiveShareMode) && videoRecordingStatus === "idle") {
@@ -5047,6 +5637,65 @@ Interviewer: ${fullOutput}`);
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatHistory]);
+  useEffect15(() => {
+    if (transcriptRef.current && !isEditingTranscript) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
+    }
+  }, [transcript, isEditingTranscript]);
+  useEffect15(() => {
+    if (!isEditingTranscript) {
+      setEditableTranscript(transcript);
+    }
+  }, [transcript, isEditingTranscript]);
+  const [mediaStatus, setMediaStatus] = useState17(null);
+  const [hasAiError, setHasAiError] = useState17(null);
+  useEffect15(() => {
+    if (!userMediaStream)
+      return;
+    const updateStatus = () => {
+      const audioTracks = userMediaStream.getAudioTracks();
+      const videoTracks = userMediaStream.getVideoTracks();
+      setMediaStatus({
+        hasAudio: audioTracks.some((track) => track.enabled && track.readyState === "live"),
+        hasVideo: videoTracks.length > 0 ? videoTracks.some((track) => track.enabled && track.readyState === "live") : void 0
+      });
+    };
+    updateStatus();
+    const tracks = userMediaStream.getTracks();
+    tracks.forEach((track) => {
+      track.addEventListener("ended", updateStatus);
+      track.addEventListener("mute", updateStatus);
+      track.addEventListener("unmute", updateStatus);
+    });
+    return () => {
+      tracks.forEach((track) => {
+        track.removeEventListener("ended", updateStatus);
+        track.removeEventListener("mute", updateStatus);
+        track.removeEventListener("unmute", updateStatus);
+      });
+    };
+  }, [userMediaStream]);
+  const handleSendCorrection = useCallback8(async () => {
+    if (!editableTranscript.trim() || !sessionPromiseRef.current) {
+      showToast("No correction to send", "error");
+      return;
+    }
+    try {
+      console.log("\u{1F4DD} [Interview] Sending transcript correction to AI...");
+      const session = await sessionPromiseRef.current;
+      const lines = editableTranscript.split("\n\n");
+      const lastCandidateResponse = lines.filter((line) => line.startsWith("Candidate:")).pop()?.replace("Candidate:", "").trim();
+      if (lastCandidateResponse) {
+        const correctionMessage = `I'd like to clarify my previous response: ${lastCandidateResponse}`;
+        showToast("Correction noted. Please speak your clarification.", "info");
+        console.log("\u2705 [Interview] Correction logged:", lastCandidateResponse);
+      }
+      setIsEditingTranscript(false);
+    } catch (error) {
+      console.error("\u274C [Interview] Error sending correction:", error);
+      showToast("Failed to send correction", "error");
+    }
+  }, [editableTranscript, showToast]);
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -5086,48 +5735,262 @@ Interviewer: ${fullOutput}`);
       ] });
     }
     return /* @__PURE__ */ jsxs14(Fragment8, { children: [
-      /* @__PURE__ */ jsx16("div", { className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(AudioVisualizer_default, { isSpeaking: isAiSpeaking, status: isAiThinking ? "Thinking..." : "Listening..." }) : /* @__PURE__ */ jsx16(VideoPanel_default, { name: "AI Interviewer", isSpeaking: isAiSpeaking, status: isAiThinking ? "Thinking..." : "Listening...", avatarNode: /* @__PURE__ */ jsx16(ImageSlider_default, { images: AI_INTERVIEWER_IMAGES }) }) }),
-      /* @__PURE__ */ jsx16("div", { className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(VideoPanel_default, { name: settings.candidateName, avatarNode: /* @__PURE__ */ jsx16(UserCircleIcon, {}), isMuted }) : isLiveShareMode ? /* @__PURE__ */ jsx16(VideoPanel_default, { name: settings.candidateName, videoRef: screenShareVideoRef, status: "Sharing Screen", isMuted }) : (
+      /* @__PURE__ */ jsx16("div", { className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(
+        AudioVisualizer_default,
+        {
+          isSpeaking: isAiSpeaking,
+          status: isAiThinking ? "Thinking..." : "Listening...",
+          hasError: !!hasAiError,
+          errorMessage: hasAiError || void 0,
+          hasAudio: mediaStatus?.hasAudio
+        }
+      ) : /* @__PURE__ */ jsx16(
+        VideoPanel_default,
+        {
+          name: "AI Interviewer",
+          isSpeaking: isAiSpeaking,
+          status: isAiThinking ? "Thinking..." : "Listening...",
+          avatarNode: /* @__PURE__ */ jsx16(ImageSlider_default, { images: AI_INTERVIEWER_IMAGES })
+        }
+      ) }),
+      /* @__PURE__ */ jsx16("div", { className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(
+        VideoPanel_default,
+        {
+          name: settings.candidateName,
+          avatarNode: /* @__PURE__ */ jsx16(UserCircleIcon, {}),
+          isMuted,
+          status: mediaStatus?.hasAudio ? "Audio Connected" : "Audio Disconnected"
+        }
+      ) : isLiveShareMode ? /* @__PURE__ */ jsx16(
+        VideoPanel_default,
+        {
+          name: settings.candidateName,
+          videoRef: screenShareVideoRef,
+          stream: screenShareStream,
+          status: mediaStatus?.hasVideo ? "Screen Sharing Active" : "Screen Share Disconnected",
+          isMuted
+        }
+      ) : (
         // Video mode
-        /* @__PURE__ */ jsx16(VideoPanel_default, { name: settings.candidateName, videoRef: cameraVideoRef, isMuted })
+        /* @__PURE__ */ jsx16(
+          VideoPanel_default,
+          {
+            name: settings.candidateName,
+            videoRef: cameraVideoRef,
+            stream: userMediaStream,
+            isMuted,
+            status: !mediaStatus ? "Connecting..." : !mediaStatus.hasVideo ? "Video Disconnected" : !mediaStatus.hasAudio ? "Audio Disconnected" : "Connected"
+          }
+        )
       ) })
     ] });
   };
-  return /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col md:flex-row h-full overflow-hidden bg-slate-900", children: [
-    /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col p-4 gap-4", children: [
-      /* @__PURE__ */ jsxs14("div", { className: "bg-slate-950/50 p-3 rounded-lg border border-slate-700 text-center flex-shrink-0", children: [
-        /* @__PURE__ */ jsx16("p", { className: "text-sm text-slate-400 mb-1", children: "Current Question:" }),
-        /* @__PURE__ */ jsx16("p", { className: "text-base font-semibold text-slate-100", children: currentQuestion })
-      ] }),
-      /* @__PURE__ */ jsx16("div", { className: "flex-1 grid grid-cols-1 md:grid-cols-2 gap-4", children: renderMainContent() }),
-      /* @__PURE__ */ jsxs14("div", { className: "flex-shrink-0 flex items-center justify-center gap-4 mt-2", children: [
-        isAudioEnabled && /* @__PURE__ */ jsx16("button", { onClick: () => setIsMuted((prev) => !prev), className: `p-3 rounded-full transition-colors ${isMuted ? "bg-red-600 hover:bg-red-500" : "bg-slate-700 hover:bg-slate-600"}`, children: isMuted ? /* @__PURE__ */ jsx16(MicOffIcon, {}) : /* @__PURE__ */ jsx16(MicOnIcon, {}) }),
-        /* @__PURE__ */ jsx16("button", { onClick: handleEndInterview, disabled: isEnding, className: "bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-wait", children: isEnding ? "Ending..." : "End Interview" }),
-        isAudioEnabled && /* @__PURE__ */ jsx16("button", { onClick: () => setIsSidePanelCollapsed((prev) => !prev), className: "p-3 rounded-full bg-slate-700 hover:bg-slate-600 transition-colors", children: /* @__PURE__ */ jsx16(SettingsIcon, {}) })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs14("div", { className: `bg-slate-800 border-l border-slate-700 flex flex-col transition-all duration-300 ${isSidePanelCollapsed ? "w-0" : "w-full md:w-80"} overflow-hidden`, children: [
-      /* @__PURE__ */ jsx16("div", { className: "p-4 border-b border-slate-700 flex-shrink-0", children: /* @__PURE__ */ jsx16("h2", { className: "text-lg font-bold text-slate-100", children: "Interview Tools" }) }),
-      /* @__PURE__ */ jsxs14("div", { className: "flex-1 overflow-y-auto p-4 space-y-4", children: [
-        /* @__PURE__ */ jsxs14("div", { className: "bg-slate-700/50 p-3 rounded-lg flex items-center justify-between", children: [
-          /* @__PURE__ */ jsxs14("span", { className: "font-semibold text-slate-200 flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx16(ClockIcon, { className: "h-5 w-5" }),
-            " Time Left"
-          ] }),
-          /* @__PURE__ */ jsx16("span", { className: "font-mono text-lg", children: formatTime(timeLeft) })
+  return /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900", children: [
+    /* @__PURE__ */ jsx16("div", { className: "bg-slate-950/90 backdrop-blur-sm border-b border-slate-700/50 px-6 py-3 flex-shrink-0", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-4", children: [
+        /* @__PURE__ */ jsxs14("div", { className: "relative bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30", children: [
+          /* @__PURE__ */ jsx16("svg", { className: "w-6 h-6 text-white", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2.5, d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }) }),
+          /* @__PURE__ */ jsx16("div", { className: "absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-950 animate-pulse" })
         ] }),
         /* @__PURE__ */ jsxs14("div", { children: [
-          /* @__PURE__ */ jsx16("label", { htmlFor: "notes", className: "block text-sm font-medium text-slate-300 mb-2", children: "My Notes" }),
+          /* @__PURE__ */ jsxs14("h1", { className: "text-xl font-bold text-white flex items-center gap-2", children: [
+            "AI Interview Session",
+            /* @__PURE__ */ jsx16("span", { className: "text-xs font-normal px-2 py-1 bg-blue-500/20 text-blue-300 rounded-full border border-blue-500/30", children: "Live" })
+          ] }),
+          /* @__PURE__ */ jsxs14("p", { className: "text-xs text-slate-400 flex items-center gap-2 mt-0.5", children: [
+            /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }) }),
+            settings.position,
+            " \u2022 ",
+            settings.difficulty,
+            " Level"
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxs14("div", { className: `flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${timeLeft < 30 ? "bg-red-900/30 border border-red-500/50" : "bg-slate-800/50 border border-slate-600"}`, children: [
+          /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-slate-300", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
+          /* @__PURE__ */ jsx16("span", { className: `font-mono text-lg font-bold ${timeLeft < 30 ? "text-red-400" : "text-slate-200"}`, children: formatTime(timeLeft) })
+        ] }),
+        isAudioEnabled && /* @__PURE__ */ jsx16(
+          "button",
+          {
+            onClick: () => setIsMuted((prev) => !prev),
+            className: `p-2.5 rounded-lg transition-all duration-200 ${isMuted ? "bg-red-600/90 hover:bg-red-500 text-white" : "bg-slate-700/50 hover:bg-slate-600/50 text-slate-300"}`,
+            title: isMuted ? "Unmute microphone" : "Mute microphone",
+            children: isMuted ? /* @__PURE__ */ jsxs14("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+              /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
+              /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
+            ] }) : /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" }) })
+          }
+        ),
+        /* @__PURE__ */ jsx16(
+          "button",
+          {
+            onClick: handleEndInterview,
+            disabled: isEnding,
+            className: "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-red-500/20 hover:shadow-red-500/40 flex items-center gap-2",
+            children: isEnding ? /* @__PURE__ */ jsxs14(Fragment8, { children: [
+              /* @__PURE__ */ jsx16("div", { className: "w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" }),
+              /* @__PURE__ */ jsx16("span", { children: "Ending..." })
+            ] }) : /* @__PURE__ */ jsxs14(Fragment8, { children: [
+              /* @__PURE__ */ jsx16("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M6 18L18 6M6 6l12 12" }) }),
+              /* @__PURE__ */ jsx16("span", { children: "End Interview" })
+            ] })
+          }
+        ),
+        /* @__PURE__ */ jsx16(
+          "button",
+          {
+            onClick: () => setIsSidePanelCollapsed((prev) => !prev),
+            className: "p-2.5 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 transition-colors text-slate-300",
+            title: "Toggle side panel",
+            children: /* @__PURE__ */ jsxs14("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+              /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" }),
+              /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z" })
+            ] })
+          }
+        )
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col md:flex-row overflow-hidden", children: [
+      /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col p-6 gap-4", children: [
+        /* @__PURE__ */ jsx16("div", { className: "bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm p-4 rounded-xl border border-blue-500/30 shadow-lg flex-shrink-0", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-start gap-3", children: [
+          /* @__PURE__ */ jsx16("div", { className: "bg-blue-500/20 p-2 rounded-lg mt-1", children: /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }) }),
+          /* @__PURE__ */ jsxs14("div", { className: "flex-1", children: [
+            /* @__PURE__ */ jsx16("p", { className: "text-xs font-semibold text-blue-300 uppercase tracking-wider mb-1", children: "Current Question" }),
+            /* @__PURE__ */ jsx16("p", { className: "text-base font-medium text-white leading-relaxed", children: currentQuestion })
+          ] })
+        ] }) }),
+        /* @__PURE__ */ jsx16("div", { className: "flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0", children: renderMainContent() }),
+        !isChatMode && /* @__PURE__ */ jsxs14("div", { className: "bg-gradient-to-br from-slate-900 to-slate-950 rounded-xl border border-slate-700/50 p-4 flex-shrink-0", style: { maxHeight: "200px" }, children: [
+          /* @__PURE__ */ jsxs14("div", { className: "flex items-center justify-between mb-3", children: [
+            /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" }) }),
+              /* @__PURE__ */ jsx16("h3", { className: "text-sm font-semibold text-slate-200", children: "Live Transcript" }),
+              /* @__PURE__ */ jsx16("span", { className: "text-xs text-slate-500", children: isEditingTranscript ? "(Editing)" : "(Real-time)" })
+            ] }),
+            /* @__PURE__ */ jsx16("div", { className: "flex items-center gap-2", children: !isEditingTranscript ? /* @__PURE__ */ jsxs14(
+              "button",
+              {
+                onClick: () => setIsEditingTranscript(true),
+                className: "text-xs px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors flex items-center gap-1",
+                title: "Edit transcript",
+                children: [
+                  /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
+                  "Edit"
+                ]
+              }
+            ) : /* @__PURE__ */ jsxs14(Fragment8, { children: [
+              /* @__PURE__ */ jsx16(
+                "button",
+                {
+                  onClick: () => {
+                    setIsEditingTranscript(false);
+                    setEditableTranscript(transcript);
+                  },
+                  className: "text-xs px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors",
+                  children: "Cancel"
+                }
+              ),
+              /* @__PURE__ */ jsxs14(
+                "button",
+                {
+                  onClick: handleSendCorrection,
+                  className: "text-xs px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center gap-1",
+                  title: "Send correction to AI",
+                  children: [
+                    /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5 13l4 4L19 7" }) }),
+                    "Apply"
+                  ]
+                }
+              )
+            ] }) })
+          ] }),
           /* @__PURE__ */ jsx16(
-            "textarea",
+            "div",
             {
-              id: "notes",
-              value: notes,
-              onChange: (e) => setNotes(e.target.value),
-              className: "w-full h-48 bg-slate-700/50 border border-slate-600 rounded-md p-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500",
-              placeholder: "Jot down your thoughts here..."
+              ref: transcriptRef,
+              className: "overflow-y-auto h-32 bg-slate-950/50 rounded-lg p-3 border border-slate-700/50",
+              children: isEditingTranscript ? /* @__PURE__ */ jsx16(
+                "textarea",
+                {
+                  value: editableTranscript,
+                  onChange: (e) => setEditableTranscript(e.target.value),
+                  className: "w-full h-full bg-transparent text-slate-300 text-sm resize-none focus:outline-none",
+                  placeholder: "Transcript will appear here as you speak..."
+                }
+              ) : /* @__PURE__ */ jsx16("div", { className: "text-slate-300 text-sm whitespace-pre-wrap font-mono leading-relaxed", children: transcript || /* @__PURE__ */ jsx16("span", { className: "text-slate-500 italic", children: "Transcript will appear here as you speak..." }) })
             }
-          )
+          ),
+          isEditingTranscript && /* @__PURE__ */ jsx16("p", { className: "text-xs text-slate-500 mt-2", children: '\u{1F4A1} Tip: Edit your response and click "Apply" to note corrections' })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs14("div", { className: `bg-slate-950/80 backdrop-blur-sm border-l border-slate-700/50 flex flex-col transition-all duration-300 ${isSidePanelCollapsed ? "w-0" : "w-full md:w-96"} overflow-hidden`, children: [
+        /* @__PURE__ */ jsx16("div", { className: "p-6 border-b border-slate-700/50 flex-shrink-0 bg-gradient-to-r from-slate-900 to-slate-800", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ jsx16("div", { className: "bg-blue-600/20 p-2 rounded-lg", children: /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" }) }) }),
+          /* @__PURE__ */ jsx16("h2", { className: "text-lg font-bold text-white", children: "Interview Tools" })
+        ] }) }),
+        /* @__PURE__ */ jsxs14("div", { className: "flex-1 overflow-y-auto p-6 space-y-6", children: [
+          /* @__PURE__ */ jsxs14("div", { className: "bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/50", children: [
+            /* @__PURE__ */ jsxs14("div", { className: "flex items-center justify-between mb-3", children: [
+              /* @__PURE__ */ jsx16("span", { className: "text-sm font-semibold text-slate-300", children: "Progress" }),
+              /* @__PURE__ */ jsxs14("span", { className: "text-xs text-slate-400", children: [
+                questions.length,
+                " questions"
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx16("div", { className: "w-full bg-slate-700/50 rounded-full h-2.5 mb-2", children: /* @__PURE__ */ jsx16(
+              "div",
+              {
+                className: "bg-gradient-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all duration-500",
+                style: { width: `${timeLeft / INTERVIEW_DURATION * 100}%` }
+              }
+            ) }),
+            /* @__PURE__ */ jsxs14("p", { className: "text-xs text-slate-400 mt-2", children: [
+              Math.round((1 - timeLeft / INTERVIEW_DURATION) * 100),
+              "% Complete"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs14("div", { className: "bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/50", children: [
+            /* @__PURE__ */ jsxs14("label", { htmlFor: "notes", className: "flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3", children: [
+              /* @__PURE__ */ jsx16("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
+              "My Notes"
+            ] }),
+            /* @__PURE__ */ jsx16(
+              "textarea",
+              {
+                id: "notes",
+                value: notes,
+                onChange: (e) => setNotes(e.target.value),
+                className: "w-full h-64 bg-slate-900/50 border border-slate-600/50 rounded-lg p-3 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent resize-none",
+                placeholder: "Jot down your thoughts, key points, or reminders here..."
+              }
+            ),
+            /* @__PURE__ */ jsxs14("p", { className: "text-xs text-slate-500 mt-2", children: [
+              notes.length,
+              " characters"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsx16("div", { className: "bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-4 rounded-xl border border-blue-500/20", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
+            /* @__PURE__ */ jsxs14("div", { children: [
+              /* @__PURE__ */ jsx16("h3", { className: "text-sm font-semibold text-blue-300 mb-2", children: "Interview Tips" }),
+              /* @__PURE__ */ jsxs14("ul", { className: "text-xs text-slate-400 space-y-1.5", children: [
+                /* @__PURE__ */ jsxs14("li", { className: "flex items-start gap-2", children: [
+                  /* @__PURE__ */ jsx16("span", { className: "text-blue-400", children: "\u2022" }),
+                  /* @__PURE__ */ jsx16("span", { children: "Speak clearly and at a steady pace" })
+                ] }),
+                /* @__PURE__ */ jsxs14("li", { className: "flex items-start gap-2", children: [
+                  /* @__PURE__ */ jsx16("span", { className: "text-blue-400", children: "\u2022" }),
+                  /* @__PURE__ */ jsx16("span", { children: "Take your time to think before answering" })
+                ] }),
+                /* @__PURE__ */ jsxs14("li", { className: "flex items-start gap-2", children: [
+                  /* @__PURE__ */ jsx16("span", { className: "text-blue-400", children: "\u2022" }),
+                  /* @__PURE__ */ jsx16("span", { children: "Use the STAR method for behavioral questions" })
+                ] })
+              ] })
+            ] })
+          ] }) })
         ] })
       ] })
     ] })
@@ -5136,7 +5999,7 @@ Interviewer: ${fullOutput}`);
 var InterviewScreen_default = InterviewScreen;
 
 // components/PlaybackScreen.tsx
-import { useState as useState17, useEffect as useEffect16 } from "react";
+import { useState as useState18, useEffect as useEffect16 } from "react";
 
 // components/FeedbackPanel.tsx
 import { jsx as jsx17, jsxs as jsxs15 } from "react/jsx-runtime";
@@ -5356,12 +6219,12 @@ var TabButton = ({ title, active, onClick }) => /* @__PURE__ */ jsx19(
   }
 );
 var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeReport, qna, mode, settings, onFinishReview, modelSettings: modelSettings2 }) => {
-  const [activeTab, setActiveTab] = useState17("report");
-  const [feedback, setFeedback] = useState17(null);
-  const [isFeedbackLoading, setIsFeedbackLoading] = useState17(false);
-  const [feedbackError, setFeedbackError] = useState17("");
-  const [loadingMessage, setLoadingMessage] = useState17("Generating AI feedback...");
-  const [mediaUrl, setMediaUrl] = useState17(null);
+  const [activeTab, setActiveTab] = useState18("report");
+  const [feedback, setFeedback] = useState18(null);
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState18(false);
+  const [feedbackError, setFeedbackError] = useState18("");
+  const [loadingMessage, setLoadingMessage] = useState18("Generating AI feedback...");
+  const [mediaUrl, setMediaUrl] = useState18(null);
   const isVideo = mode === InterviewMode.VIDEO || mode === InterviewMode.LIVE_SHARE;
   const isChat = mode === InterviewMode.CHAT;
   const hasMedia = !!mediaBlob && !isChat;
@@ -5494,12 +6357,12 @@ var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeRepor
 var PlaybackScreen_default = PlaybackScreen;
 
 // components/HistoryScreen.tsx
-import { useState as useState18, useEffect as useEffect17, useMemo as useMemo6 } from "react";
+import { useState as useState19, useEffect as useEffect17, useMemo as useMemo6 } from "react";
 import { Fragment as Fragment9, jsx as jsx20, jsxs as jsxs18 } from "react/jsx-runtime";
 var CommentsPanel = ({ interviewId, currentUser }) => {
-  const [comments, setComments] = useState18([]);
-  const [newComment, setNewComment] = useState18("");
-  const [isLoading, setIsLoading] = useState18(false);
+  const [comments, setComments] = useState19([]);
+  const [newComment, setNewComment] = useState19("");
+  const [isLoading, setIsLoading] = useState19(false);
   useEffect17(() => {
     const fetchComments = async () => {
       const fetchedComments = await getCommentsForInterview(interviewId);
@@ -5580,10 +6443,10 @@ var transformReportToFeedbackData = (report) => {
   };
 };
 var DetailView = ({ item, currentUser, onBack }) => {
-  const [report, setReport] = useState18(null);
-  const [isLoadingReport, setIsLoadingReport] = useState18(true);
-  const [reconstructedTranscript, setReconstructedTranscript] = useState18(null);
-  const [isLoadingTranscript, setIsLoadingTranscript] = useState18(true);
+  const [report, setReport] = useState19(null);
+  const [isLoadingReport, setIsLoadingReport] = useState19(true);
+  const [reconstructedTranscript, setReconstructedTranscript] = useState19(null);
+  const [isLoadingTranscript, setIsLoadingTranscript] = useState19(true);
   const { showToast } = useToast();
   const feedbackDataForPanel = useMemo6(() => transformReportToFeedbackData(report), [report]);
   useEffect17(() => {
@@ -5728,10 +6591,10 @@ var HistoryCard = ({ item, onViewReport, onDownload, isDownloading }) => {
   ] });
 };
 var HistoryScreen = ({ currentUser, onBackToHome }) => {
-  const [history, setHistory] = useState18([]);
-  const [isLoading, setIsLoading] = useState18(true);
-  const [selectedInterview, setSelectedInterview] = useState18(null);
-  const [downloadingId, setDownloadingId] = useState18(null);
+  const [history, setHistory] = useState19([]);
+  const [isLoading, setIsLoading] = useState19(true);
+  const [selectedInterview, setSelectedInterview] = useState19(null);
+  const [downloadingId, setDownloadingId] = useState19(null);
   const { showToast } = useToast();
   useEffect17(() => {
     const fetchHistory = async () => {
@@ -6274,18 +7137,18 @@ var OrderSuccessScreen = ({ onBackToHome }) => {
 var OrderSuccessScreen_default = OrderSuccessScreen;
 
 // components/ContactScreen.tsx
-import { useState as useState20 } from "react";
+import { useState as useState21 } from "react";
 import { jsx as jsx28, jsxs as jsxs26 } from "react/jsx-runtime";
 var ContactScreen = ({ onBackToHome }) => {
-  const [formData, setFormData] = useState20({
+  const [formData, setFormData] = useState21({
     name: "",
     email: "",
     subject: "",
     message: ""
   });
-  const [errors, setErrors] = useState20({});
-  const [isSubmitting, setIsSubmitting] = useState20(false);
-  const [isSubmitted, setIsSubmitted] = useState20(false);
+  const [errors, setErrors] = useState21({});
+  const [isSubmitting, setIsSubmitting] = useState21(false);
+  const [isSubmitted, setIsSubmitted] = useState21(false);
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
@@ -6555,11 +7418,11 @@ var modelSettings = {
   questionGeneration: "gemini-2.5-flash"
 };
 var App = () => {
-  const [currentUser, setCurrentUser] = useState21(null);
-  const [activeInterviewId, setActiveInterviewId] = useState21(null);
-  const [interviewSettings, setInterviewSettings] = useState21(null);
-  const [interviewResult, setInterviewResult] = useState21(null);
-  const [selectedPlan, setSelectedPlan] = useState21(null);
+  const [currentUser, setCurrentUser] = useState22(null);
+  const [activeInterviewId, setActiveInterviewId] = useState22(null);
+  const [interviewSettings, setInterviewSettings] = useState22(null);
+  const [interviewResult, setInterviewResult] = useState22(null);
+  const [selectedPlan, setSelectedPlan] = useState22(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();

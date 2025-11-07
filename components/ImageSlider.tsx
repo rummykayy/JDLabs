@@ -27,15 +27,15 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, interval = 5000 }) =>
       {images.map((image, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === currentIndex ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          aria-hidden={index === currentIndex ? 'false' : 'true'}
         >
-            <img
-                src={image}
-                alt={`Feature image ${index + 1}`}
-                className="w-full h-full object-cover ken-burns"
-            />
+          <img
+            src={image}
+            alt={`Feature image ${index + 1}`}
+            className="block w-full h-full object-cover ken-burns"
+          />
         </div>
       ))}
     </div>

@@ -1,0 +1,17 @@
+{
+  "name": "JD Labs - AI Interview Platform",
+  "short_name": "JD Labs",
+  "description": "AI-powered interview platform for modern hiring",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/JDLabsLogo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

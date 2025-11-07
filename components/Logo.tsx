@@ -2,7 +2,7 @@ import React from 'react';
 
 const Logo: React.FC = () => (
   <div className="flex items-center gap-2" aria-label="JD Labs Logo">
-    <img src="https://storage.googleapis.com/jdlabs_images/images/JDLabsLogo.jpg" alt="JD Labs Logo Icon" className="h-12 w-22 " />    
+    <img src="https://storage.googleapis.com/jdlabs_images/images/JDLabsLogo.jpg" alt="JD Labs Logo Icon" className="h-12 w-auto" />
   </div>
 );
 

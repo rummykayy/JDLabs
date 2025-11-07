@@ -6,7 +6,7 @@ console.log("Loaded SUPABASE_URL:", process.env.SUPABASE_URL);
 const esbuild = require('esbuild');
 
 // List of required environment variables for the application to function.
-const requiredEnv = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'API_KEY'];
+const requiredEnv = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'API_KEY', 'GOOGLE_API_KEY'];
 
 // Validate that all required environment variables are set.
 // If any are missing, log an error and exit the build process to prevent a faulty build.
@@ -22,7 +22,8 @@ for (const envVar of requiredEnv) {
 const define = {
   'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
   'process.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY),
-  'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
+  'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
+  'process.env.GOOGLE_API_KEY': JSON.stringify(process.env.GOOGLE_API_KEY)
 };
 
 // Execute the esbuild build process.
@@ -32,7 +33,7 @@ esbuild.build({
   outfile: 'public/index.js',
   jsx: 'automatic',
   format: 'esm',
-  external: ['react', 'react-dom/client', '@google/genai', '@supabase/supabase-js'],
+  external: ['react', 'react-dom/client', '@google/genai', '@google/generative-ai', '@supabase/supabase-js'],
   define,
 }).catch((err) => {
   console.error("Build failed:", err);

@@ -1,8 +1,11 @@
 import React from 'react';
 
 interface AudioVisualizerProps {
-  isSpeaking?: boolean;
-  status?: string;
+    isSpeaking?: boolean;
+    status?: string;
+    hasError?: boolean;
+    hasAudio?: boolean;
+    errorMessage?: string;
 }
 
 /**
@@ -12,12 +15,12 @@ interface AudioVisualizerProps {
  * - When speaking, it shows an active, scrolling ECG-like waveform.
  * This is achieved using SVG path animations within a circular clip path.
  */
-const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isSpeaking, status }) => {
+const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isSpeaking, status, hasError, hasAudio, errorMessage }) => {
     // A single, repeating ECG-like "beat" pattern
     const ecgBeat = "l 15 0 l 5 -10 l 10 25 l 5 -30 l 5 15 l 20 0"; // Total width: 60 units
     // A long path composed of multiple beats to allow for smooth scrolling animation
     const speakingWave = `M -200 100 ${ecgBeat.repeat(10)}`;
-    
+
     // Path definitions for a calm, gently pulsing wave for the idle state
     const idleWave = "M -200 100 C -150 100, -150 100, -100 100 C -50 100, -50 100, 0 100 C 50 100, 50 100, 100 100 C 150 100, 150 100, 200 100 C 250 100, 250 100, 300 100";
     const idleWavePulse1 = "M -200 100 C -150 103, -150 103, -100 100 C -50 97, -50 97, 0 100 C 50 103, 50 103, 100 100 C 150 97, 150 97, 200 100 C 250 103, 250 103, 300 100";
@@ -31,22 +34,51 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isSpeaking, status })
                         <circle cx="100" cy="100" r="80" />
                     </clipPath>
                     <filter id="glow-effect" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-                      <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
                     </filter>
                 </defs>
 
                 {/* Outer decorative circle */}
-                <circle cx="100" cy="100" r="80" fill="transparent" stroke="rgba(79, 128, 255, 0.2)" strokeWidth="1.5" />
-                
+                <circle
+                    cx="100"
+                    cy="100"
+                    r="80"
+                    fill="transparent"
+                    stroke={hasError ? "rgba(239, 68, 68, 0.3)" : "rgba(79, 128, 255, 0.2)"}
+                    strokeWidth="1.5"
+                    className={hasError ? "animate-pulse" : ""}
+                />
+
                 {/* Inner grid-like circles for a high-tech look */}
-                <circle cx="100" cy="100" r="60" fill="transparent" stroke="rgba(79, 128, 255, 0.1)" strokeWidth="1" />
-                <circle cx="100" cy="100" r="40" fill="transparent" stroke="rgba(79, 128, 255, 0.1)" strokeWidth="1" />
-                <circle cx="100" cy="100" r="20" fill="transparent" stroke="rgba(79, 128, 255, 0.1)" strokeWidth="1" />
-                
+                <circle
+                    cx="100"
+                    cy="100"
+                    r="60"
+                    fill="transparent"
+                    stroke={hasError ? "rgba(239, 68, 68, 0.2)" : "rgba(79, 128, 255, 0.1)"}
+                    strokeWidth="1"
+                />
+                <circle
+                    cx="100"
+                    cy="100"
+                    r="40"
+                    fill="transparent"
+                    stroke={hasError ? "rgba(239, 68, 68, 0.2)" : "rgba(79, 128, 255, 0.1)"}
+                    strokeWidth="1"
+                />
+                <circle
+                    cx="100"
+                    cy="100"
+                    r="20"
+                    fill="transparent"
+                    stroke={hasError ? "rgba(239, 68, 68, 0.2)" : "rgba(79, 128, 255, 0.1)"}
+                    strokeWidth="1"
+                />
+
                 {/* The animated signal line, clipped to the circle's boundary */}
                 <g clipPath="url(#circle-clip)">
                     <path
@@ -67,7 +99,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isSpeaking, status })
                                 repeatCount="indefinite"
                             />
                         ) : (
-                           <animate
+                            <animate
                                 attributeName="d"
                                 dur="4s"
                                 repeatCount="indefinite"
@@ -78,17 +110,42 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ isSpeaking, status })
                 </g>
             </svg>
 
-            {/* Existing UI for status text and speaking indicator */}
+            {/* Status Indicators */}
+            <div className="absolute top-3 right-3 flex gap-2">
+                {hasAudio !== undefined && (
+                    <div
+                        className={`h-2 w-2 rounded-full ${hasAudio ? 'bg-green-500' : 'bg-red-500'}`}
+                        title={`Audio ${hasAudio ? 'connected' : 'disconnected'}`}
+                    />
+                )}
+            </div>
+
+            {/* Error Overlay */}
+            {hasError && errorMessage && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <div className="bg-red-900/50 px-4 py-3 rounded-lg text-center backdrop-blur-sm">
+                        <p className="text-red-200 text-sm">{errorMessage}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Status Bar */}
             <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">AI Interviewer</span>
                 </div>
-                {status && <span className="text-xs text-slate-400">{status}</span>}
+                {status && (
+                    <span className={`text-xs ${hasError ? 'text-red-400' : 'text-slate-400'}`}>
+                        {status}
+                    </span>
+                )}
             </div>
-             {isSpeaking && (
+
+            {/* Speaking Indicator */}
+            {isSpeaking && (
                 <div className="absolute top-3 left-3 flex items-center justify-center" aria-label="AI is speaking" role="status">
-                <div className="absolute h-4 w-4 rounded-full bg-blue-400 opacity-75 animate-ping"></div>
-                <div className="relative h-3 w-3 rounded-full bg-blue-500"></div>
+                    <div className="absolute h-4 w-4 rounded-full bg-blue-400 opacity-75 animate-ping"></div>
+                    <div className="relative h-3 w-3 rounded-full bg-blue-500"></div>
                 </div>
             )}
         </div>
