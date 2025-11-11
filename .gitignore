@@ -34,3 +34,4 @@ run-migration*
 *.njsproj
 *.sln
 *.sw?
+.env
