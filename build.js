@@ -26,16 +26,29 @@ const define = {
   'process.env.GOOGLE_API_KEY': JSON.stringify(process.env.GOOGLE_API_KEY)
 };
 
-// Execute the esbuild build process.
-esbuild.build({
-  entryPoints: ['index.tsx'],
-  bundle: true,
-  outfile: 'public/index.js',
-  jsx: 'automatic',
-  format: 'esm',
-  external: ['react', 'react-dom/client', '@google/genai', '@google/generative-ai', '@supabase/supabase-js'],
-  define,
-}).catch((err) => {
+// Build both frontend and backend
+Promise.all([
+  // Frontend build
+  esbuild.build({
+    entryPoints: ['index.tsx'],
+    bundle: true,
+    outfile: 'public/index.js',
+    jsx: 'automatic',
+    format: 'esm',
+    external: ['react', 'react-dom/client', '@google/genai', '@google/generative-ai', '@supabase/supabase-js'],
+    define,
+  }),
+
+  // Backend TypeScript build
+  esbuild.build({
+    entryPoints: ['services/aiSocketServer.ts'],
+    bundle: true,
+    platform: 'node',
+    outfile: 'dist/services/aiSocketServer.js',
+    format: 'cjs',
+    external: ['ws', '@google/genai', '@google/generative-ai'],
+  })
+]).catch((err) => {
   console.error("Build failed:", err);
   process.exit(1);
 });

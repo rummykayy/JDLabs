@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="AI-powered interview platform for modern hiring" />
+  <link rel="icon" href="/JDLabsLogo.jpg" />
+  <link rel="apple-touch-icon" href="/JDLabsLogo.jpg" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <title>JD Labs - AI Interview Platform</title>
+
+  <!-- Preload key assets with correct attributes -->
+  <link rel="preload" href="https://storage.googleapis.com/jdlabs_images/images/c0001.jpg" as="image" type="image/jpeg">
+  <link rel="preload" href="https://storage.googleapis.com/jdlabs_images/images/a0001.jpg" as="image" type="image/jpeg">
+  <link rel="preload" href="https://storage.googleapis.com/jdlabs_images/images/b0001.jpg" as="image" type="image/jpeg">
+
+  <!-- Preconnect to key domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Import main CSS with Tailwind -->
+  <link rel="stylesheet" href="/styles/main.css" type="text/css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/generative-ai": "/node_modules/@google/generative-ai/dist/index.js",
+    "react": "/node_modules/react/index.js",
+    "react-dom": "/node_modules/react-dom/index.js",
+    "react-dom/client": "/node_modules/react-dom/client.js",
+    "@supabase/supabase-js": "/node_modules/@supabase/supabase-js/dist/index.js",
+    "react-router-dom": "/node_modules/react-router-dom/dist/index.js"
+  }
+}
+</script>
+</head>
+
+<body class="bg-slate-900 text-white">
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script type="module" src="/main.tsx"></script>
+</body>
+
+</html>

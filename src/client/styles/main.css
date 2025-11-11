@@ -1,0 +1,41 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+@keyframes scroll-up {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-50%);
+    }
+}
+
+.animate-scroll-up {
+    animation: scroll-up 120s linear infinite;
+}
+
+.animate-scroll-up:hover {
+    animation-play-state: paused;
+}
+
+.ken-burns {
+    animation: ken-burns 20s ease-in-out infinite alternate;
+    transform-origin: center center;
+}
+
+@keyframes ken-burns {
+    0% {
+        transform: scale(1) translate(0, 0);
+    }
+
+    100% {
+        transform: scale(1.1) translate(2%, -2%);
+    }
+}

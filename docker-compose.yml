@@ -1,0 +1,74 @@
+services:
+  # Ollama - Local LLM (Large Language Model)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: jdlabs-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - jdlabs-network
+
+  # Whisper - Speech-to-Text (ASR)
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: jdlabs-whisper
+    ports:
+      - "9000:9000"
+    environment:
+      - ASR_MODEL=base.en
+      - ASR_ENGINE=openai_whisper
+    volumes:
+      - whisper_data:/root/.cache/whisper
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - jdlabs-network
+
+  # Piper - Text-to-Speech (TTS)
+  # Using custom image with piper binary pre-installed
+  piper:
+    build:
+      context: .
+      dockerfile: Dockerfile.piper
+    container_name: jdlabs-piper
+    ports:
+      - "10200:10200"
+    volumes:
+      - piper_models:/data/models
+    healthcheck:
+      test: ["CMD", "test", "-f", "/data/piper/piper"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - jdlabs-network
+
+volumes:
+  ollama_data:
+    driver: local
+  whisper_data:
+    driver: local
+  piper_models:
+    driver: local
+
+networks:
+  jdlabs-network:
+    driver: bridge

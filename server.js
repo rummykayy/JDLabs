@@ -1,19 +1,64 @@
-const express = require('express');
-const path = require('path');
+import dotenv from 'dotenv';
+import express from 'express';
+import { createServer } from 'http';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { AISocketServer } from './dist/server/server/services/aiSocketServer.js';
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;  // Fixed port 3000
+const port = process.env.PORT || 5000;
 
-// Serve static files from the 'public' directory.
-// This is crucial for serving robots.txt, sitemap.xml, images, etc.
-app.use(express.static(path.join(__dirname, 'public')));
+// Add CORS and security headers
+app.use((req, res, next) => {
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',');
+  const origin = req.headers.origin;
 
-// For any other request, serve the index.html file.
-// This is the fallback for Single-Page Application (SPA) routing.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // Allow only specified origins
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  // Security headers
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Sec-WebSocket-Protocol');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.header('X-Content-Type-Options', 'nosniff');
+  res.header('X-Frame-Options', 'SAMEORIGIN');
+  res.header('X-XSS-Protection', '1; mode=block');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+
+  next();
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// Serve static files
+// In production, serve the built client files from dist/client
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('dist/client'));
+} else {
+  // In development, serve public directory
+  app.use(express.static('public'));
+}
+
+// Create HTTP Server
+const server = createServer(app);
+
+// Initialize WebSocket AI Server
+new AISocketServer(server);
+
+// Start server
+server.listen(port, () => {
+  console.log(`🚀 JD Labs AI Interview backend running on port ${port}`);
 });

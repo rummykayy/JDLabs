@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JD Labs API Test</title>
+</head>
+
+<body>
+    <h1>JD Labs API Test</h1>
+    <div id="status"></div>
+    <script>
+        const ws = new WebSocket('ws://localhost:5000/ai/interview');
+        const status = document.getElementById('status');
+
+        ws.onopen = () => {
+            status.textContent = 'Connected to WebSocket';
+            // Send a test message
+            ws.send(JSON.stringify({
+                type: 'text',
+                content: 'Hello'
+            }));
+        };
+
+        ws.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            status.textContent = `Received: ${JSON.stringify(response)}`;
+        };
+
+        ws.onerror = (error) => {
+            status.textContent = `Error: ${error.message}`;
+        };
+
+        ws.onclose = () => {
+            status.textContent = 'WebSocket closed';
+        };
+    </script>
+</body>
+
+</html>

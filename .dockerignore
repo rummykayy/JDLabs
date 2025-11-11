@@ -1,0 +1,75 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Development files
+.env
+.env.local
+.env.*.local
+*.log
+
+# Version control
+.git/
+.gitignore
+.github/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+coverage/
+.nyc_output/
+*.test.ts
+*.test.js
+__tests__/
+test/
+tests/
+
+# Documentation
+*.md
+docs/
+README.md
+
+# Scripts (except production scripts)
+scripts/start-local-ai.sh
+scripts/start-local-ai.ps1
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Development config
+tsconfig.json
+tsconfig.*.json
+vite.config.ts
+tailwind.config.mjs
+postcss.config.mjs
+
+# Source maps
+*.map

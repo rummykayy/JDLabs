@@ -8,7 +8,21 @@
       "Bash(dir /B *test*.js check*.js run*.js 2)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(npm run build:client:*)",
+      "Bash(test:*)",
+      "Bash(Get-FileHash \"C:\\Users\\karthik\\Downloads\\JDLabs\\JDLabs-main\\src\\server\\services\\geminiLiveManager.ts\")",
+      "Bash(Select-Object Hash)",
+      "Bash(npm run build:server:*)",
+      "Bash(dir:*)",
+      "Bash(docker logs:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command \"docker exec jdlabs-piper ls -la /data/\")",
+      "Bash(powershell -Command \"docker exec jdlabs-piper ls -la /data/piper/\")",
+      "Bash(powershell -Command \"Stop-Process -Name node -Force\")",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker exec:*)"
     ],
     "deny": [],
     "ask": []

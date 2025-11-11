@@ -3,30 +3,60 @@
   "version": "1.0.0",
   "description": "AI Interview Platform Server",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "build": "node build.js",
+    "start": "node --experimental-specifier-resolution=node server.js",
+    "dev": "vite --host",
+    "dev:server": "tsc -p tsconfig.server.json --watch",
+    "dev:local": "cross-env AI_BACKEND=local npm start",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "tsc -p tsconfig.client.json && vite build",
+    "build:server": "tsc -p tsconfig.server.json",
+    "preview": "vite preview",
     "seed": "node scripts/populate-database.js",
-    "verify": "node tests/verify-database.js"
+    "verify": "node tests/verify-database.js",
+    "ai:start": "docker-compose up -d",
+    "ai:stop": "docker-compose down",
+    "ai:logs": "docker-compose logs -f",
+    "ai:setup": "node scripts/start-local-ai.ps1"
   },
   "dependencies": {
-    "@google/genai": "^1.28.0",
+    "@google/genai": "^1.29.0",
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.43.4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/uuid": "^10.0.0",
+    "cross-env": "^7.0.3",
     "dotenv": "^17.2.3",
     "express": "^4.19.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.9.5"
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "uuid": "^13.0.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.28.5",
     "@playwright/test": "^1.56.1",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.1.0",
+    "autoprefixer": "^10.4.16",
     "esbuild": "^0.20.2",
     "playwright": "^1.56.1",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^7.1.12",
+    "vitest": "^4.0.8"
+  },
+  "peerDependencies": {
+    "@types/react": "^19.2.2",
+    "react-router-dom": "^7.9.5"
   }
 }

@@ -1319,8 +1319,8 @@ function isModifiedEvent(event) {
 }
 function shouldProcessLinkClick(event, target) {
   return event.button === 0 && // Ignore everything but left clicks
-  (!target || target === "_self") && // Let browser handle "target=_blank" etc.
-  !isModifiedEvent(event);
+    (!target || target === "_self") && // Let browser handle "target=_blank" etc.
+    !isModifiedEvent(event);
 }
 var _formDataSupportsSubmitter = null;
 function isFormDataSubmitterSupported() {
@@ -1444,7 +1444,7 @@ async function loadRouteModule(route, routeModulesCache) {
     );
     console.error(error);
     if (window.__reactRouterContext && window.__reactRouterContext.isSpaMode && // @ts-expect-error
-    import.meta.hot) {
+      import.meta.hot) {
       throw error;
     }
     window.location.reload();
@@ -1798,7 +1798,7 @@ var isBrowser = typeof window !== "undefined" && typeof window.document !== "und
 try {
   if (isBrowser) {
     window.__reactRouterVersion = // @ts-expect-error
-    "7.9.5";
+      "7.9.5";
   }
 } catch (e) {
 }
@@ -1921,17 +1921,17 @@ var Link = React10.forwardRef(
     let link = (
       // eslint-disable-next-line jsx-a11y/anchor-has-content
       /* @__PURE__ */ React10.createElement(
-        "a",
-        {
-          ...rest,
-          ...prefetchHandlers,
-          href: absoluteHref || href,
-          onClick: isExternal || reloadDocument ? onClick : handleClick,
-          ref: mergeRefs(forwardedRef, prefetchRef),
-          target,
-          "data-discover": !isAbsolute && discover === "render" ? "true" : void 0
-        }
-      )
+      "a",
+      {
+        ...rest,
+        ...prefetchHandlers,
+        href: absoluteHref || href,
+        onClick: isExternal || reloadDocument ? onClick : handleClick,
+        ref: mergeRefs(forwardedRef, prefetchRef),
+        target,
+        "data-discover": !isAbsolute && discover === "render" ? "true" : void 0
+      }
+    )
     );
     return shouldPrefetch && !isAbsolute ? /* @__PURE__ */ React10.createElement(React10.Fragment, null, link, /* @__PURE__ */ React10.createElement(PrefetchPageLinks, { page: href })) : link;
   }
@@ -1954,8 +1954,8 @@ var NavLink = React10.forwardRef(
     let routerState = React10.useContext(DataRouterStateContext);
     let { navigator: navigator2, basename } = React10.useContext(NavigationContext);
     let isTransitioning = routerState != null && // Conditional usage is OK here because the usage of a data router is static
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useViewTransitionState(path) && viewTransition === true;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useViewTransitionState(path) && viewTransition === true;
     let toPathname = navigator2.encodeLocation ? navigator2.encodeLocation(path).pathname : path.pathname;
     let locationPathname = location.pathname;
     let nextLocationPathname = routerState && routerState.navigation && routerState.navigation.location ? routerState.navigation.location.pathname : null;
@@ -2384,7 +2384,7 @@ function useViewTransitionState(to, { relative } = {}) {
 }
 
 // App.tsx
-import { useState as useState22, useEffect as useEffect18, useCallback as useCallback9 } from "react";
+import { useState as useState23, useEffect as useEffect19, useCallback as useCallback9 } from "react";
 
 // supabaseService.ts
 import { createClient } from "@supabase/supabase-js";
@@ -2966,23 +2966,30 @@ var ToastComponent = ({ toast, onClose }) => {
                 ${isExiting ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}
             `,
       children: [
-        /* @__PURE__ */ jsx("div", { className: "p-4", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start", children: [
+        /* @__PURE__ */ jsx("div", {
+        className: "p-4", children: /* @__PURE__ */ jsxs("div", {
+          className: "flex items-start", children: [
           /* @__PURE__ */ jsx("div", { className: `flex-shrink-0 ${typeClasses[toast.type]}`, children: config.icon }),
           /* @__PURE__ */ jsx("div", { className: "ml-3 w-0 flex-1 pt-0.5", children: /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-slate-200", children: toast.message }) }),
-          /* @__PURE__ */ jsx("div", { className: "ml-4 flex flex-shrink-0", children: /* @__PURE__ */ jsxs(
-            "button",
-            {
-              onClick: handleClose,
-              className: "inline-flex rounded-md bg-slate-800 text-slate-400 hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-800",
-              children: [
+          /* @__PURE__ */ jsx("div", {
+            className: "ml-4 flex flex-shrink-0", children: /* @__PURE__ */ jsxs(
+              "button",
+              {
+                onClick: handleClose,
+                className: "inline-flex rounded-md bg-slate-800 text-slate-400 hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-800",
+                children: [
                 /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Close" }),
                 /* @__PURE__ */ jsx("svg", { className: "h-5 w-5", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", "aria-hidden": "true", children: /* @__PURE__ */ jsx("path", { d: "M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" }) })
-              ]
-            }
-          ) })
-        ] }) }),
+                ]
+              }
+            )
+          })
+          ]
+        })
+      }),
         /* @__PURE__ */ jsx("div", { className: `absolute bottom-0 left-0 h-1 ${config.barClass} animate-progress` }),
-        /* @__PURE__ */ jsx("style", { children: `
+        /* @__PURE__ */ jsx("style", {
+        children: `
                 @keyframes progress {
                     from { width: 100%; }
                     to { width: 0%; }
@@ -3004,24 +3011,28 @@ var ToastProvider = ({ children }) => {
   const removeToast = (id) => {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   };
-  return /* @__PURE__ */ jsxs(ToastContext.Provider, { value: { showToast }, children: [
-    children,
+  return /* @__PURE__ */ jsxs(ToastContext.Provider, {
+    value: { showToast }, children: [
+      children,
     /* @__PURE__ */ jsx(
-      "div",
-      {
-        "aria-live": "assertive",
-        className: "pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50",
-        children: /* @__PURE__ */ jsx("div", { className: "flex w-full flex-col items-center space-y-4 sm:items-end", children: toasts.map((toast) => /* @__PURE__ */ jsx(
-          ToastComponent,
-          {
-            toast,
-            onClose: () => removeToast(toast.id)
-          },
-          toast.id
-        )) })
-      }
-    )
-  ] });
+        "div",
+        {
+          "aria-live": "assertive",
+          className: "pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50",
+          children: /* @__PURE__ */ jsx("div", {
+            className: "flex w-full flex-col items-center space-y-4 sm:items-end", children: toasts.map((toast) => /* @__PURE__ */ jsx(
+              ToastComponent,
+              {
+                toast,
+                onClose: () => removeToast(toast.id)
+              },
+              toast.id
+            ))
+          })
+        }
+      )
+    ]
+  });
 };
 var useToast = () => {
   const context = useContext6(ToastContext);
@@ -3076,65 +3087,93 @@ var Header = ({ currentUser, onLogout }) => {
       setIsShareOpen(false);
     });
   };
-  return /* @__PURE__ */ jsxs2("header", { className: "sticky top-0 z-30 w-full bg-slate-900/70 backdrop-blur-md border-b border-slate-700", children: [
-    /* @__PURE__ */ jsx3("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8", children: /* @__PURE__ */ jsxs2("div", { className: "relative flex items-center justify-between h-16", children: [
+  return /* @__PURE__ */ jsxs2("header", {
+    className: "sticky top-0 z-30 w-full bg-slate-900/70 backdrop-blur-md border-b border-slate-700", children: [
+    /* @__PURE__ */ jsx3("div", {
+      className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8", children: /* @__PURE__ */ jsxs2("div", {
+        className: "relative flex items-center justify-between h-16", children: [
       /* @__PURE__ */ jsx3("div", { className: "flex items-center", children: /* @__PURE__ */ jsx3(NavLink, { to: "/", className: "flex-shrink-0", children: /* @__PURE__ */ jsx3(Logo_default, {}) }) }),
-      /* @__PURE__ */ jsxs2("nav", { className: "hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-2", children: [
-        navItems.map((item) => /* @__PURE__ */ jsx3(NavLink, { to: item.path, className: navLinkClasses, children: item.name }, item.name)),
-        currentUser && /* @__PURE__ */ jsx3(NavLink, { to: "/history", className: navLinkClasses, children: "History" })
-      ] }),
-      /* @__PURE__ */ jsxs2("div", { className: "flex items-center gap-3", children: [
-        currentUser ? /* @__PURE__ */ jsxs2("div", { className: "flex items-center gap-4", children: [
-          /* @__PURE__ */ jsxs2("span", { className: "text-slate-300 hidden sm:inline", children: [
-            "Welcome, ",
-            currentUser.name
-          ] }),
+      /* @__PURE__ */ jsxs2("nav", {
+          className: "hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-2", children: [
+            navItems.map((item) => /* @__PURE__ */ jsx3(NavLink, { to: item.path, className: navLinkClasses, children: item.name }, item.name)),
+            currentUser && /* @__PURE__ */ jsx3(NavLink, { to: "/history", className: navLinkClasses, children: "History" })
+          ]
+        }),
+      /* @__PURE__ */ jsxs2("div", {
+          className: "flex items-center gap-3", children: [
+            currentUser ? /* @__PURE__ */ jsxs2("div", {
+              className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ jsxs2("span", {
+                className: "text-slate-300 hidden sm:inline", children: [
+                  "Welcome, ",
+                  currentUser.name
+                ]
+              }),
           /* @__PURE__ */ jsx3(
-            "button",
-            {
-              onClick: onLogout,
-              className: "bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-2 px-4 rounded-md transition-colors text-sm",
-              children: "Logout"
-            }
-          )
-        ] }) : /* @__PURE__ */ jsxs2("div", { className: "hidden md:flex items-center gap-3", children: [
+                "button",
+                {
+                  onClick: onLogout,
+                  className: "bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-2 px-4 rounded-md transition-colors text-sm",
+                  children: "Logout"
+                }
+              )
+              ]
+            }) : /* @__PURE__ */ jsxs2("div", {
+              className: "hidden md:flex items-center gap-3", children: [
           /* @__PURE__ */ jsx3(
-            NavLink,
-            {
-              to: "/register",
-              className: "bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-sm text-sm",
-              children: "Register"
-            }
-          ),
+                NavLink,
+                {
+                  to: "/register",
+                  className: "bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-sm text-sm",
+                  children: "Register"
+                }
+              ),
           /* @__PURE__ */ jsx3(
-            NavLink,
-            {
-              to: "/login",
-              className: "bg-transparent hover:bg-slate-800 text-slate-200 font-medium py-2 px-4 rounded-md transition-colors border border-slate-600 text-sm",
-              children: "Login"
-            }
-          )
-        ] }),
+                NavLink,
+                {
+                  to: "/login",
+                  className: "bg-transparent hover:bg-slate-800 text-slate-200 font-medium py-2 px-4 rounded-md transition-colors border border-slate-600 text-sm",
+                  children: "Login"
+                }
+              )
+              ]
+            }),
         /* @__PURE__ */ jsx3("div", { className: "md:hidden", children: /* @__PURE__ */ jsx3("button", { onClick: () => setIsMobileMenuOpen(true), className: "text-slate-300 hover:text-white", children: /* @__PURE__ */ jsx3("svg", { className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx3("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 6h16M4 12h16m-7 6h7" }) }) }) })
-      ] })
-    ] }) }),
-    isMobileMenuOpen && /* @__PURE__ */ jsxs2("div", { className: "fixed inset-0 z-50 bg-slate-900 md:hidden animate-fade-in", children: [
+          ]
+        })
+        ]
+      })
+    }),
+      isMobileMenuOpen && /* @__PURE__ */ jsxs2("div", {
+        className: "fixed inset-0 z-50 bg-slate-900 md:hidden animate-fade-in", children: [
       /* @__PURE__ */ jsx3("div", { className: "absolute top-0 right-0 p-4", children: /* @__PURE__ */ jsx3("button", { onClick: () => setIsMobileMenuOpen(false), className: "text-slate-400 hover:text-white", "aria-label": "Close menu", children: /* @__PURE__ */ jsx3("svg", { className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx3("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M6 18L18 6M6 6l12 12" }) }) }) }),
-      /* @__PURE__ */ jsxs2("div", { className: "flex flex-col items-center justify-center h-full", children: [
-        /* @__PURE__ */ jsxs2("nav", { className: "flex flex-col items-center gap-6", children: [
-          navItems.map((item) => /* @__PURE__ */ jsx3(NavLink, { to: item.path, onClick: () => setIsMobileMenuOpen(false), className: "text-2xl font-semibold text-slate-200 hover:text-blue-400 transition-colors", children: item.name }, item.name)),
-          currentUser && /* @__PURE__ */ jsx3(NavLink, { to: "/history", onClick: () => setIsMobileMenuOpen(false), className: "text-2xl font-semibold text-slate-200 hover:text-blue-400 transition-colors", children: "History" })
-        ] }),
-        /* @__PURE__ */ jsx3("div", { className: "mt-12 pt-8 border-t border-slate-700 w-full max-w-xs flex flex-col items-center gap-4", children: currentUser ? /* @__PURE__ */ jsx3("button", { onClick: () => {
-          onLogout();
-          setIsMobileMenuOpen(false);
-        }, className: "w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-3 px-6 rounded-md transition-colors text-lg", children: "Logout" }) : /* @__PURE__ */ jsxs2(Fragment7, { children: [
+      /* @__PURE__ */ jsxs2("div", {
+          className: "flex flex-col items-center justify-center h-full", children: [
+        /* @__PURE__ */ jsxs2("nav", {
+            className: "flex flex-col items-center gap-6", children: [
+              navItems.map((item) => /* @__PURE__ */ jsx3(NavLink, { to: item.path, onClick: () => setIsMobileMenuOpen(false), className: "text-2xl font-semibold text-slate-200 hover:text-blue-400 transition-colors", children: item.name }, item.name)),
+              currentUser && /* @__PURE__ */ jsx3(NavLink, { to: "/history", onClick: () => setIsMobileMenuOpen(false), className: "text-2xl font-semibold text-slate-200 hover:text-blue-400 transition-colors", children: "History" })
+            ]
+          }),
+        /* @__PURE__ */ jsx3("div", {
+            className: "mt-12 pt-8 border-t border-slate-700 w-full max-w-xs flex flex-col items-center gap-4", children: currentUser ? /* @__PURE__ */ jsx3("button", {
+              onClick: () => {
+                onLogout();
+                setIsMobileMenuOpen(false);
+              }, className: "w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-3 px-6 rounded-md transition-colors text-lg", children: "Logout"
+            }) : /* @__PURE__ */ jsxs2(Fragment7, {
+              children: [
           /* @__PURE__ */ jsx3(NavLink, { to: "/register", onClick: () => setIsMobileMenuOpen(false), className: "w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-6 rounded-md transition-all", children: "Register" }),
           /* @__PURE__ */ jsx3(NavLink, { to: "/login", onClick: () => setIsMobileMenuOpen(false), className: "w-full text-center bg-transparent hover:bg-slate-800 text-slate-200 font-medium py-3 px-6 rounded-md transition-colors border border-slate-600", children: "Login" })
-        ] }) })
-      ] })
-    ] })
-  ] });
+              ]
+            })
+          })
+          ]
+        })
+        ]
+      })
+    ]
+  });
 };
 var Header_default = Header;
 
@@ -3143,39 +3182,47 @@ import React14 from "react";
 import { jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
 var Footer = React14.forwardRef(({ onNavigate }, ref) => {
   const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
-  return /* @__PURE__ */ jsx4("footer", { ref, className: "w-full bg-slate-900 border-t border-slate-700 py-6 px-4 sm:px-6 lg:px-8", children: /* @__PURE__ */ jsxs3("div", { className: "flex flex-wrap items-center justify-between gap-4", children: [
-    /* @__PURE__ */ jsxs3("p", { className: "text-sm text-slate-400", children: [
-      "\xA9 ",
-      currentYear,
-      " JD Labs. All rights reserved."
-    ] }),
-    /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-6", children: [
+  return /* @__PURE__ */ jsx4("footer", {
+    ref, className: "w-full bg-slate-900 border-t border-slate-700 py-6 px-4 sm:px-6 lg:px-8", children: /* @__PURE__ */ jsxs3("div", {
+      className: "flex flex-wrap items-center justify-between gap-4", children: [
+    /* @__PURE__ */ jsxs3("p", {
+        className: "text-sm text-slate-400", children: [
+          "\xA9 ",
+          currentYear,
+          " JD Labs. All rights reserved."
+        ]
+      }),
+    /* @__PURE__ */ jsxs3("div", {
+        className: "flex items-center gap-6", children: [
       /* @__PURE__ */ jsx4(
-        "a",
-        {
-          href: "/terms",
-          onClick: (e) => {
-            e.preventDefault();
-            onNavigate("terms");
-          },
-          className: "text-sm text-slate-400 hover:text-slate-200 transition-colors",
-          children: "Terms & Conditions"
-        }
-      ),
+          "a",
+          {
+            href: "/terms",
+            onClick: (e) => {
+              e.preventDefault();
+              onNavigate("terms");
+            },
+            className: "text-sm text-slate-400 hover:text-slate-200 transition-colors",
+            children: "Terms & Conditions"
+          }
+        ),
       /* @__PURE__ */ jsx4(
-        "a",
-        {
-          href: "/privacy",
-          onClick: (e) => {
-            e.preventDefault();
-            onNavigate("privacy");
-          },
-          className: "text-sm text-slate-400 hover:text-slate-200 transition-colors",
-          children: "Privacy Policy"
-        }
-      )
-    ] })
-  ] }) });
+          "a",
+          {
+            href: "/privacy",
+            onClick: (e) => {
+              e.preventDefault();
+              onNavigate("privacy");
+            },
+            className: "text-sm text-slate-400 hover:text-slate-200 transition-colors",
+            children: "Privacy Policy"
+          }
+        )
+        ]
+      })
+      ]
+    })
+  });
 });
 var Footer_default = Footer;
 
@@ -3183,27 +3230,85 @@ var Footer_default = Footer;
 import { useState as useState9, useRef as useRef7, useEffect as useEffect9 } from "react";
 
 // services/aiService.ts
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
+
+// services/aiConfig.ts
+import { GoogleGenAI } from "@google/genai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-var createGeminiChatSession = (model, systemInstruction) => {
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
-  const chat = ai.chats.create({
-    model,
-    config: { systemInstruction }
-  });
-  return {
-    sendMessage: async (message) => {
-      const result = await chat.sendMessage({ message });
-      return result.text;
+var ORIGIN = "http://localhost:3000";
+var API_BASE = "generativelanguage.googleapis.com";
+var API_CONFIG = {
+  headers: {
+    "Referer": ORIGIN,
+    "Origin": ORIGIN,
+    "Host": API_BASE
+  },
+  origin: ORIGIN
+};
+var createGenAI = () => {
+  const createWebSocketUrl = (path) => {
+    const url = new URL(`wss://${API_BASE}${path}`);
+    url.searchParams.set("origin", encodeURIComponent(ORIGIN));
+    return url.toString();
+  };
+  const config = {
+    apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA",
+    options: {
+      headers: API_CONFIG.headers,
+      webSocket: {
+        // Override WebSocket creation
+        create: (url) => {
+          const wsUrl = url.includes("/ws/") ? createWebSocketUrl(new URL(url).pathname) : url;
+          const ws = new WebSocket(wsUrl);
+          ws.addEventListener("open", () => {
+            if (ws.url.includes(API_BASE)) {
+              ws._headers = {
+                ...API_CONFIG.headers,
+                "Sec-WebSocket-Protocol": "gemini-api"
+              };
+            }
+          });
+          return ws;
+        }
+      },
+      fetch: (url, init) => {
+        const headers = {
+          ...init.headers,
+          ...API_CONFIG.headers
+        };
+        return fetch(url, { ...init, headers });
+      }
     }
   };
+  return new GoogleGenAI(config);
 };
-var createChatSession = ({ model, systemInstruction }) => {
-  return createGeminiChatSession(model, systemInstruction);
+var createGenerativeAI = () => {
+  const genAI2 = new GoogleGenerativeAI("AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA");
+  const model = genAI2.getGenerativeModel({ model: "gemini-pro" });
+  model.model = {
+    ...model.model,
+    createWebSocket: (url) => {
+      const wsUrl = new URL(url);
+      wsUrl.protocol = "wss:";
+      wsUrl.host = API_BASE;
+      wsUrl.searchParams.set("origin", encodeURIComponent(ORIGIN));
+      const ws = new WebSocket(wsUrl.toString());
+      ws.addEventListener("open", () => {
+        ws._headers = {
+          ...API_CONFIG.headers,
+          "Sec-WebSocket-Protocol": "gemini-api"
+        };
+      });
+      return ws;
+    }
+  };
+  return genAI2;
 };
+
+// services/aiService.ts
 var extractTextFromUrl = async ({ model, url }) => {
   const prompt = `Please extract the full, clean text of the main job description from the following URL. Respond with only the job description text, with no introductory or concluding phrases like "Here is the job description". URL: ${url}`;
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
+  const ai = createGenAI();
   const response = await ai.models.generateContent({ model, contents: prompt });
   return response.text.trim();
 };
@@ -3261,7 +3366,7 @@ Evaluate the candidate and provide:
 6. At least 2 areas for improvement
 
 Return as structured JSON.`;
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
+  const ai = createGenAI();
   const response = await ai.models.generateContent({
     model,
     contents: prompt,
@@ -3278,7 +3383,7 @@ Return as structured JSON.`;
     throw new Error("Could not generate or parse interview feedback.");
   }
 };
-var genAI = new GoogleGenerativeAI("AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA");
+var genAI = createGenerativeAI();
 console.log("\u2705 AI Service initialized with multi-stage interview support (Gemini 2.0)");
 
 // types.ts
@@ -3316,14 +3421,20 @@ var DocumentDuplicateIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M15.75 17.
 var VideoCameraIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9A2.25 2.25 0 004.5 18.75z", className: "h-6 w-6" });
 var ChatBubbleIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.76 9.76 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.455.097-.91.03-1.362A9.954 9.954 0 013 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z", className: "h-6 w-6" });
 var TargetIcon = () => /* @__PURE__ */ jsx5(SvgIcon, { d: "M8.25 12a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0z M12 21a9 9 0 100-18 9 9 0 000 18z", className: "h-6 w-6" });
-var GoogleIcon = () => /* @__PURE__ */ jsxs4("svg", { className: "h-6 w-6", viewBox: "0 0 48 48", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [
+var GoogleIcon = () => /* @__PURE__ */ jsxs4("svg", {
+  className: "h-6 w-6", viewBox: "0 0 48 48", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [
   /* @__PURE__ */ jsx5("path", { d: "M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z", fill: "#4285F4" }),
   /* @__PURE__ */ jsx5("path", { d: "M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z", fill: "url(#paint0_linear_1_1)" }),
-  /* @__PURE__ */ jsx5("defs", { children: /* @__PURE__ */ jsxs4("linearGradient", { id: "paint0_linear_1_1", x1: "24", y1: "2", x2: "24", y2: "46", gradientUnits: "userSpaceOnUse", children: [
+  /* @__PURE__ */ jsx5("defs", {
+    children: /* @__PURE__ */ jsxs4("linearGradient", {
+      id: "paint0_linear_1_1", x1: "24", y1: "2", x2: "24", y2: "46", gradientUnits: "userSpaceOnUse", children: [
     /* @__PURE__ */ jsx5("stop", { stopColor: "#4285F4" }),
     /* @__PURE__ */ jsx5("stop", { offset: "1", stopColor: "#34A853" })
-  ] }) })
-] });
+      ]
+    })
+  })
+  ]
+});
 var TRENDING_JOBS_DATA = [
   {
     id: "sample-1",
@@ -3416,11 +3527,13 @@ var PLANS = [
 // components/JobCarousel.tsx
 import { useState as useState7, useEffect as useEffect7, useRef as useRef6, useCallback as useCallback5 } from "react";
 import { jsx as jsx6, jsxs as jsxs5 } from "react/jsx-runtime";
-var JobCard = ({ job, onSelect }) => /* @__PURE__ */ jsxs5("div", { className: "bg-slate-800/80 backdrop-blur-sm p-5 rounded-lg border border-slate-700 flex flex-col h-full hover:border-blue-500 transition-all duration-300 group transform hover:-translate-y-1", children: [
+var JobCard = ({ job, onSelect }) => /* @__PURE__ */ jsxs5("div", {
+  className: "bg-slate-800/80 backdrop-blur-sm p-5 rounded-lg border border-slate-700 flex flex-col h-full hover:border-blue-500 transition-all duration-300 group transform hover:-translate-y-1", children: [
   /* @__PURE__ */ jsx6("h3", { className: "font-bold text-lg text-slate-100 group-hover:text-blue-400 transition-colors", children: job.title }),
   /* @__PURE__ */ jsx6("p", { className: "text-sm text-slate-400 mt-2 flex-grow", children: job.description }),
   /* @__PURE__ */ jsx6("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx6("button", { onClick: onSelect, className: "bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors shadow-sm", children: "Select" }) })
-] });
+  ]
+});
 var JobCarousel = ({ jobs, onSelect }) => {
   const [currentIndex, setCurrentIndex] = useState7(0);
   const [itemsToShow, setItemsToShow] = useState7(3);
@@ -3468,32 +3581,34 @@ var JobCarousel = ({ jobs, onSelect }) => {
         timeoutRef.current = setTimeout(goNext, 5e3);
       },
       children: [
-        /* @__PURE__ */ jsx6("div", { className: "overflow-hidden", ref: containerRef, children: /* @__PURE__ */ jsx6(
+        /* @__PURE__ */ jsx6("div", {
+        className: "overflow-hidden", ref: containerRef, children: /* @__PURE__ */ jsx6(
           "div",
           {
             className: "flex transition-transform duration-500 ease-in-out",
             style: { transform: `translateX(-${currentIndex * 100 / itemsToShow}%)` },
             children: jobs.map((job) => /* @__PURE__ */ jsx6("div", { className: "p-2", style: { flex: `0 0 ${100 / itemsToShow}%` }, children: /* @__PURE__ */ jsx6(JobCard, { job, onSelect: () => onSelect(job) }) }, job.id))
           }
-        ) }),
-        /* @__PURE__ */ jsx6(
-          "button",
-          {
-            onClick: goPrev,
-            className: "absolute top-1/2 -left-4 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600 rounded-full p-2 z-10 transition-opacity opacity-0 group-hover:opacity-100",
-            "aria-label": "Previous Job",
-            children: /* @__PURE__ */ jsx6("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx6("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15 19l-7-7 7-7" }) })
-          }
-        ),
-        /* @__PURE__ */ jsx6(
-          "button",
-          {
-            onClick: goNext,
-            className: "absolute top-1/2 -right-4 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600 rounded-full p-2 z-10 transition-opacity opacity-0 group-hover:opacity-100",
-            "aria-label": "Next Job",
-            children: /* @__PURE__ */ jsx6("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx6("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 5l7 7-7 7" }) })
-          }
         )
+      }),
+        /* @__PURE__ */ jsx6(
+        "button",
+        {
+          onClick: goPrev,
+          className: "absolute top-1/2 -left-4 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600 rounded-full p-2 z-10 transition-opacity opacity-0 group-hover:opacity-100",
+          "aria-label": "Previous Job",
+          children: /* @__PURE__ */ jsx6("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx6("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15 19l-7-7 7-7" }) })
+        }
+      ),
+        /* @__PURE__ */ jsx6(
+        "button",
+        {
+          onClick: goNext,
+          className: "absolute top-1/2 -right-4 -translate-y-1/2 bg-slate-700/50 hover:bg-slate-600 rounded-full p-2 z-10 transition-opacity opacity-0 group-hover:opacity-100",
+          "aria-label": "Next Job",
+          children: /* @__PURE__ */ jsx6("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx6("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 5l7 7-7 7" }) })
+        }
+      )
       ]
     }
   );
@@ -3504,26 +3619,34 @@ var JobCarousel_default = JobCarousel;
 import { jsx as jsx7, jsxs as jsxs6 } from "react/jsx-runtime";
 var FeatureCard = ({ icon, title, children, media, reverseLayout = false }) => {
   const layoutClasses = `flex flex-col ${reverseLayout ? "md:flex-row-reverse" : "md:flex-row"} gap-8 lg:gap-12 items-center`;
-  return /* @__PURE__ */ jsxs6("div", { className: layoutClasses, children: [
+  return /* @__PURE__ */ jsxs6("div", {
+    className: layoutClasses, children: [
     /* @__PURE__ */ jsx7("div", { className: "w-full md:w-1/2 flex-shrink-0", children: media }),
-    /* @__PURE__ */ jsxs6("div", { className: "w-full md:w-1/2", children: [
-      /* @__PURE__ */ jsxs6("div", { className: "flex items-center gap-4 mb-4", children: [
+    /* @__PURE__ */ jsxs6("div", {
+      className: "w-full md:w-1/2", children: [
+      /* @__PURE__ */ jsxs6("div", {
+        className: "flex items-center gap-4 mb-4", children: [
         /* @__PURE__ */ jsx7("div", { className: "flex-shrink-0 h-12 w-12 bg-slate-800 text-blue-400 rounded-lg flex items-center justify-center border border-slate-700", children: icon }),
         /* @__PURE__ */ jsx7("h3", { className: "text-2xl lg:text-3xl font-bold text-slate-100", children: title })
-      ] }),
+        ]
+      }),
       /* @__PURE__ */ jsx7("div", { className: "text-slate-400 space-y-3 text-base lg:text-lg leading-relaxed", children })
-    ] })
-  ] });
+      ]
+    })
+    ]
+  });
 };
 var FeatureCard_default = FeatureCard;
 
 // components/MediaContainer.tsx
 import { jsx as jsx8, jsxs as jsxs7 } from "react/jsx-runtime";
 var MediaContainer = ({ children }) => {
-  return /* @__PURE__ */ jsxs7("div", { className: "relative group aspect-video bg-slate-900 rounded-lg overflow-hidden border-2 border-slate-700 transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/20", children: [
-    children,
+  return /* @__PURE__ */ jsxs7("div", {
+    className: "relative group aspect-video bg-slate-900 rounded-lg overflow-hidden border-2 border-slate-700 transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/20", children: [
+      children,
     /* @__PURE__ */ jsx8("div", { className: "absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-all duration-300 pointer-events-none" })
-  ] });
+    ]
+  });
 };
 var MediaContainer_default = MediaContainer;
 
@@ -3543,22 +3666,24 @@ var ImageSlider = ({ images, interval = 5e3 }) => {
   if (!images || images.length === 0) {
     return /* @__PURE__ */ jsx9("div", { className: "w-full h-full flex items-center justify-center text-slate-500", children: "No Image" });
   }
-  return /* @__PURE__ */ jsx9("div", { className: "relative w-full h-full overflow-hidden", children: images.map((image, index) => /* @__PURE__ */ jsx9(
-    "div",
-    {
-      className: `absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-100" : "opacity-0"}`,
-      "aria-hidden": index === currentIndex ? "false" : "true",
-      children: /* @__PURE__ */ jsx9(
-        "img",
-        {
-          src: image,
-          alt: `Feature image ${index + 1}`,
-          className: "block w-full h-full object-cover ken-burns"
-        }
-      )
-    },
-    index
-  )) });
+  return /* @__PURE__ */ jsx9("div", {
+    className: "relative w-full h-full overflow-hidden", children: images.map((image, index) => /* @__PURE__ */ jsx9(
+      "div",
+      {
+        className: `absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-100" : "opacity-0"}`,
+        "aria-hidden": index === currentIndex ? "false" : "true",
+        children: /* @__PURE__ */ jsx9(
+          "img",
+          {
+            src: image,
+            alt: `Feature image ${index + 1}`,
+            className: "block w-full h-full object-cover ken-burns"
+          }
+        )
+      },
+      index
+    ))
+  });
 };
 var ImageSlider_default = ImageSlider;
 
@@ -3570,18 +3695,26 @@ var AudioVisualizer = ({ isSpeaking, status, hasError, hasAudio, errorMessage })
   const idleWave = "M -200 100 C -150 100, -150 100, -100 100 C -50 100, -50 100, 0 100 C 50 100, 50 100, 100 100 C 150 100, 150 100, 200 100 C 250 100, 250 100, 300 100";
   const idleWavePulse1 = "M -200 100 C -150 103, -150 103, -100 100 C -50 97, -50 97, 0 100 C 50 103, 50 103, 100 100 C 150 97, 150 97, 200 100 C 250 103, 250 103, 300 100";
   const idleWavePulse2 = "M -200 100 C -150 97, -150 97, -100 100 C -50 103, -50 103, 0 100 C 50 97, 50 97, 100 100 C 150 103, 150 103, 200 100 C 250 97, 250 97, 300 100";
-  return /* @__PURE__ */ jsxs8("div", { className: "relative w-full h-full bg-slate-950 rounded-lg overflow-hidden aspect-video transition-colors duration-300 flex items-center justify-center p-4", children: [
-    /* @__PURE__ */ jsxs8("svg", { width: "100%", height: "100%", viewBox: "0 0 200 200", children: [
-      /* @__PURE__ */ jsxs8("defs", { children: [
+  return /* @__PURE__ */ jsxs8("div", {
+    className: "relative w-full h-full bg-slate-950 rounded-lg overflow-hidden aspect-video transition-colors duration-300 flex items-center justify-center p-4", children: [
+    /* @__PURE__ */ jsxs8("svg", {
+      width: "100%", height: "100%", viewBox: "0 0 200 200", children: [
+      /* @__PURE__ */ jsxs8("defs", {
+        children: [
         /* @__PURE__ */ jsx10("clipPath", { id: "circle-clip", children: /* @__PURE__ */ jsx10("circle", { cx: "100", cy: "100", r: "80" }) }),
-        /* @__PURE__ */ jsxs8("filter", { id: "glow-effect", x: "-50%", y: "-50%", width: "200%", height: "200%", children: [
+        /* @__PURE__ */ jsxs8("filter", {
+          id: "glow-effect", x: "-50%", y: "-50%", width: "200%", height: "200%", children: [
           /* @__PURE__ */ jsx10("feGaussianBlur", { in: "SourceGraphic", stdDeviation: "2", result: "blur" }),
-          /* @__PURE__ */ jsxs8("feMerge", { children: [
+          /* @__PURE__ */ jsxs8("feMerge", {
+            children: [
             /* @__PURE__ */ jsx10("feMergeNode", { in: "blur" }),
             /* @__PURE__ */ jsx10("feMergeNode", { in: "SourceGraphic" })
-          ] })
-        ] })
-      ] }),
+            ]
+          })
+          ]
+        })
+        ]
+      }),
       /* @__PURE__ */ jsx10(
         "circle",
         {
@@ -3627,68 +3760,84 @@ var AudioVisualizer = ({ isSpeaking, status, hasError, hasAudio, errorMessage })
           strokeWidth: "1"
         }
       ),
-      /* @__PURE__ */ jsx10("g", { clipPath: "url(#circle-clip)", children: /* @__PURE__ */ jsx10(
-        "path",
+      /* @__PURE__ */ jsx10("g", {
+        clipPath: "url(#circle-clip)", children: /* @__PURE__ */ jsx10(
+          "path",
+          {
+            d: isSpeaking ? speakingWave : idleWave,
+            fill: "none",
+            stroke: "#4F80FF",
+            strokeWidth: "2",
+            strokeLinecap: "round",
+            filter: "url(#glow-effect)",
+            children: isSpeaking ? /* @__PURE__ */ jsx10(
+              "animateTransform",
+              {
+                attributeName: "transform",
+                type: "translate",
+                from: "0, 0",
+                to: "-60, 0",
+                dur: "0.8s",
+                repeatCount: "indefinite"
+              }
+            ) : /* @__PURE__ */ jsx10(
+              "animate",
+              {
+                attributeName: "d",
+                dur: "4s",
+                repeatCount: "indefinite",
+                values: `${idleWave};${idleWavePulse1};${idleWavePulse2};${idleWave}`
+              }
+            )
+          }
+        )
+      })
+      ]
+    }),
+    /* @__PURE__ */ jsx10("div", {
+      className: "absolute top-3 right-3 flex gap-2", children: hasAudio !== void 0 && /* @__PURE__ */ jsx10(
+        "div",
         {
-          d: isSpeaking ? speakingWave : idleWave,
-          fill: "none",
-          stroke: "#4F80FF",
-          strokeWidth: "2",
-          strokeLinecap: "round",
-          filter: "url(#glow-effect)",
-          children: isSpeaking ? /* @__PURE__ */ jsx10(
-            "animateTransform",
-            {
-              attributeName: "transform",
-              type: "translate",
-              from: "0, 0",
-              to: "-60, 0",
-              dur: "0.8s",
-              repeatCount: "indefinite"
-            }
-          ) : /* @__PURE__ */ jsx10(
-            "animate",
-            {
-              attributeName: "d",
-              dur: "4s",
-              repeatCount: "indefinite",
-              values: `${idleWave};${idleWavePulse1};${idleWavePulse2};${idleWave}`
-            }
-          )
+          className: `h-2 w-2 rounded-full ${hasAudio ? "bg-green-500" : "bg-red-500"}`,
+          title: `Audio ${hasAudio ? "connected" : "disconnected"}`
         }
-      ) })
-    ] }),
-    /* @__PURE__ */ jsx10("div", { className: "absolute top-3 right-3 flex gap-2", children: hasAudio !== void 0 && /* @__PURE__ */ jsx10(
-      "div",
-      {
-        className: `h-2 w-2 rounded-full ${hasAudio ? "bg-green-500" : "bg-red-500"}`,
-        title: `Audio ${hasAudio ? "connected" : "disconnected"}`
-      }
-    ) }),
-    hasError && errorMessage && /* @__PURE__ */ jsx10("div", { className: "absolute inset-0 flex items-center justify-center z-10", children: /* @__PURE__ */ jsx10("div", { className: "bg-red-900/50 px-4 py-3 rounded-lg text-center backdrop-blur-sm", children: /* @__PURE__ */ jsx10("p", { className: "text-red-200 text-sm", children: errorMessage }) }) }),
-    /* @__PURE__ */ jsxs8("div", { className: "absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent", children: [
+      )
+    }),
+      hasError && errorMessage && /* @__PURE__ */ jsx10("div", { className: "absolute inset-0 flex items-center justify-center z-10", children: /* @__PURE__ */ jsx10("div", { className: "bg-red-900/50 px-4 py-3 rounded-lg text-center backdrop-blur-sm", children: /* @__PURE__ */ jsx10("p", { className: "text-red-200 text-sm", children: errorMessage }) }) }),
+    /* @__PURE__ */ jsxs8("div", {
+        className: "absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent", children: [
       /* @__PURE__ */ jsx10("div", { className: "flex items-center justify-between", children: /* @__PURE__ */ jsx10("span", { className: "text-sm font-medium", children: "AI Interviewer" }) }),
-      status && /* @__PURE__ */ jsx10("span", { className: `text-xs ${hasError ? "text-red-400" : "text-slate-400"}`, children: status })
-    ] }),
-    isSpeaking && /* @__PURE__ */ jsxs8("div", { className: "absolute top-3 left-3 flex items-center justify-center", "aria-label": "AI is speaking", role: "status", children: [
+          status && /* @__PURE__ */ jsx10("span", { className: `text-xs ${hasError ? "text-red-400" : "text-slate-400"}`, children: status })
+        ]
+      }),
+      isSpeaking && /* @__PURE__ */ jsxs8("div", {
+        className: "absolute top-3 left-3 flex items-center justify-center", "aria-label": "AI is speaking", role: "status", children: [
       /* @__PURE__ */ jsx10("div", { className: "absolute h-4 w-4 rounded-full bg-blue-400 opacity-75 animate-ping" }),
       /* @__PURE__ */ jsx10("div", { className: "relative h-3 w-3 rounded-full bg-blue-500" })
-    ] })
-  ] });
+        ]
+      })
+    ]
+  });
 };
 var AudioVisualizer_default = AudioVisualizer;
 
 // components/FeaturePlaceholders.tsx
 import { jsx as jsx11, jsxs as jsxs9 } from "react/jsx-runtime";
-var ChatInterviewPlaceholder = () => /* @__PURE__ */ jsxs9("div", { className: "w-full h-full p-4 flex flex-col gap-2 overflow-hidden", children: [
+var ChatInterviewPlaceholder = () => /* @__PURE__ */ jsxs9("div", {
+  className: "w-full h-full p-4 flex flex-col gap-2 overflow-hidden", children: [
   /* @__PURE__ */ jsx11("div", { className: "p-2 rounded-lg bg-slate-700 self-start max-w-[70%] animate-fade-in-chat", style: { animationDelay: "0.5s" }, children: /* @__PURE__ */ jsx11("p", { className: "text-xs text-slate-300", children: "Tell me about a challenging project you've worked on." }) }),
   /* @__PURE__ */ jsx11("div", { className: "p-2 rounded-lg bg-blue-600 self-end max-w-[70%] animate-fade-in-chat", style: { animationDelay: "2s" }, children: /* @__PURE__ */ jsx11("p", { className: "text-xs text-white", children: "Sure! In my previous role, I was tasked with..." }) }),
-  /* @__PURE__ */ jsx11("div", { className: "p-2 rounded-lg bg-slate-700 self-start max-w-[70%] animate-fade-in-chat", style: { animationDelay: "3.5s" }, children: /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-1", children: [
+  /* @__PURE__ */ jsx11("div", {
+    className: "p-2 rounded-lg bg-slate-700 self-start max-w-[70%] animate-fade-in-chat", style: { animationDelay: "3.5s" }, children: /* @__PURE__ */ jsxs9("div", {
+      className: "flex items-center gap-1", children: [
     /* @__PURE__ */ jsx11("span", { className: "w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce", style: { animationDelay: "0s" } }),
     /* @__PURE__ */ jsx11("span", { className: "w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce", style: { animationDelay: "0.2s" } }),
     /* @__PURE__ */ jsx11("span", { className: "w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce", style: { animationDelay: "0.4s" } })
-  ] }) }),
-  /* @__PURE__ */ jsx11("style", { children: `
+      ]
+    })
+  }),
+  /* @__PURE__ */ jsx11("style", {
+    children: `
           @keyframes fade-in-chat {
               from { opacity: 0; transform: translateY(10px); }
               to { opacity: 1; transform: translateY(0); }
@@ -3698,7 +3847,8 @@ var ChatInterviewPlaceholder = () => /* @__PURE__ */ jsxs9("div", { className: "
               opacity: 0;
           }
       ` })
-] });
+  ]
+});
 
 // constants/media.ts
 var IMAGE_BASE_URL = "https://storage.googleapis.com/jdlabs_images/images";
@@ -3750,10 +3900,12 @@ var ModeButton = ({ modeName, description, tag, tagClass, activeMode, setMode })
     onClick: () => setMode(modeName),
     className: `w-full text-left p-3 rounded-lg border-2 transition-all duration-200 ${activeMode === modeName ? "bg-blue-500/20 border-blue-500" : "bg-slate-700/50 border-slate-600 hover:border-slate-500"}`,
     children: [
-      /* @__PURE__ */ jsxs10("div", { className: "flex justify-between items-center", children: [
+      /* @__PURE__ */ jsxs10("div", {
+      className: "flex justify-between items-center", children: [
         /* @__PURE__ */ jsx12("span", { className: "font-semibold text-slate-200 text-sm", children: modeName }),
         /* @__PURE__ */ jsx12("span", { className: `text-xs font-bold px-1.5 py-0.5 rounded-full ${tagClass}`, children: tag })
-      ] }),
+      ]
+    }),
       /* @__PURE__ */ jsx12("p", { className: "text-xs text-slate-400 mt-1", children: description })
     ]
   }
@@ -3854,95 +4006,148 @@ var SetupScreen = ({ onStartInterview, modelSettings: modelSettings2, currentUse
       model
     });
   };
-  return /* @__PURE__ */ jsxs10("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-black", children: [
-    /* @__PURE__ */ jsx12("div", { className: "text-center mb-6 animate-fade-in-down", children: /* @__PURE__ */ jsxs10("div", { className: "inline-block bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-full py-1.5 px-4 text-sm text-slate-300", children: [
-      "\u2728 ",
+  return /* @__PURE__ */ jsxs10("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-black", children: [
+    /* @__PURE__ */ jsx12("div", {
+      className: "text-center mb-6 animate-fade-in-down", children: /* @__PURE__ */ jsxs10("div", {
+        className: "inline-block bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-full py-1.5 px-4 text-sm text-slate-300", children: [
+          "\u2728 ",
       /* @__PURE__ */ jsx12("span", { className: "font-semibold text-blue-400", children: "New Feature:" }),
-      " Now with Live Screen Sharing for technical interviews!"
-    ] }) }),
-    /* @__PURE__ */ jsxs10("div", { className: "w-full max-w-5xl mx-auto z-10 text-center pt-2 pb-8 md:pt-0 md:pb-12", children: [
+          " Now with Live Screen Sharing for technical interviews!"
+        ]
+      })
+    }),
+    /* @__PURE__ */ jsxs10("div", {
+      className: "w-full max-w-5xl mx-auto z-10 text-center pt-2 pb-8 md:pt-0 md:pb-12", children: [
       /* @__PURE__ */ jsx12("h1", { className: "text-4xl md:text-5xl font-bold text-slate-100 animate-fade-in-down", style: { animationDelay: "0.2s" }, children: "AI Interview Platform" }),
       /* @__PURE__ */ jsx12("p", { className: "mt-4 text-lg text-slate-300 max-w-2xl mx-auto animate-fade-in-down", style: { animationDelay: "0.4s" }, children: "Streamline hiring with AI-powered video, live, audio and chat interviews" })
-    ] }),
-    /* @__PURE__ */ jsxs10("div", { className: "w-full max-w-5xl mx-auto mb-8 md:mb-12 animate-fade-in-up", style: { animationDelay: "0.6s" }, children: [
+      ]
+    }),
+    /* @__PURE__ */ jsxs10("div", {
+      className: "w-full max-w-5xl mx-auto mb-8 md:mb-12 animate-fade-in-up", style: { animationDelay: "0.6s" }, children: [
       /* @__PURE__ */ jsx12("h2", { className: "text-2xl font-semibold text-center mb-4", children: carouselTitle }),
       /* @__PURE__ */ jsx12(JobCarousel_default, { jobs: displayJobs, onSelect: handleSelectJob })
-    ] }),
-    /* @__PURE__ */ jsx12("div", { className: "w-full max-w-5xl mx-auto", children: /* @__PURE__ */ jsxs10("form", { ref: formRef, onSubmit: handleSubmit, className: "bg-slate-800/50 backdrop-blur-md p-6 sm:p-8 rounded-2xl shadow-2xl shadow-black/20 border border-slate-700 transition-colors duration-300 ease-out hover:border-blue-500/50 animate-fade-in-up", style: { animationDelay: "0.8s" }, children: [
-      /* @__PURE__ */ jsxs10("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-8", children: [
-        /* @__PURE__ */ jsxs10("div", { className: "space-y-6", children: [
-          /* @__PURE__ */ jsxs10("div", { children: [
-            /* @__PURE__ */ jsxs10("label", { htmlFor: "jobDescription", className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-2", children: [
+      ]
+    }),
+    /* @__PURE__ */ jsx12("div", {
+      className: "w-full max-w-5xl mx-auto", children: /* @__PURE__ */ jsxs10("form", {
+        ref: formRef, onSubmit: handleSubmit, className: "bg-slate-800/50 backdrop-blur-md p-6 sm:p-8 rounded-2xl shadow-2xl shadow-black/20 border border-slate-700 transition-colors duration-300 ease-out hover:border-blue-500/50 animate-fade-in-up", style: { animationDelay: "0.8s" }, children: [
+      /* @__PURE__ */ jsxs10("div", {
+          className: "grid grid-cols-1 lg:grid-cols-2 gap-8", children: [
+        /* @__PURE__ */ jsxs10("div", {
+            className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs10("div", {
+              children: [
+            /* @__PURE__ */ jsxs10("label", {
+                htmlFor: "jobDescription", className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-2", children: [
               /* @__PURE__ */ jsx12("span", { className: "text-blue-400", children: /* @__PURE__ */ jsx12(PencilIcon, {}) }),
-              "Job Description (JD)"
-            ] }),
+                  "Job Description (JD)"
+                ]
+              }),
             /* @__PURE__ */ jsx12("textarea", { id: "jobDescription", value: jobDescription, onChange: (e) => setJobDescription(e.target.value), rows: 8, className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder: "Paste the job description here...", required: true }),
-            /* @__PURE__ */ jsxs10("div", { className: "flex gap-2 mt-2", children: [
+            /* @__PURE__ */ jsxs10("div", {
+                className: "flex gap-2 mt-2", children: [
               /* @__PURE__ */ jsx12("input", { type: "url", value: jdUrl, onChange: (e) => setJdUrl(e.target.value), placeholder: "...or provide a link to it", className: "flex-1 bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500" }),
               /* @__PURE__ */ jsx12("button", { type: "button", onClick: handleFetchJd, disabled: isFetchingJd, className: "bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-wait disabled:shadow-none", children: isFetchingJd ? "..." : "Fetch" })
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs10("div", { className: "relative flex items-center", children: [
+                ]
+              })
+              ]
+            }),
+          /* @__PURE__ */ jsxs10("div", {
+              className: "relative flex items-center", children: [
             /* @__PURE__ */ jsx12("div", { className: "flex-grow border-t border-slate-600" }),
             /* @__PURE__ */ jsx12("span", { className: "flex-shrink mx-4 text-slate-500 text-xs font-semibold", children: "OR" }),
             /* @__PURE__ */ jsx12("div", { className: "flex-grow border-t border-slate-600" })
-          ] }),
-          /* @__PURE__ */ jsxs10("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-6", children: [
-            /* @__PURE__ */ jsxs10("div", { children: [
-              /* @__PURE__ */ jsxs10("label", { htmlFor: "position", className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-2", children: [
+              ]
+            }),
+          /* @__PURE__ */ jsxs10("div", {
+              className: "grid grid-cols-1 sm:grid-cols-2 gap-6", children: [
+            /* @__PURE__ */ jsxs10("div", {
+                children: [
+              /* @__PURE__ */ jsxs10("label", {
+                  htmlFor: "position", className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-2", children: [
                 /* @__PURE__ */ jsx12("span", { className: "text-blue-400", children: /* @__PURE__ */ jsx12(BriefcaseIcon, {}) }),
-                "Select Job"
-              ] }),
+                    "Select Job"
+                  ]
+                }),
               /* @__PURE__ */ jsx12("select", { id: "position", value: selectedJobId, onChange: (e) => handleJobChange(e.target.value), className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2.5 px-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500", disabled: displayJobs.length === 0, children: displayJobs.length > 0 ? displayJobs.map((j) => /* @__PURE__ */ jsx12("option", { value: j.id, children: j.title }, j.id)) : /* @__PURE__ */ jsx12("option", { children: "No jobs found" }) })
-            ] }),
-            /* @__PURE__ */ jsxs10("div", { children: [
-              /* @__PURE__ */ jsxs10("label", { htmlFor: "language", className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-2", children: [
+                ]
+              }),
+            /* @__PURE__ */ jsxs10("div", {
+                children: [
+              /* @__PURE__ */ jsxs10("label", {
+                  htmlFor: "language", className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-2", children: [
                 /* @__PURE__ */ jsx12("span", { className: "text-blue-400", children: /* @__PURE__ */ jsx12(GlobeIcon, {}) }),
-                "Language"
-              ] }),
+                    "Language"
+                  ]
+                }),
               /* @__PURE__ */ jsx12("select", { id: "language", value: selectedLanguageCode, onChange: (e) => setSelectedLanguageCode(e.target.value), className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2.5 px-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500", children: languages.map((l) => /* @__PURE__ */ jsx12("option", { value: l.code, children: l.name }, l.id)) })
-            ] })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs10("div", { className: "space-y-6", children: [
-          /* @__PURE__ */ jsxs10("div", { children: [
-            /* @__PURE__ */ jsxs10("label", { className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-3", children: [
+                ]
+              })
+              ]
+            })
+            ]
+          }),
+        /* @__PURE__ */ jsxs10("div", {
+            className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs10("div", {
+              children: [
+            /* @__PURE__ */ jsxs10("label", {
+                className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-3", children: [
               /* @__PURE__ */ jsx12("span", { className: "text-blue-400", children: /* @__PURE__ */ jsx12(TargetIcon, {}) }),
-              "Interview Mode"
-            ] }),
-            /* @__PURE__ */ jsxs10("div", { className: "space-y-3", children: [
+                  "Interview Mode"
+                ]
+              }),
+            /* @__PURE__ */ jsxs10("div", {
+                className: "space-y-3", children: [
               /* @__PURE__ */ jsx12(ModeButton, { modeName: InterviewMode.VIDEO, description: "Full video call with AI Interviewer", tag: "Recommended", tagClass: "bg-blue-600 text-white", activeMode: mode, setMode }),
               /* @__PURE__ */ jsx12(ModeButton, { modeName: InterviewMode.LIVE_SHARE, description: "Live Audio with screen sharing for tasks", tag: "LIVE", tagClass: "bg-red-500 text-white", activeMode: mode, setMode }),
               /* @__PURE__ */ jsx12(ModeButton, { modeName: InterviewMode.AUDIO, description: "Voice-only conversation", tag: "VOICE", tagClass: "bg-purple-500 text-white", activeMode: mode, setMode }),
               /* @__PURE__ */ jsx12(ModeButton, { modeName: InterviewMode.CHAT, description: "Text-based chat session", tag: "TEXT", tagClass: "bg-gray-500 text-white", activeMode: mode, setMode })
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs10("div", { children: [
-            /* @__PURE__ */ jsxs10("label", { className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-3", children: [
+                ]
+              })
+              ]
+            }),
+          /* @__PURE__ */ jsxs10("div", {
+              children: [
+            /* @__PURE__ */ jsxs10("label", {
+                className: "flex items-center gap-2 text-base font-bold text-slate-300 mb-3", children: [
               /* @__PURE__ */ jsx12("span", { className: "text-blue-400", children: /* @__PURE__ */ jsx12(SignalIcon, {}) }),
-              "Interview Difficulty"
-            ] }),
-            /* @__PURE__ */ jsx12("div", { className: "flex w-full rounded-md bg-slate-700/50 p-1", children: ["Easy", "Medium", "Hard"].map((level) => /* @__PURE__ */ jsx12(
-              "button",
-              {
-                type: "button",
-                onClick: () => setDifficulty(level),
-                className: `w-full rounded py-1.5 text-sm font-semibold transition-colors ${difficulty === level ? "bg-blue-600 text-white shadow" : "text-slate-300 hover:bg-slate-600/50"}`,
-                children: level
-              },
-              level
-            )) })
-          ] })
-        ] })
-      ] }),
+                  "Interview Difficulty"
+                ]
+              }),
+            /* @__PURE__ */ jsx12("div", {
+                className: "flex w-full rounded-md bg-slate-700/50 p-1", children: ["Easy", "Medium", "Hard"].map((level) => /* @__PURE__ */ jsx12(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => setDifficulty(level),
+                    className: `w-full rounded py-1.5 text-sm font-semibold transition-colors ${difficulty === level ? "bg-blue-600 text-white shadow" : "text-slate-300 hover:bg-slate-600/50"}`,
+                    children: level
+                  },
+                  level
+                ))
+              })
+              ]
+            })
+            ]
+          })
+          ]
+        }),
       /* @__PURE__ */ jsx12("div", { className: "mt-8 pt-6 border-t border-slate-700", children: /* @__PURE__ */ jsx12("button", { type: "submit", className: "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]", children: "Start Interview" }) })
-    ] }) }),
-    /* @__PURE__ */ jsxs10("div", { className: "w-full max-w-6xl mx-auto mt-16 md:mt-24", children: [
-      /* @__PURE__ */ jsxs10("div", { className: "text-center mb-16", children: [
+        ]
+      })
+    }),
+    /* @__PURE__ */ jsxs10("div", {
+      className: "w-full max-w-6xl mx-auto mt-16 md:mt-24", children: [
+      /* @__PURE__ */ jsxs10("div", {
+        className: "text-center mb-16", children: [
         /* @__PURE__ */ jsx12("h2", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Our Features" }),
         /* @__PURE__ */ jsx12("p", { className: "text-slate-400 mt-4 text-lg max-w-3xl mx-auto", children: "Leverage cutting-edge AI to conduct comprehensive and insightful interviews for any role." })
-      ] }),
-      /* @__PURE__ */ jsxs10("div", { className: "space-y-16", children: [
+        ]
+      }),
+      /* @__PURE__ */ jsxs10("div", {
+        className: "space-y-16", children: [
         /* @__PURE__ */ jsx12(
           FeatureCard_default,
           {
@@ -3990,9 +4195,12 @@ var SetupScreen = ({ onStartInterview, modelSettings: modelSettings2, currentUse
             children: /* @__PURE__ */ jsx12("p", { children: "Receive detailed, AI-generated reports after each interview. Our analytics cover technical proficiency, communication skills, confidence levels, and more, with data-driven insights to help you make the best hiring decisions." })
           }
         )
-      ] })
-    ] })
-  ] });
+        ]
+      })
+      ]
+    })
+    ]
+  });
 };
 var SetupScreen_default = SetupScreen;
 
@@ -4052,82 +4260,102 @@ var LoginScreen = ({ onSwitchToRegister }) => {
       showToast(`Google Sign-In Error: ${error2.message}`, "error");
     }
   };
-  return /* @__PURE__ */ jsx13("div", { className: "flex-1 flex items-center justify-center p-4", children: /* @__PURE__ */ jsxs11("div", { className: "max-w-md w-full bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-slate-700", children: [
-    /* @__PURE__ */ jsxs11("div", { className: "text-center mb-8", children: [
+  return /* @__PURE__ */ jsx13("div", {
+    className: "flex-1 flex items-center justify-center p-4", children: /* @__PURE__ */ jsxs11("div", {
+      className: "max-w-md w-full bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-slate-700", children: [
+    /* @__PURE__ */ jsxs11("div", {
+        className: "text-center mb-8", children: [
       /* @__PURE__ */ jsx13("div", { className: "inline-block mb-4", children: /* @__PURE__ */ jsx13(Logo_default, {}) }),
       /* @__PURE__ */ jsx13("h2", { className: "text-3xl font-bold text-white", children: "Login to Your Account" }),
       /* @__PURE__ */ jsx13("p", { className: "text-slate-400 mt-2", children: "Welcome back! Please enter your details." })
-    ] }),
-    /* @__PURE__ */ jsxs11("form", { onSubmit: handleLogin, className: "space-y-6", children: [
-      /* @__PURE__ */ jsxs11("div", { children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs11("form", {
+        onSubmit: handleLogin, className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs11("div", {
+          children: [
         /* @__PURE__ */ jsx13("label", { className: "block text-sm font-medium text-slate-300 mb-2", children: "Email Address" }),
         /* @__PURE__ */ jsx13(
-          "input",
-          {
-            type: "email",
-            value: email,
-            onChange: (e) => setEmail(e.target.value),
-            className: "w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            placeholder: "you@example.com",
-            "aria-label": "Email Address",
-            disabled: isLoading
-          }
-        )
-      ] }),
-      /* @__PURE__ */ jsxs11("div", { children: [
+            "input",
+            {
+              type: "email",
+              value: email,
+              onChange: (e) => setEmail(e.target.value),
+              className: "w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              placeholder: "you@example.com",
+              "aria-label": "Email Address",
+              disabled: isLoading
+            }
+          )
+          ]
+        }),
+      /* @__PURE__ */ jsxs11("div", {
+          children: [
         /* @__PURE__ */ jsx13("label", { className: "block text-sm font-medium text-slate-300 mb-2", children: "Password" }),
         /* @__PURE__ */ jsx13(
-          "input",
-          {
-            type: "password",
-            value: password,
-            onChange: (e) => setPassword(e.target.value),
-            className: "w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
-            "aria-label": "Password",
-            disabled: isLoading
-          }
-        )
-      ] }),
-      error && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm text-center", children: error }),
-      /* @__PURE__ */ jsxs11(
-        "button",
-        {
-          type: "submit",
-          disabled: isLoading,
-          className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-wait",
-          children: [
-            isLoading && /* @__PURE__ */ jsx13("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
-            isLoading ? "Signing In..." : "Sign In"
+            "input",
+            {
+              type: "password",
+              value: password,
+              onChange: (e) => setPassword(e.target.value),
+              className: "w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+              "aria-label": "Password",
+              disabled: isLoading
+            }
+          )
           ]
-        }
-      )
-    ] }),
-    /* @__PURE__ */ jsxs11("div", { className: "relative my-6", children: [
+        }),
+          error && /* @__PURE__ */ jsx13("p", { className: "text-red-500 text-sm text-center", children: error }),
+      /* @__PURE__ */ jsxs11(
+            "button",
+            {
+              type: "submit",
+              disabled: isLoading,
+              className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-wait",
+              children: [
+                isLoading && /* @__PURE__ */ jsx13("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
+                isLoading ? "Signing In..." : "Sign In"
+              ]
+            }
+          )
+        ]
+      }),
+    /* @__PURE__ */ jsxs11("div", {
+        className: "relative my-6", children: [
       /* @__PURE__ */ jsx13("div", { className: "absolute inset-0 flex items-center", "aria-hidden": "true", children: /* @__PURE__ */ jsx13("div", { className: "w-full border-t border-slate-600" }) }),
       /* @__PURE__ */ jsx13("div", { className: "relative flex justify-center text-sm", children: /* @__PURE__ */ jsx13("span", { className: "px-2 bg-slate-800 text-slate-400", children: "OR" }) })
-    ] }),
-    /* @__PURE__ */ jsxs11("button", { onClick: handleGoogleSignIn, className: "w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-600 rounded-lg hover:bg-slate-700 transition-colors", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs11("button", {
+        onClick: handleGoogleSignIn, className: "w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-600 rounded-lg hover:bg-slate-700 transition-colors", children: [
       /* @__PURE__ */ jsx13(GoogleIcon, {}),
       /* @__PURE__ */ jsx13("span", { className: "text-slate-200 font-semibold", children: "Sign in with Google" })
-    ] }),
-    /* @__PURE__ */ jsx13("div", { className: "text-center mt-6", children: /* @__PURE__ */ jsxs11("p", { className: "text-slate-400 text-sm", children: [
-      "Don't have an account?",
-      " ",
+        ]
+      }),
+    /* @__PURE__ */ jsx13("div", {
+        className: "text-center mt-6", children: /* @__PURE__ */ jsxs11("p", {
+          className: "text-slate-400 text-sm", children: [
+            "Don't have an account?",
+            " ",
       /* @__PURE__ */ jsx13(
-        Link,
-        {
-          to: "/register",
-          onClick: (e) => {
-            e.preventDefault();
-            onSwitchToRegister();
-          },
-          className: "text-blue-400 hover:text-blue-300 font-semibold underline transition-colors duration-200",
-          children: "Register Now"
-        }
-      )
-    ] }) })
-  ] }) });
+              Link,
+              {
+                to: "/register",
+                onClick: (e) => {
+                  e.preventDefault();
+                  onSwitchToRegister();
+                },
+                className: "text-blue-400 hover:text-blue-300 font-semibold underline transition-colors duration-200",
+                children: "Register Now"
+              }
+            )
+          ]
+        })
+      })
+      ]
+    })
+  });
 };
 var LoginScreen_default = LoginScreen;
 
@@ -4159,101 +4387,131 @@ var RegisterScreen = ({ onSwitchToLogin, onBackToSetup }) => {
       navigate("/login");
     }
   };
-  return /* @__PURE__ */ jsx14("div", { className: "flex-1 flex flex-col items-center justify-center p-4", children: /* @__PURE__ */ jsxs12("div", { className: "w-full max-w-md", children: [
-    /* @__PURE__ */ jsxs12("div", { className: "text-center mb-8", children: [
+  return /* @__PURE__ */ jsx14("div", {
+    className: "flex-1 flex flex-col items-center justify-center p-4", children: /* @__PURE__ */ jsxs12("div", {
+      className: "w-full max-w-md", children: [
+    /* @__PURE__ */ jsxs12("div", {
+        className: "text-center mb-8", children: [
       /* @__PURE__ */ jsx14("div", { className: "inline-block mb-4", children: /* @__PURE__ */ jsx14(Logo_default, {}) }),
       /* @__PURE__ */ jsx14("h1", { className: "text-3xl font-bold text-slate-100", children: "Create a New Account" }),
       /* @__PURE__ */ jsx14("p", { className: "text-slate-400 mt-2", children: "Join the AI Interview Platform today." })
-    ] }),
-    /* @__PURE__ */ jsxs12("div", { className: "bg-slate-800 p-8 rounded-lg border border-slate-700", children: [
-      /* @__PURE__ */ jsxs12("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
-        /* @__PURE__ */ jsxs12("div", { children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs12("div", {
+        className: "bg-slate-800 p-8 rounded-lg border border-slate-700", children: [
+      /* @__PURE__ */ jsxs12("form", {
+          onSubmit: handleSubmit, className: "space-y-6", children: [
+        /* @__PURE__ */ jsxs12("div", {
+            children: [
           /* @__PURE__ */ jsx14("label", { htmlFor: "name", className: "block text-sm font-medium text-slate-300 mb-2", children: "Full Name" }),
-          /* @__PURE__ */ jsxs12("div", { className: "relative", children: [
+          /* @__PURE__ */ jsxs12("div", {
+              className: "relative", children: [
             /* @__PURE__ */ jsx14("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx14(UserIcon, {}) }),
             /* @__PURE__ */ jsx14(
-              "input",
-              {
-                type: "text",
-                id: "name",
-                value: name,
-                onChange: (e) => setName(e.target.value),
-                disabled: isLoading,
-                className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
-                placeholder: "Your Name"
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs12("div", { children: [
+                "input",
+                {
+                  type: "text",
+                  id: "name",
+                  value: name,
+                  onChange: (e) => setName(e.target.value),
+                  disabled: isLoading,
+                  className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                  placeholder: "Your Name"
+                }
+              )
+              ]
+            })
+            ]
+          }),
+        /* @__PURE__ */ jsxs12("div", {
+            children: [
           /* @__PURE__ */ jsx14("label", { htmlFor: "email", className: "block text-sm font-medium text-slate-300 mb-2", children: "Email Address" }),
-          /* @__PURE__ */ jsxs12("div", { className: "relative", children: [
+          /* @__PURE__ */ jsxs12("div", {
+              className: "relative", children: [
             /* @__PURE__ */ jsx14("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx14(AtSymbolIcon, {}) }),
             /* @__PURE__ */ jsx14(
-              "input",
-              {
-                type: "email",
-                id: "email",
-                value: email,
-                onChange: (e) => setEmail(e.target.value),
-                disabled: isLoading,
-                className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
-                placeholder: "you@example.com"
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs12("div", { children: [
+                "input",
+                {
+                  type: "email",
+                  id: "email",
+                  value: email,
+                  onChange: (e) => setEmail(e.target.value),
+                  disabled: isLoading,
+                  className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                  placeholder: "you@example.com"
+                }
+              )
+              ]
+            })
+            ]
+          }),
+        /* @__PURE__ */ jsxs12("div", {
+            children: [
           /* @__PURE__ */ jsx14("label", { htmlFor: "password", className: "block text-sm font-medium text-slate-300 mb-2", children: "Password" }),
-          /* @__PURE__ */ jsxs12("div", { className: "relative", children: [
+          /* @__PURE__ */ jsxs12("div", {
+              className: "relative", children: [
             /* @__PURE__ */ jsx14("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx14(LockClosedIcon, {}) }),
             /* @__PURE__ */ jsx14(
-              "input",
+                "input",
+                {
+                  type: "password",
+                  id: "password",
+                  value: password,
+                  onChange: (e) => setPassword(e.target.value),
+                  disabled: isLoading,
+                  className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                  placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+                }
+              )
+              ]
+            })
+            ]
+          }),
+            error && /* @__PURE__ */ jsx14("p", { className: "text-red-500 text-sm text-center", children: error }),
+        /* @__PURE__ */ jsxs12(
+              "button",
               {
-                type: "password",
-                id: "password",
-                value: password,
-                onChange: (e) => setPassword(e.target.value),
+                type: "submit",
                 disabled: isLoading,
-                className: "w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
-                placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+                className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-wait",
+                children: [
+                  isLoading && /* @__PURE__ */ jsx14("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
+                  isLoading ? "Creating Account..." : "Create Account"
+                ]
               }
             )
-          ] })
-        ] }),
-        error && /* @__PURE__ */ jsx14("p", { className: "text-red-500 text-sm text-center", children: error }),
-        /* @__PURE__ */ jsxs12(
-          "button",
-          {
-            type: "submit",
-            disabled: isLoading,
-            className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-wait",
-            children: [
-              isLoading && /* @__PURE__ */ jsx14("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
-              isLoading ? "Creating Account..." : "Create Account"
-            ]
-          }
-        )
-      ] }),
-      /* @__PURE__ */ jsxs12("p", { className: "text-center text-sm text-slate-400 mt-6", children: [
-        "Already have an account?",
-        " ",
-        /* @__PURE__ */ jsx14(Link, { to: "/login", onClick: (e) => {
-          e.preventDefault();
-          onSwitchToLogin();
-        }, className: "font-medium text-blue-400 hover:text-blue-300", children: "Login here" })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx14("div", { className: "text-center mt-6", children: /* @__PURE__ */ jsx14(Link, { to: "/", onClick: (e) => {
-      e.preventDefault();
-      onBackToSetup();
-    }, className: "text-sm text-slate-400 hover:text-slate-200", children: "\u2190 Back to Interview Setup" }) })
-  ] }) });
+          ]
+        }),
+      /* @__PURE__ */ jsxs12("p", {
+          className: "text-center text-sm text-slate-400 mt-6", children: [
+            "Already have an account?",
+            " ",
+        /* @__PURE__ */ jsx14(Link, {
+              to: "/login", onClick: (e) => {
+                e.preventDefault();
+                onSwitchToLogin();
+              }, className: "font-medium text-blue-400 hover:text-blue-300", children: "Login here"
+            })
+          ]
+        })
+        ]
+      }),
+    /* @__PURE__ */ jsx14("div", {
+        className: "text-center mt-6", children: /* @__PURE__ */ jsx14(Link, {
+          to: "/", onClick: (e) => {
+            e.preventDefault();
+            onBackToSetup();
+          }, className: "text-sm text-slate-400 hover:text-slate-200", children: "\u2190 Back to Interview Setup"
+        })
+      })
+      ]
+    })
+  });
 };
 var RegisterScreen_default = RegisterScreen;
 
 // components/InterviewScreen.tsx
-import { useState as useState17, useEffect as useEffect15, useMemo as useMemo5, useRef as useRef13, useCallback as useCallback8 } from "react";
+import { useState as useState18, useEffect as useEffect16, useMemo as useMemo5, useRef as useRef14, useCallback as useCallback8 } from "react";
 
 // hooks/useCamera.ts
 import { useState as useState12, useEffect as useEffect10, useRef as useRef8 } from "react";
@@ -4956,201 +5214,202 @@ var VideoPanel = ({ name, status, videoRef, avatarUrl, avatarNode, isMuted, isSp
       videoEl.removeEventListener("error", handlePlayError);
     };
   }, [isSpeaking, src, videoRef, name]);
-  return /* @__PURE__ */ jsxs13("div", { className: `relative w-full h-full bg-slate-950 rounded-lg overflow-hidden border-2 ${isSpeaking ? "border-blue-500" : "border-slate-700"} aspect-video transition-colors duration-300`, children: [
-    isSpeaking && /* @__PURE__ */ jsxs13("div", { className: "absolute top-3 left-3 flex items-center justify-center", "aria-label": "AI is speaking", role: "status", children: [
+  return /* @__PURE__ */ jsxs13("div", {
+    className: `relative w-full h-full bg-slate-950 rounded-lg overflow-hidden border-2 ${isSpeaking ? "border-blue-500" : "border-slate-700"} aspect-video transition-colors duration-300`, children: [
+      isSpeaking && /* @__PURE__ */ jsxs13("div", {
+        className: "absolute top-3 left-3 flex items-center justify-center", "aria-label": "AI is speaking", role: "status", children: [
       /* @__PURE__ */ jsx15("div", { className: "absolute h-4 w-4 rounded-full bg-blue-400 opacity-75 animate-ping" }),
       /* @__PURE__ */ jsx15("div", { className: "relative h-3 w-3 rounded-full bg-blue-500" })
-    ] }),
-    hasPlaybackError && /* @__PURE__ */ jsx15("div", { className: "absolute inset-0 bg-red-900/30 flex items-center justify-center z-10", children: /* @__PURE__ */ jsxs13("div", { className: "bg-red-900/50 p-4 rounded-lg text-center", children: [
+        ]
+      }),
+      hasPlaybackError && /* @__PURE__ */ jsx15("div", {
+        className: "absolute inset-0 bg-red-900/30 flex items-center justify-center z-10", children: /* @__PURE__ */ jsxs13("div", {
+          className: "bg-red-900/50 p-4 rounded-lg text-center", children: [
       /* @__PURE__ */ jsx15("p", { className: "text-red-200 text-sm", children: "Playback Error" }),
       /* @__PURE__ */ jsx15("p", { className: "text-red-300 text-xs mt-1", children: errorMessage || "Click anywhere to retry" })
-    ] }) }),
-    (videoRef || src) && /* @__PURE__ */ jsxs13("div", { className: "absolute top-3 right-3 flex gap-2 z-20", children: [
-      trackStatus.video !== void 0 && /* @__PURE__ */ jsx15(
-        "div",
+          ]
+        })
+      }),
+      (videoRef || src) && /* @__PURE__ */ jsxs13("div", {
+        className: "absolute top-3 right-3 flex gap-2 z-20", children: [
+          trackStatus.video !== void 0 && /* @__PURE__ */ jsx15(
+            "div",
+            {
+              className: `w-2 h-2 rounded-full ${trackStatus.video ? "bg-green-500" : "bg-red-500"}`,
+              title: `Video track ${trackStatus.video ? "active" : "inactive"}`
+            }
+          ),
+          trackStatus.audio !== void 0 && /* @__PURE__ */ jsx15(
+            "div",
+            {
+              className: `w-2 h-2 rounded-full ${trackStatus.audio ? "bg-green-500" : "bg-red-500"}`,
+              title: `Audio track ${trackStatus.audio ? "active" : "inactive"}`
+            }
+          )
+        ]
+      }),
+      src ? /* @__PURE__ */ jsx15(
+        "video",
         {
-          className: `w-2 h-2 rounded-full ${trackStatus.video ? "bg-green-500" : "bg-red-500"}`,
-          title: `Video track ${trackStatus.video ? "active" : "inactive"}`
+          ref: internalVideoRef,
+          src,
+          loop: true,
+          playsInline: true,
+          muted: true,
+          className: "w-full h-full object-cover",
+          onLoadedMetadata: () => {
+            console.log(`[VideoPanel:${name}] src video metadata loaded`);
+            setHasPlaybackError(false);
+            setErrorMessage("");
+          },
+          children: "Your browser does not support the video tag."
         }
-      ),
-      trackStatus.audio !== void 0 && /* @__PURE__ */ jsx15(
-        "div",
+      ) : videoRef ? /* @__PURE__ */ jsx15(
+        "video",
         {
-          className: `w-2 h-2 rounded-full ${trackStatus.audio ? "bg-green-500" : "bg-red-500"}`,
-          title: `Audio track ${trackStatus.audio ? "active" : "inactive"}`
+          ref: videoRef,
+          autoPlay: true,
+          playsInline: true,
+          muted: true,
+          className: "w-full h-full object-cover",
+          onLoadedMetadata: () => {
+            console.log(`[VideoPanel:${name}] videoRef metadata loaded`);
+            setHasPlaybackError(false);
+            setErrorMessage("");
+          }
         }
-      )
-    ] }),
-    src ? /* @__PURE__ */ jsx15(
-      "video",
-      {
-        ref: internalVideoRef,
-        src,
-        loop: true,
-        playsInline: true,
-        muted: true,
-        className: "w-full h-full object-cover",
-        onLoadedMetadata: () => {
-          console.log(`[VideoPanel:${name}] src video metadata loaded`);
-          setHasPlaybackError(false);
-          setErrorMessage("");
-        },
-        children: "Your browser does not support the video tag."
-      }
-    ) : videoRef ? /* @__PURE__ */ jsx15(
-      "video",
-      {
-        ref: videoRef,
-        autoPlay: true,
-        playsInline: true,
-        muted: true,
-        className: "w-full h-full object-cover",
-        onLoadedMetadata: () => {
-          console.log(`[VideoPanel:${name}] videoRef metadata loaded`);
-          setHasPlaybackError(false);
-          setErrorMessage("");
-        }
-      }
-    ) : avatarUrl ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("img", { src: avatarUrl, alt: name, className: "block w-32 h-32 rounded-full" }) }) : avatarNode ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: avatarNode }) : /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("span", { className: "text-slate-500", children: "No Video" }) }),
-    /* @__PURE__ */ jsxs13("div", { className: "absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent", children: [
-      /* @__PURE__ */ jsxs13("div", { className: "flex items-center justify-between", children: [
+      ) : avatarUrl ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("img", { src: avatarUrl, alt: name, className: "block w-32 h-32 rounded-full" }) }) : avatarNode ? /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: avatarNode }) : /* @__PURE__ */ jsx15("div", { className: "w-full h-full flex items-center justify-center bg-slate-800", children: /* @__PURE__ */ jsx15("span", { className: "text-slate-500", children: "No Video" }) }),
+    /* @__PURE__ */ jsxs13("div", {
+        className: "absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent", children: [
+      /* @__PURE__ */ jsxs13("div", {
+          className: "flex items-center justify-between", children: [
         /* @__PURE__ */ jsx15("span", { className: "text-sm font-medium", children: name }),
-        isMuted && /* @__PURE__ */ jsx15(MicOffIcon, {})
-      ] }),
-      status && /* @__PURE__ */ jsx15("span", { className: "text-xs text-slate-400", children: status })
-    ] })
-  ] });
+            isMuted && /* @__PURE__ */ jsx15(MicOffIcon, {})
+          ]
+        }),
+          status && /* @__PURE__ */ jsx15("span", { className: "text-xs text-slate-400", children: status })
+        ]
+      })
+    ]
+  });
 };
 var VideoPanel_default = VideoPanel;
 
-// components/InterviewScreen.tsx
-import { GoogleGenAI as GoogleGenAI2, Modality } from "@google/genai";
-import { Fragment as Fragment8, jsx as jsx16, jsxs as jsxs14 } from "react/jsx-runtime";
-function encode(bytes) {
-  let binary = "";
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-function decode(base64) {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
-async function decodeAudioData(data2, ctx, sampleRate, numChannels) {
-  const dataInt16 = new Int16Array(data2.buffer);
-  const frameCount = dataInt16.length / numChannels;
-  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-  for (let channel = 0; channel < numChannels; channel++) {
-    const channelData = buffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) {
-      channelData[i] = dataInt16[i * numChannels + channel] / 32768;
+// hooks/useBackendSocket.ts
+import { useEffect as useEffect15, useRef as useRef13, useState as useState17 } from "react";
+function useBackendSocket() {
+  const socketRef = useRef13(null);
+  const [isConnected, setIsConnected] = useState17(false);
+  const [responses, setResponses] = useState17([]);
+  const [error, setError] = useState17(null);
+  useEffect15(() => {
+    const socket = new WebSocket("ws://localhost:5000/ai/interview");
+    socketRef.current = socket;
+    socket.addEventListener("open", () => {
+      console.log("\u2705 Connected to interview backend");
+      setIsConnected(true);
+      setError(null);
+    });
+    socket.addEventListener("message", (event) => {
+      try {
+        const data2 = JSON.parse(event.data);
+        console.log("\u{1F916} Backend response:", data2);
+        if (data2.type === "error") {
+          setError(data2.content);
+        } else {
+          setResponses((prev) => [...prev, data2.content]);
+        }
+      } catch (err) {
+        console.error("Error parsing message:", err);
+        setError("Failed to parse response from server");
+      }
+    });
+    socket.addEventListener("close", (event) => {
+      console.log("WebSocket closed:", event);
+      setIsConnected(false);
+      if (event.code === 1e3) {
+        setError("Session ended");
+      } else {
+        setError(`Connection closed: ${event.reason || "Unknown reason"}`);
+      }
+    });
+    socket.addEventListener("error", (event) => {
+      console.error("WebSocket error:", event);
+      setError("Connection error occurred");
+    });
+    return () => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.close(1e3, "Cleanup");
+      }
+    };
+  }, []);
+  const sendMessage = (message) => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(message));
+    } else {
+      setError("Not connected to server");
     }
-  }
-  return buffer;
-}
-function createBlob(data2) {
-  const l = data2.length;
-  const int16 = new Int16Array(l);
-  for (let i = 0; i < l; i++) {
-    int16[i] = data2[i] * 32768;
-  }
+  };
+  const sendText = (text) => {
+    sendMessage({ type: "text", content: text });
+  };
+  const sendAudio = (audioBase64) => {
+    sendMessage({ type: "audio", content: audioBase64 });
+  };
   return {
-    data: encode(new Uint8Array(int16.buffer)),
-    mimeType: "audio/pcm;rate=16000"
+    isConnected,
+    responses,
+    error,
+    sendText,
+    sendAudio
   };
 }
-var getApiErrorDetails = (error) => {
-  const defaultMessage = "I'm sorry, an unexpected error occurred. Please try again later.";
-  const rateLimitMessage = "The AI service is currently experiencing high demand. Retrying...";
-  const quotaMessage = "You have reached the daily limit for this model. Please select a different model in the settings or try again tomorrow.";
-  const processErrorObject = (apiError) => {
-    const message = apiError.message || "";
-    if (apiError.status === "RESOURCE_EXHAUSTED" || apiError.code === 429) {
-      if (message.toLowerCase().includes("daily limit") || message.toLowerCase().includes("quota")) {
-        return { type: "QUOTA_EXHAUSTED", message: quotaMessage };
-      }
-      return { type: "RATE_LIMIT", message: rateLimitMessage };
-    }
-    return { type: "OTHER", message: message || defaultMessage };
-  };
-  if (typeof error === "object" && error !== null && "error" in error) {
-    return processErrorObject(error.error);
-  }
-  if (error instanceof Error && error.message) {
-    try {
-      const errorJson = JSON.parse(error.message);
-      if (errorJson.error) {
-        return processErrorObject(errorJson.error);
-      }
-    } catch (e) {
-    }
-    const message = error.message.toLowerCase();
-    if (message.includes("resource_exhausted") || message.includes("429") || message.includes("rate limit")) {
-      if (message.includes("daily limit") || message.includes("quota")) {
-        return { type: "QUOTA_EXHAUSTED", message: quotaMessage };
-      }
-      return { type: "RATE_LIMIT", message: rateLimitMessage };
-    }
-    return { type: "OTHER", message: error.message };
-  }
-  return { type: "OTHER", message: defaultMessage };
-};
-var MediaErrorDisplay = ({ error, children }) => /* @__PURE__ */ jsxs14("div", { className: "bg-red-900/30 border-2 border-red-500/50 rounded-lg p-6 flex flex-col items-center justify-center text-center h-full", role: "alert", children: [
+
+// components/InterviewScreen.tsx
+import { Fragment as Fragment8, jsx as jsx16, jsxs as jsxs14 } from "react/jsx-runtime";
+var MediaErrorDisplay = ({ error, children }) => /* @__PURE__ */ jsxs14("div", {
+  className: "bg-red-900/30 border-2 border-red-500/50 rounded-lg p-6 flex flex-col items-center justify-center text-center h-full", role: "alert", children: [
   /* @__PURE__ */ jsx16("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-12 w-12 text-red-400 mb-4", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", "aria-hidden": "true", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }) }),
   /* @__PURE__ */ jsx16("h3", { className: "text-xl font-bold text-red-300 mb-2", children: error.title }),
   /* @__PURE__ */ jsx16("p", { className: "text-red-300/90 max-w-md", children: error.message }),
-  children && /* @__PURE__ */ jsx16("div", { className: "mt-6", children })
-] });
+    children && /* @__PURE__ */ jsx16("div", { className: "mt-6", children })
+  ]
+});
 var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
-  const [questions, setQuestions] = useState17([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState17(0);
-  const [isAiThinking, setIsAiThinking] = useState17(true);
-  const [isEnding, setIsEnding] = useState17(false);
-  const [chatHistory, setChatHistory] = useState17([]);
-  const [qna, setQna] = useState17([]);
-  const [currentMessage, setCurrentMessage] = useState17("");
-  const [isSidePanelCollapsed, setIsSidePanelCollapsed] = useState17(false);
-  const [notes, setNotes] = useState17("");
-  const [isMuted, setIsMuted] = useState17(false);
-  const [initError, setInitError] = useState17(null);
-  const [retryStatus, setRetryStatus] = useState17(null);
-  const [isAiSpeaking, setIsAiSpeaking] = useState17(false);
-  const [transcript, setTranscript] = useState17("");
-  const [editableTranscript, setEditableTranscript] = useState17("");
-  const [isEditingTranscript, setIsEditingTranscript] = useState17(false);
+  const [questions, setQuestions] = useState18([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState18(0);
+  const [isAiThinking, setIsAiThinking] = useState18(true);
+  const [isEnding, setIsEnding] = useState18(false);
+  const [chatHistory, setChatHistory] = useState18([]);
+  const [qna, setQna] = useState18([]);
+  const [currentMessage, setCurrentMessage] = useState18("");
+  const [isSidePanelCollapsed, setIsSidePanelCollapsed] = useState18(false);
+  const [notes, setNotes] = useState18("");
+  const [isMuted, setIsMuted] = useState18(false);
+  const [initError, setInitError] = useState18(null);
+  const [retryStatus, setRetryStatus] = useState18(null);
+  const [isAiSpeaking, setIsAiSpeaking] = useState18(false);
+  const [transcript, setTranscript] = useState18("");
+  const [editableTranscript, setEditableTranscript] = useState18("");
+  const [isEditingTranscript, setIsEditingTranscript] = useState18(false);
   const { showToast } = useToast();
-  const transcriptRef = useRef13(null);
-  const cameraVideoRef = useRef13(null);
-  const screenShareVideoRef = useRef13(null);
+  const transcriptRef = useRef14(null);
+  const cameraVideoRef = useRef14(null);
+  const screenShareVideoRef = useRef14(null);
   const INTERVIEW_DURATION = 180;
-  const [timeLeft, setTimeLeft] = useState17(INTERVIEW_DURATION);
-  const [isInterviewStarted, setIsInterviewStarted] = useState17(false);
-  const chatRef = useRef13(null);
-  const sessionPromiseRef = useRef13(null);
-  const aiRef = useRef13(null);
-  const inputAudioContextRef = useRef13(null);
-  const outputAudioContextRef = useRef13(null);
-  const outputGainNodeRef = useRef13(null);
-  const scriptProcessorRef = useRef13(null);
-  const mediaStreamSourceRef = useRef13(null);
-  const nextStartTimeRef = useRef13(0);
-  const audioSourcesRef = useRef13(/* @__PURE__ */ new Set());
-  const currentInputTranscriptionRef = useRef13("");
-  const currentOutputTranscriptionRef = useRef13("");
-  const chatContainerRef = useRef13(null);
-  const capturedUserMediaStreamRef = useRef13(null);
-  const malpracticeLogRef = useRef13([]);
-  const lastActivityTimeRef = useRef13(Date.now());
-  const isMutedRef = useRef13(isMuted);
-  const hasInitialized = useRef13(false);
-  useEffect15(() => {
+  const [timeLeft, setTimeLeft] = useState18(INTERVIEW_DURATION);
+  const [isInterviewStarted, setIsInterviewStarted] = useState18(false);
+  const { isConnected, responses, error, sendText, sendAudio } = useBackendSocket();
+  const chatRef = useRef14(null);
+  const currentInputTranscriptionRef = useRef14("");
+  const currentOutputTranscriptionRef = useRef14("");
+  const chatContainerRef = useRef14(null);
+  const capturedUserMediaStreamRef = useRef14(null);
+  const malpracticeLogRef = useRef14([]);
+  const lastActivityTimeRef = useRef14(Date.now());
+  const isMutedRef = useRef14(isMuted);
+  const hasInitialized = useRef14(false);
+  useEffect16(() => {
     isMutedRef.current = isMuted;
   }, [isMuted]);
   const isVideoMode = settings.mode === InterviewMode.VIDEO;
@@ -5164,7 +5423,26 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     video: isVideoMode,
     audio: true
   });
-  useEffect15(() => {
+  useEffect16(() => {
+    return () => {
+      console.log("[InterviewScreen] \u{1F9F9} Component unmounting, cleaning up media streams...");
+      if (userMediaStream) {
+        console.log("[InterviewScreen] Stopping user media stream tracks");
+        userMediaStream.getTracks().forEach((track) => {
+          console.log(`[InterviewScreen] Stopping ${track.kind} track:`, track.label);
+          track.stop();
+        });
+      }
+      if (capturedUserMediaStreamRef.current) {
+        console.log("[InterviewScreen] Stopping captured stream tracks");
+        capturedUserMediaStreamRef.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+        capturedUserMediaStreamRef.current = null;
+      }
+    };
+  }, []);
+  useEffect16(() => {
     console.log("[InterviewScreen] Media stream status:", {
       hasStream: !!userMediaStream,
       streamId: userMediaStream?.id,
@@ -5184,7 +5462,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
   const { stream: screenShareStream, error: screenShareError } = useScreenShare({
     enabled: isLiveShareMode
   });
-  useEffect15(() => {
+  useEffect16(() => {
     if (screenShareVideoRef.current && screenShareStream) {
       screenShareVideoRef.current.srcObject = screenShareStream;
     }
@@ -5193,61 +5471,29 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
   const { recordingStatus: videoRecordingStatus, videoUrl, videoBlob, startRecording: startVideoRecording, stopRecording: stopVideoRecording } = useVideoRecorder(streamForRecorder);
   const { recordingStatus: audioRecordingStatus, audioUrl, audioBlob, startRecording: startAudioRecording, stopRecording: stopAudioRecording } = useAudioRecorder(streamForRecorder);
   const handleSendChatMessage = useCallback8(async () => {
-    if (!currentMessage.trim() || isAiThinking || !chatRef.current)
+    if (!currentMessage.trim() || isAiThinking || !isConnected)
       return;
     const userMessage = currentMessage;
     setChatHistory((prev) => [...prev, { author: "user", text: userMessage }]);
     setCurrentMessage("");
     setIsAiThinking(true);
     try {
-      const aiResponse = await chatRef.current.sendMessage(userMessage);
-      setChatHistory((prev) => [...prev, { author: "ai", text: aiResponse }]);
-      setQuestions((prev) => [...prev, { id: String(prev.length + 1), text: aiResponse }]);
-      setCurrentQuestionIndex((prev) => prev + 1);
+      sendText(userMessage);
     } catch (err) {
       console.error("Chat error:", err);
-      const errorDetails = getApiErrorDetails(err);
-      setChatHistory((prev) => [...prev, { author: "ai", text: `Sorry, an error occurred: ${errorDetails.message}` }]);
-    } finally {
+      setChatHistory((prev) => [...prev, { author: "ai", text: `Sorry, an error occurred while sending your message` }]);
       setIsAiThinking(false);
     }
-  }, [currentMessage, isAiThinking]);
+  }, [currentMessage, isAiThinking, isConnected, sendText]);
   const cleanupLiveSession = useCallback8(() => {
     console.log("[InterviewScreen] \u{1F9F9} cleanupLiveSession called");
-    console.trace("[InterviewScreen] Cleanup stack trace");
-    if (sessionPromiseRef.current) {
-      console.log("[InterviewScreen] Closing AI session...");
-      sessionPromiseRef.current.then((s) => s.close()).catch((e) => {
-        if (!e.message.toLowerCase().includes("close")) {
-          console.error("[InterviewScreen] Error closing live session:", e);
-        }
+    if (capturedUserMediaStreamRef.current) {
+      console.log("[InterviewScreen] \u{1F3A5} Stopping camera and microphone tracks...");
+      capturedUserMediaStreamRef.current.getTracks().forEach((track) => {
+        console.log(`[InterviewScreen] Stopping ${track.kind} track:`, track.label);
+        track.stop();
       });
-      sessionPromiseRef.current = null;
-    }
-    if (scriptProcessorRef.current) {
-      console.log("[InterviewScreen] Disconnecting script processor...");
-      scriptProcessorRef.current.disconnect();
-      scriptProcessorRef.current = null;
-    }
-    if (mediaStreamSourceRef.current) {
-      console.log("[InterviewScreen] Disconnecting media stream source...");
-      mediaStreamSourceRef.current.disconnect();
-      mediaStreamSourceRef.current = null;
-    }
-    if (inputAudioContextRef.current && inputAudioContextRef.current.state !== "closed") {
-      console.log("[InterviewScreen] Closing input audio context...");
-      inputAudioContextRef.current.close().catch((e) => console.error("Error closing input audio context:", e));
-    }
-    if (outputAudioContextRef.current && outputAudioContextRef.current.state !== "closed") {
-      console.log("[InterviewScreen] Stopping audio sources and closing output context...");
-      for (const source of audioSourcesRef.current.values()) {
-        try {
-          source.stop();
-        } catch (err) {
-        }
-      }
-      audioSourcesRef.current.clear();
-      outputAudioContextRef.current.close().catch((e) => console.error("Error closing output audio context:", e));
+      capturedUserMediaStreamRef.current = null;
     }
     console.log("[InterviewScreen] \u2705 Cleanup complete");
   }, []);
@@ -5291,7 +5537,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
       onEndInterview({ interviewId, mediaBlob: finalMediaBlob, fullTranscript: finalTranscript, malpracticeReport, qna: finalQna });
     }, 1500);
   }, [isEnding, interviewId, isAudioEnabled, isVideoMode, isLiveShareMode, isChatMode, stopVideoRecording, stopAudioRecording, videoBlob, audioBlob, chatHistory, transcript, onEndInterview, showToast, cleanupLiveSession, qna]);
-  useEffect15(() => {
+  useEffect16(() => {
     if (!isInterviewStarted)
       return;
     if (timeLeft <= 0) {
@@ -5308,7 +5554,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     }, 1e3);
     return () => clearInterval(timerId);
   }, [timeLeft, isEnding, isInterviewStarted, handleEndInterview, showToast]);
-  useEffect15(() => {
+  useEffect16(() => {
     if (isChatMode)
       return;
     let hiddenSince = null;
@@ -5338,7 +5584,7 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [showToast, isChatMode, isEnding]);
-  useEffect15(() => {
+  useEffect16(() => {
     if (isChatMode || isEnding)
       return;
     const loggedPauses = /* @__PURE__ */ new Set();
@@ -5360,11 +5606,12 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
     }, 5e3);
     return () => clearInterval(interval);
   }, [isAiSpeaking, showToast, isChatMode, isEnding]);
-  useEffect15(() => {
+  useEffect16(() => {
     console.log("[InterviewScreen] \u{1F3AC} Interview initialization effect triggered", {
       hasInitialized: hasInitialized.current,
       isAudioEnabled,
-      hasUserMediaStream: !!userMediaStream
+      hasUserMediaStream: !!userMediaStream,
+      isConnected
     });
     if (hasInitialized.current) {
       console.log("[InterviewScreen] \u23ED\uFE0F Already initialized, skipping");
@@ -5374,256 +5621,37 @@ var InterviewScreen = ({ interviewId, settings, onEndInterview }) => {
       console.log("[InterviewScreen] \u23F8\uFE0F Waiting for user media stream...");
       return;
     }
-    if (false) {
-      console.error("[InterviewScreen] \u274C Missing API key");
-      setInitError("API key is not configured. Please set it up to start the interview.");
-      return;
-    }
     if (userMediaStream) {
       console.log("[InterviewScreen] \u{1F4F8} Capturing stream reference:", userMediaStream.id);
       capturedUserMediaStreamRef.current = userMediaStream;
     }
-    console.log("[InterviewScreen] \u{1F3C1} Initializing AI...");
+    if (!isConnected) {
+      console.log("[InterviewScreen] \u23F3 Waiting for WebSocket connection...");
+      return;
+    }
+    console.log("[InterviewScreen] \u{1F680} Starting interview...");
     hasInitialized.current = true;
-    aiRef.current = new GoogleGenAI2({ apiKey: "AIzaSyBW-9TVhtutds_9MZGnRd9aNursFetZNmA" });
-    let retryCount = 0;
-    const maxRetries = 3;
-    const systemInstruction = `You are an expert AI interviewer. Your sole purpose is to conduct a professional, ${settings.difficulty} level interview for a "${settings.position}" role, based on this job description: "${settings.jobDescription}".
-
-Your persona is that of a focused and objective hiring manager.
-
-Your instructions are:
-1.  **Start the interview:** Begin with a brief greeting and then immediately ask the first relevant interview question.
-2.  **Stay On-Topic:** All your questions and responses must be directly related to assessing the candidate's skills and experience for the specified job.
-3.  **One Question at a Time:** Ask only one question at a time and wait for the candidate's full response.
-4.  **Handle Off-Topic Conversation:** If the candidate attempts to divert the conversation to topics not relevant to the interview (e.g., small talk, personal opinions on unrelated matters), you MUST politely but firmly redirect them back. When you do this, your response text MUST start with the exact tag "[DIVERSION_DETECTED]". Do not speak the tag itself, only use it in the text transcript. For example: "[DIVERSION_DETECTED] That's an interesting point, but for the purpose of this interview, let's focus on your technical skills."
-5.  **Maintain Professionalism:** Do not engage in casual chat, tell jokes, or offer personal opinions. Your tone should be professional and neutral.
-6.  **Language:** Conduct the interview in ${settings.language}.
-7.  **Formatting:** Do not use markdown in your responses.`;
-    const startInterview = async () => {
-      try {
-        console.log("[InterviewScreen] \u{1F680} Starting interview...", {
-          mode: settings.mode,
-          model: settings.model,
-          retryCount,
-          hasUserMediaStream: !!userMediaStream
-        });
-        setRetryStatus(retryCount > 0 ? `Retrying... (${retryCount}/${maxRetries})` : null);
-        setIsAiThinking(true);
-        setInitError(null);
-        if (isChatMode) {
-          console.log("[InterviewScreen] \u{1F4AC} Initializing chat mode...");
-          chatRef.current = createChatSession({
-            model: settings.model,
-            systemInstruction
-          });
-          console.log("[InterviewScreen] Sending initial message to AI...");
-          const firstQuestion = await chatRef.current.sendMessage("Hello, I am ready to start the interview.");
-          console.log("[InterviewScreen] \u2705 Received first question from AI:", firstQuestion.substring(0, 100) + "...");
-          setChatHistory([{ author: "ai", text: firstQuestion }]);
-          setQuestions([{ id: "1", text: firstQuestion }]);
-          setIsInterviewStarted(true);
-          console.log("[InterviewScreen] \u2705 AI ready, interview started (chat mode)");
-        } else if (isAudioEnabled) {
-          const streamToUse = capturedUserMediaStreamRef.current;
-          if (!streamToUse) {
-            console.error("[InterviewScreen] \u274C No captured stream available for audio mode");
-            throw new Error("User media stream not available");
-          }
-          console.log("[InterviewScreen] \u{1F3A4} Initializing audio-enabled mode...");
-          console.log("[InterviewScreen] Using captured stream:", {
-            id: streamToUse.id,
-            videoTracks: streamToUse.getVideoTracks().length,
-            audioTracks: streamToUse.getAudioTracks().length
-          });
-          console.log("[InterviewScreen] Creating audio contexts...");
-          inputAudioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16e3 });
-          outputAudioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24e3 });
-          console.log("[InterviewScreen] Audio contexts created:", {
-            inputSampleRate: inputAudioContextRef.current.sampleRate,
-            inputState: inputAudioContextRef.current.state,
-            outputSampleRate: outputAudioContextRef.current.sampleRate,
-            outputState: outputAudioContextRef.current.state
-          });
-          outputGainNodeRef.current = outputAudioContextRef.current.createGain();
-          outputGainNodeRef.current.gain.value = 1.5;
-          outputGainNodeRef.current.connect(outputAudioContextRef.current.destination);
-          console.log("[InterviewScreen] \u{1F50A} Audio output configured with gain:", outputGainNodeRef.current.gain.value);
-          console.log("[InterviewScreen] \u{1F50C} Connecting to AI live session...", {
-            model: settings.model,
-            voiceName: "Zephyr"
-          });
-          sessionPromiseRef.current = aiRef.current.live.connect({
-            model: settings.model,
-            config: {
-              systemInstruction,
-              responseModalities: [Modality.AUDIO],
-              speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Zephyr" } } },
-              inputAudioTranscription: {},
-              outputAudioTranscription: {}
-            },
-            callbacks: {
-              onopen: () => {
-                console.log("[InterviewScreen] \u2705 AI Live session OPENED successfully");
-                console.log("[InterviewScreen] Setting up audio processing pipeline...");
-                const capturedStream = capturedUserMediaStreamRef.current;
-                if (!capturedStream || !inputAudioContextRef.current) {
-                  console.error("[InterviewScreen] \u274C Cannot setup audio pipeline - missing stream or context", {
-                    hasCapturedStream: !!capturedStream,
-                    hasInputContext: !!inputAudioContextRef.current
-                  });
-                  return;
-                }
-                console.log("[InterviewScreen] Creating media stream source from captured stream:", capturedStream.id);
-                mediaStreamSourceRef.current = inputAudioContextRef.current.createMediaStreamSource(capturedStream);
-                console.log("[InterviewScreen] Creating script processor for audio capture...");
-                scriptProcessorRef.current = inputAudioContextRef.current.createScriptProcessor(4096, 1, 1);
-                scriptProcessorRef.current.onaudioprocess = (event) => {
-                  const inputData = event.inputBuffer.getChannelData(0);
-                  const pcmBlob = createBlob(inputData);
-                  sessionPromiseRef.current?.then((session2) => {
-                    if (!isMutedRef.current) {
-                      session2.sendRealtimeInput({ media: pcmBlob });
-                    }
-                  });
-                };
-                console.log("[InterviewScreen] Connecting audio processing nodes...");
-                mediaStreamSourceRef.current.connect(scriptProcessorRef.current);
-                scriptProcessorRef.current.connect(inputAudioContextRef.current.destination);
-                console.log("[InterviewScreen] \u2705 Audio pipeline connected and ready");
-              },
-              onmessage: async (message) => {
-                const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
-                if (base64Audio) {
-                  console.log("\u{1F50A} [Interview] Received AI audio response");
-                  setIsAiSpeaking(true);
-                  const outCtx = outputAudioContextRef.current;
-                  const gainNode = outputGainNodeRef.current;
-                  if (!outCtx || !gainNode) {
-                    console.error("\u274C [Interview] Audio context or gain node not available");
-                    return;
-                  }
-                  if (outCtx.state === "suspended") {
-                    console.log("\u{1F513} [Interview] Resuming suspended audio context");
-                    await outCtx.resume();
-                  }
-                  nextStartTimeRef.current = Math.max(nextStartTimeRef.current, outCtx.currentTime);
-                  const audioBuffer = await decodeAudioData(decode(base64Audio), outCtx, 24e3, 1);
-                  const source = outCtx.createBufferSource();
-                  source.buffer = audioBuffer;
-                  source.connect(gainNode);
-                  source.addEventListener("ended", () => {
-                    audioSourcesRef.current.delete(source);
-                    if (audioSourcesRef.current.size === 0) {
-                      setIsAiSpeaking(false);
-                      console.log("\u2705 [Interview] AI finished speaking");
-                    }
-                  });
-                  source.start(nextStartTimeRef.current);
-                  nextStartTimeRef.current += audioBuffer.duration;
-                  audioSourcesRef.current.add(source);
-                  console.log("\u25B6\uFE0F [Interview] Playing AI audio, duration:", audioBuffer.duration.toFixed(2), "s");
-                }
-                if (message.serverContent?.inputTranscription?.text) {
-                  lastActivityTimeRef.current = Date.now();
-                  currentInputTranscriptionRef.current += message.serverContent.inputTranscription.text;
-                }
-                if (message.serverContent?.outputTranscription)
-                  currentOutputTranscriptionRef.current += message.serverContent.outputTranscription.text;
-                if (message.serverContent?.turnComplete) {
-                  const fullInput = currentInputTranscriptionRef.current.trim();
-                  let fullOutput = currentOutputTranscriptionRef.current.trim();
-                  if (fullInput)
-                    setTranscript((prev) => `${prev}
-
-Candidate: ${fullInput}`);
-                  if (fullOutput) {
-                    if (fullOutput.startsWith("[DIVERSION_DETECTED]")) {
-                      const logEntry = {
-                        type: "Topic Diversion",
-                        details: "Candidate attempted to divert the conversation from the interview topic.",
-                        timestamp: (/* @__PURE__ */ new Date()).toLocaleTimeString()
-                      };
-                      malpracticeLogRef.current.push(logEntry);
-                      showToast("Activity detected: Topic diversion", "info");
-                      fullOutput = fullOutput.replace("[DIVERSION_DETECTED]", "").trim();
-                    }
-                    setTranscript((prev) => `${prev}
-
-Interviewer: ${fullOutput}`);
-                    setQuestions((prev) => [...prev, { id: String(prev.length + 1), text: fullOutput }]);
-                    if (fullInput) {
-                      setQna((prev) => [...prev, { question: fullOutput, answer: fullInput }]);
-                    }
-                    setCurrentQuestionIndex((prev) => prev + 1);
-                    lastActivityTimeRef.current = Date.now();
-                  }
-                  currentInputTranscriptionRef.current = "";
-                  currentOutputTranscriptionRef.current = "";
-                }
-                if (message.serverContent?.interrupted) {
-                  for (const source of audioSourcesRef.current.values()) {
-                    source.stop();
-                    audioSourcesRef.current.delete(source);
-                  }
-                  nextStartTimeRef.current = 0;
-                  setIsAiSpeaking(false);
-                }
-              },
-              onerror: (e) => {
-                console.error("[InterviewScreen] \u274C Live session ERROR:", e);
-                console.error("[InterviewScreen] Error details:", {
-                  type: e.type,
-                  message: e.message,
-                  error: e.error
-                });
-              },
-              onclose: () => {
-                console.log("[InterviewScreen] \u{1F50C} Live session CLOSED");
-              }
-            }
-          });
-          console.log("[InterviewScreen] \u23F3 Awaiting AI session connection...");
-          const session = await sessionPromiseRef.current;
-          console.log("[InterviewScreen] \u2705 AI session connected successfully");
-          console.log("[InterviewScreen] \u{1F4E4} Sending initial silent audio to trigger first question...");
-          session.sendRealtimeInput({ media: createBlob(new Float32Array(160)) });
-          setIsInterviewStarted(true);
-          console.log("[InterviewScreen] \u2705\u2705\u2705 AI session connected, interview started successfully");
-        }
-      } catch (err) {
-        console.error("[InterviewScreen] \u274C\u274C\u274C Error starting interview:", err);
-        console.error("[InterviewScreen] Error details:", {
-          name: err?.name,
-          message: err?.message,
-          stack: err?.stack,
-          cause: err?.cause
-        });
-        const errorDetails = getApiErrorDetails(err);
-        console.error("[InterviewScreen] Parsed error details:", errorDetails);
-        if (errorDetails.type === "RATE_LIMIT" && retryCount < maxRetries) {
-          retryCount++;
-          const retryDelay = 3e4 * retryCount;
-          console.log(`[InterviewScreen] \u{1F504} Rate limited, retrying in ${retryDelay / 1e3}s (attempt ${retryCount}/${maxRetries})`);
-          setTimeout(startInterview, retryDelay);
-        } else {
-          console.error("[InterviewScreen] \u274C Fatal error, not retrying:", errorDetails.message);
-          setInitError(errorDetails.message);
-        }
-      } finally {
-        if (!initError) {
-          console.log("[InterviewScreen] AI thinking complete, setting isAiThinking to false");
-          setIsAiThinking(false);
-        }
+    setIsAiThinking(true);
+    setInitError(null);
+    const startMessage = JSON.stringify({
+      type: "start_interview",
+      settings: {
+        mode: settings.mode,
+        difficulty: settings.difficulty,
+        position: settings.position,
+        jobDescription: settings.jobDescription,
+        language: settings.language,
+        model: settings.model
       }
-    };
-    startInterview();
+    });
+    sendText(startMessage);
+    setIsInterviewStarted(true);
     return () => {
       console.log("[InterviewScreen] \u{1F9F9} Interview effect cleanup called");
       cleanupLiveSession();
     };
-  }, [settings, isAudioEnabled, userMediaStream, isChatMode]);
-  useEffect15(() => {
+  }, [settings, isAudioEnabled, userMediaStream, isConnected, sendText, cleanupLiveSession]);
+  useEffect16(() => {
     if (streamForRecorder && streamForRecorder.active) {
       if ((isVideoMode || isLiveShareMode) && videoRecordingStatus === "idle") {
         startVideoRecording();
@@ -5632,24 +5660,65 @@ Interviewer: ${fullOutput}`);
       }
     }
   }, [streamForRecorder, isVideoMode, isLiveShareMode, isAudioMode, videoRecordingStatus, audioRecordingStatus, startVideoRecording, startAudioRecording]);
-  useEffect15(() => {
+  useEffect16(() => {
+    if (responses.length > 0) {
+      const lastResponse = responses[responses.length - 1];
+      try {
+        const data2 = JSON.parse(lastResponse);
+        if (data2.type === "text") {
+          setChatHistory((prev) => [...prev, { author: "ai", text: data2.content }]);
+          setQuestions((prev) => [...prev, { id: String(prev.length + 1), text: data2.content }]);
+          setCurrentQuestionIndex((prev) => prev + 1);
+          if (data2.content.startsWith("[DIVERSION_DETECTED]")) {
+            const logEntry = {
+              type: "Topic Diversion",
+              details: "Candidate attempted to divert the conversation from the interview topic.",
+              timestamp: (/* @__PURE__ */ new Date()).toLocaleTimeString()
+            };
+            malpracticeLogRef.current.push(logEntry);
+            showToast("Activity detected: Topic diversion", "info");
+          }
+        } else if (data2.type === "audio") {
+          setIsAiSpeaking(true);
+        } else if (data2.type === "transcription") {
+          setTranscript((prev) => `${prev}
+
+${data2.role}: ${data2.content}`);
+          if (data2.role === "Interviewer") {
+            setQuestions((prev) => [...prev, { id: String(prev.length + 1), text: data2.content }]);
+            setCurrentQuestionIndex((prev) => prev + 1);
+            const lastInput = currentInputTranscriptionRef.current.trim();
+            if (lastInput) {
+              setQna((prev) => [...prev, { question: data2.content, answer: lastInput }]);
+            }
+          }
+        }
+        lastActivityTimeRef.current = Date.now();
+        setIsAiThinking(false);
+      } catch (err) {
+        console.error("Error processing WebSocket response:", err);
+        setIsAiThinking(false);
+      }
+    }
+  }, [responses, showToast]);
+  useEffect16(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatHistory]);
-  useEffect15(() => {
+  useEffect16(() => {
     if (transcriptRef.current && !isEditingTranscript) {
       transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
     }
   }, [transcript, isEditingTranscript]);
-  useEffect15(() => {
+  useEffect16(() => {
     if (!isEditingTranscript) {
       setEditableTranscript(transcript);
     }
   }, [transcript, isEditingTranscript]);
-  const [mediaStatus, setMediaStatus] = useState17(null);
-  const [hasAiError, setHasAiError] = useState17(null);
-  useEffect15(() => {
+  const [mediaStatus, setMediaStatus] = useState18(null);
+  const [hasAiError, setHasAiError] = useState18(null);
+  useEffect16(() => {
     if (!userMediaStream)
       return;
     const updateStatus = () => {
@@ -5676,26 +5745,29 @@ Interviewer: ${fullOutput}`);
     };
   }, [userMediaStream]);
   const handleSendCorrection = useCallback8(async () => {
-    if (!editableTranscript.trim() || !sessionPromiseRef.current) {
+    if (!editableTranscript.trim()) {
       showToast("No correction to send", "error");
       return;
     }
     try {
       console.log("\u{1F4DD} [Interview] Sending transcript correction to AI...");
-      const session = await sessionPromiseRef.current;
       const lines = editableTranscript.split("\n\n");
       const lastCandidateResponse = lines.filter((line) => line.startsWith("Candidate:")).pop()?.replace("Candidate:", "").trim();
       if (lastCandidateResponse) {
-        const correctionMessage = `I'd like to clarify my previous response: ${lastCandidateResponse}`;
-        showToast("Correction noted. Please speak your clarification.", "info");
-        console.log("\u2705 [Interview] Correction logged:", lastCandidateResponse);
+        const correctionMessage = {
+          type: "correction",
+          content: `I'd like to clarify my previous response: ${lastCandidateResponse}`
+        };
+        sendText(JSON.stringify(correctionMessage));
+        showToast("Correction sent", "success");
+        console.log("\u2705 [Interview] Correction sent:", lastCandidateResponse);
       }
       setIsEditingTranscript(false);
-    } catch (error) {
-      console.error("\u274C [Interview] Error sending correction:", error);
+    } catch (error2) {
+      console.error("\u274C [Interview] Error sending correction:", error2);
       showToast("Failed to send correction", "error");
     }
-  }, [editableTranscript, showToast]);
+  }, [editableTranscript, showToast, sendText]);
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -5705,72 +5777,94 @@ Interviewer: ${fullOutput}`);
   if (mediaError)
     return /* @__PURE__ */ jsx16("div", { className: "flex-1 flex items-center justify-center p-4", children: /* @__PURE__ */ jsx16(MediaErrorDisplay, { error: mediaError }) });
   if (isAiThinking && questions.length === 0) {
-    return /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col items-center justify-center p-4", children: [
+    return /* @__PURE__ */ jsxs14("div", {
+      className: "flex-1 flex flex-col items-center justify-center p-4", children: [
       /* @__PURE__ */ jsx16("div", { className: "w-12 h-12 border-4 border-slate-600 border-t-blue-500 rounded-full animate-spin" }),
       /* @__PURE__ */ jsx16("p", { className: "text-slate-300 mt-4 text-lg", children: "Initializing AI Interviewer..." }),
-      initError && /* @__PURE__ */ jsx16("p", { className: "text-red-400 mt-2 max-w-md text-center", children: initError }),
-      retryStatus && /* @__PURE__ */ jsx16("p", { className: "text-yellow-400 mt-2", children: retryStatus })
-    ] });
+        initError && /* @__PURE__ */ jsx16("p", { className: "text-red-400 mt-2 max-w-md text-center", children: initError }),
+        retryStatus && /* @__PURE__ */ jsx16("p", { className: "text-yellow-400 mt-2", children: retryStatus })
+      ]
+    });
   }
   const renderMainContent = () => {
     if (isChatMode) {
-      return /* @__PURE__ */ jsxs14("div", { className: "bg-slate-800 rounded-lg h-full flex flex-col border border-slate-700", children: [
-        /* @__PURE__ */ jsxs14("div", { ref: chatContainerRef, className: "flex-1 p-4 overflow-y-auto space-y-4", children: [
-          chatHistory.map((msg, index) => /* @__PURE__ */ jsx16("div", { className: `flex ${msg.author === "user" ? "justify-end" : "justify-start"}`, children: /* @__PURE__ */ jsx16("div", { className: `p-3 rounded-lg max-w-[80%] ${msg.author === "user" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200"}`, children: /* @__PURE__ */ jsx16("p", { className: "text-sm", children: msg.text }) }) }, index)),
-          isAiThinking && /* @__PURE__ */ jsx16("div", { className: "flex justify-start", children: /* @__PURE__ */ jsx16("div", { className: "p-3 rounded-lg bg-slate-700", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-2", children: [
+      return /* @__PURE__ */ jsxs14("div", {
+        className: "bg-slate-800 rounded-lg h-full flex flex-col border border-slate-700", children: [
+        /* @__PURE__ */ jsxs14("div", {
+          ref: chatContainerRef, className: "flex-1 p-4 overflow-y-auto space-y-4", children: [
+            chatHistory.map((msg, index) => /* @__PURE__ */ jsx16("div", { className: `flex ${msg.author === "user" ? "justify-end" : "justify-start"}`, children: /* @__PURE__ */ jsx16("div", { className: `p-3 rounded-lg max-w-[80%] ${msg.author === "user" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200"}`, children: /* @__PURE__ */ jsx16("p", { className: "text-sm", children: msg.text }) }) }, index)),
+            isAiThinking && /* @__PURE__ */ jsx16("div", {
+              className: "flex justify-start", children: /* @__PURE__ */ jsx16("div", {
+                className: "p-3 rounded-lg bg-slate-700", children: /* @__PURE__ */ jsxs14("div", {
+                  className: "flex items-center gap-2", children: [
             /* @__PURE__ */ jsx16("span", { className: "w-2 h-2 bg-slate-400 rounded-full animate-bounce", style: { animationDelay: "0s" } }),
             /* @__PURE__ */ jsx16("span", { className: "w-2 h-2 bg-slate-400 rounded-full animate-bounce", style: { animationDelay: "0.2s" } }),
             /* @__PURE__ */ jsx16("span", { className: "w-2 h-2 bg-slate-400 rounded-full animate-bounce", style: { animationDelay: "0.4s" } })
-          ] }) }) })
-        ] }),
-        /* @__PURE__ */ jsx16("div", { className: "p-4 border-t border-slate-700", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ jsx16("textarea", { value: currentMessage, onChange: (e) => setCurrentMessage(e.target.value), onKeyDown: (e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSendChatMessage();
-            }
-          }, placeholder: "Type your answer...", rows: 1, className: "flex-1 bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500", disabled: isAiThinking }),
+                  ]
+                })
+              })
+            })
+          ]
+        }),
+        /* @__PURE__ */ jsx16("div", {
+          className: "p-4 border-t border-slate-700", children: /* @__PURE__ */ jsxs14("div", {
+            className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx16("textarea", {
+              value: currentMessage, onChange: (e) => setCurrentMessage(e.target.value), onKeyDown: (e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendChatMessage();
+                }
+              }, placeholder: "Type your answer...", rows: 1, className: "flex-1 bg-slate-700/50 border border-slate-600 rounded-md py-2 px-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500", disabled: isAiThinking
+            }),
           /* @__PURE__ */ jsx16("button", { onClick: handleSendChatMessage, disabled: !currentMessage.trim() || isAiThinking, className: "bg-blue-600 hover:bg-blue-500 text-white rounded-md p-3 disabled:opacity-50 disabled:cursor-not-allowed", children: /* @__PURE__ */ jsx16(SendIcon, {}) })
-        ] }) })
-      ] });
+            ]
+          })
+        })
+        ]
+      });
     }
-    return /* @__PURE__ */ jsxs14(Fragment8, { children: [
-      /* @__PURE__ */ jsx16("div", { className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(
-        AudioVisualizer_default,
-        {
-          isSpeaking: isAiSpeaking,
-          status: isAiThinking ? "Thinking..." : "Listening...",
-          hasError: !!hasAiError,
-          errorMessage: hasAiError || void 0,
-          hasAudio: mediaStatus?.hasAudio
-        }
-      ) : /* @__PURE__ */ jsx16(
-        VideoPanel_default,
-        {
-          name: "AI Interviewer",
-          isSpeaking: isAiSpeaking,
-          status: isAiThinking ? "Thinking..." : "Listening...",
-          avatarNode: /* @__PURE__ */ jsx16(ImageSlider_default, { images: AI_INTERVIEWER_IMAGES })
-        }
-      ) }),
-      /* @__PURE__ */ jsx16("div", { className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(
-        VideoPanel_default,
-        {
-          name: settings.candidateName,
-          avatarNode: /* @__PURE__ */ jsx16(UserCircleIcon, {}),
-          isMuted,
-          status: mediaStatus?.hasAudio ? "Audio Connected" : "Audio Disconnected"
-        }
-      ) : isLiveShareMode ? /* @__PURE__ */ jsx16(
-        VideoPanel_default,
-        {
-          name: settings.candidateName,
-          videoRef: screenShareVideoRef,
-          stream: screenShareStream,
-          status: mediaStatus?.hasVideo ? "Screen Sharing Active" : "Screen Share Disconnected",
-          isMuted
-        }
-      ) : (
+    return /* @__PURE__ */ jsxs14(Fragment8, {
+      children: [
+      /* @__PURE__ */ jsx16("div", {
+        className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(
+          AudioVisualizer_default,
+          {
+            isSpeaking: isAiSpeaking,
+            status: isAiThinking ? "Thinking..." : "Listening...",
+            hasError: !!hasAiError,
+            errorMessage: hasAiError || void 0,
+            hasAudio: mediaStatus?.hasAudio
+          }
+        ) : /* @__PURE__ */ jsx16(
+          VideoPanel_default,
+          {
+            name: "AI Interviewer",
+            isSpeaking: isAiSpeaking,
+            status: isAiThinking ? "Thinking..." : "Listening...",
+            avatarNode: /* @__PURE__ */ jsx16(ImageSlider_default, { images: AI_INTERVIEWER_IMAGES })
+          }
+        )
+      }),
+      /* @__PURE__ */ jsx16("div", {
+        className: "w-full h-full", children: isAudioMode ? /* @__PURE__ */ jsx16(
+          VideoPanel_default,
+          {
+            name: settings.candidateName,
+            avatarNode: /* @__PURE__ */ jsx16(UserCircleIcon, {}),
+            isMuted,
+            status: mediaStatus?.hasAudio ? "Audio Connected" : "Audio Disconnected"
+          }
+        ) : isLiveShareMode ? /* @__PURE__ */ jsx16(
+          VideoPanel_default,
+          {
+            name: settings.candidateName,
+            videoRef: screenShareVideoRef,
+            stream: screenShareStream,
+            status: mediaStatus?.hasVideo ? "Screen Sharing Active" : "Screen Share Disconnected",
+            isMuted
+          }
+        ) : (
         // Video mode
         /* @__PURE__ */ jsx16(
           VideoPanel_default,
@@ -5782,180 +5876,247 @@ Interviewer: ${fullOutput}`);
             status: !mediaStatus ? "Connecting..." : !mediaStatus.hasVideo ? "Video Disconnected" : !mediaStatus.hasAudio ? "Audio Disconnected" : "Connected"
           }
         )
-      ) })
-    ] });
+        )
+      })
+      ]
+    });
   };
-  return /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900", children: [
-    /* @__PURE__ */ jsx16("div", { className: "bg-slate-950/90 backdrop-blur-sm border-b border-slate-700/50 px-6 py-3 flex-shrink-0", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-center justify-between", children: [
-      /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-4", children: [
-        /* @__PURE__ */ jsxs14("div", { className: "relative bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30", children: [
+  return /* @__PURE__ */ jsxs14("div", {
+    className: "flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900", children: [
+    /* @__PURE__ */ jsx16("div", {
+      className: "bg-slate-950/90 backdrop-blur-sm border-b border-slate-700/50 px-6 py-3 flex-shrink-0", children: /* @__PURE__ */ jsxs14("div", {
+        className: "flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxs14("div", {
+          className: "flex items-center gap-4", children: [
+        /* @__PURE__ */ jsxs14("div", {
+            className: "relative bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30", children: [
           /* @__PURE__ */ jsx16("svg", { className: "w-6 h-6 text-white", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2.5, d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }) }),
           /* @__PURE__ */ jsx16("div", { className: "absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-950 animate-pulse" })
-        ] }),
-        /* @__PURE__ */ jsxs14("div", { children: [
-          /* @__PURE__ */ jsxs14("h1", { className: "text-xl font-bold text-white flex items-center gap-2", children: [
-            "AI Interview Session",
+            ]
+          }),
+        /* @__PURE__ */ jsxs14("div", {
+            children: [
+          /* @__PURE__ */ jsxs14("h1", {
+              className: "text-xl font-bold text-white flex items-center gap-2", children: [
+                "AI Interview Session",
             /* @__PURE__ */ jsx16("span", { className: "text-xs font-normal px-2 py-1 bg-blue-500/20 text-blue-300 rounded-full border border-blue-500/30", children: "Live" })
-          ] }),
-          /* @__PURE__ */ jsxs14("p", { className: "text-xs text-slate-400 flex items-center gap-2 mt-0.5", children: [
+              ]
+            }),
+          /* @__PURE__ */ jsxs14("p", {
+              className: "text-xs text-slate-400 flex items-center gap-2 mt-0.5", children: [
             /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }) }),
-            settings.position,
-            " \u2022 ",
-            settings.difficulty,
-            " Level"
-          ] })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-3", children: [
-        /* @__PURE__ */ jsxs14("div", { className: `flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${timeLeft < 30 ? "bg-red-900/30 border border-red-500/50" : "bg-slate-800/50 border border-slate-600"}`, children: [
+                settings.position,
+                " \u2022 ",
+                settings.difficulty,
+                " Level"
+              ]
+            })
+            ]
+          })
+          ]
+        }),
+      /* @__PURE__ */ jsxs14("div", {
+          className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxs14("div", {
+            className: `flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${timeLeft < 30 ? "bg-red-900/30 border border-red-500/50" : "bg-slate-800/50 border border-slate-600"}`, children: [
           /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-slate-300", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
           /* @__PURE__ */ jsx16("span", { className: `font-mono text-lg font-bold ${timeLeft < 30 ? "text-red-400" : "text-slate-200"}`, children: formatTime(timeLeft) })
-        ] }),
-        isAudioEnabled && /* @__PURE__ */ jsx16(
-          "button",
-          {
-            onClick: () => setIsMuted((prev) => !prev),
-            className: `p-2.5 rounded-lg transition-all duration-200 ${isMuted ? "bg-red-600/90 hover:bg-red-500 text-white" : "bg-slate-700/50 hover:bg-slate-600/50 text-slate-300"}`,
-            title: isMuted ? "Unmute microphone" : "Mute microphone",
-            children: isMuted ? /* @__PURE__ */ jsxs14("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+            ]
+          }),
+            isAudioEnabled && /* @__PURE__ */ jsx16(
+              "button",
+              {
+                onClick: () => setIsMuted((prev) => !prev),
+                className: `p-2.5 rounded-lg transition-all duration-200 ${isMuted ? "bg-red-600/90 hover:bg-red-500 text-white" : "bg-slate-700/50 hover:bg-slate-600/50 text-slate-300"}`,
+                title: isMuted ? "Unmute microphone" : "Mute microphone",
+                children: isMuted ? /* @__PURE__ */ jsxs14("svg", {
+                  className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
               /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z", clipRule: "evenodd" }),
               /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" })
-            ] }) : /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" }) })
-          }
-        ),
+                  ]
+                }) : /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" }) })
+              }
+            ),
         /* @__PURE__ */ jsx16(
-          "button",
-          {
-            onClick: handleEndInterview,
-            disabled: isEnding,
-            className: "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-red-500/20 hover:shadow-red-500/40 flex items-center gap-2",
-            children: isEnding ? /* @__PURE__ */ jsxs14(Fragment8, { children: [
+              "button",
+              {
+                onClick: handleEndInterview,
+                disabled: isEnding,
+                className: "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-red-500/20 hover:shadow-red-500/40 flex items-center gap-2",
+                children: isEnding ? /* @__PURE__ */ jsxs14(Fragment8, {
+                  children: [
               /* @__PURE__ */ jsx16("div", { className: "w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" }),
               /* @__PURE__ */ jsx16("span", { children: "Ending..." })
-            ] }) : /* @__PURE__ */ jsxs14(Fragment8, { children: [
+                  ]
+                }) : /* @__PURE__ */ jsxs14(Fragment8, {
+                  children: [
               /* @__PURE__ */ jsx16("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M6 18L18 6M6 6l12 12" }) }),
               /* @__PURE__ */ jsx16("span", { children: "End Interview" })
-            ] })
-          }
-        ),
+                  ]
+                })
+              }
+            ),
         /* @__PURE__ */ jsx16(
-          "button",
-          {
-            onClick: () => setIsSidePanelCollapsed((prev) => !prev),
-            className: "p-2.5 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 transition-colors text-slate-300",
-            title: "Toggle side panel",
-            children: /* @__PURE__ */ jsxs14("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+              "button",
+              {
+                onClick: () => setIsSidePanelCollapsed((prev) => !prev),
+                className: "p-2.5 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 transition-colors text-slate-300",
+                title: "Toggle side panel",
+                children: /* @__PURE__ */ jsxs14("svg", {
+                  className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
               /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" }),
               /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z" })
-            ] })
-          }
-        )
-      ] })
-    ] }) }),
-    /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col md:flex-row overflow-hidden", children: [
-      /* @__PURE__ */ jsxs14("div", { className: "flex-1 flex flex-col p-6 gap-4", children: [
-        /* @__PURE__ */ jsx16("div", { className: "bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm p-4 rounded-xl border border-blue-500/30 shadow-lg flex-shrink-0", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-start gap-3", children: [
+                  ]
+                })
+              }
+            )
+          ]
+        })
+        ]
+      })
+    }),
+    /* @__PURE__ */ jsxs14("div", {
+      className: "flex-1 flex flex-col md:flex-row overflow-hidden", children: [
+      /* @__PURE__ */ jsxs14("div", {
+        className: "flex-1 flex flex-col p-6 gap-4", children: [
+        /* @__PURE__ */ jsx16("div", {
+          className: "bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm p-4 rounded-xl border border-blue-500/30 shadow-lg flex-shrink-0", children: /* @__PURE__ */ jsxs14("div", {
+            className: "flex items-start gap-3", children: [
           /* @__PURE__ */ jsx16("div", { className: "bg-blue-500/20 p-2 rounded-lg mt-1", children: /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }) }),
-          /* @__PURE__ */ jsxs14("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsxs14("div", {
+              className: "flex-1", children: [
             /* @__PURE__ */ jsx16("p", { className: "text-xs font-semibold text-blue-300 uppercase tracking-wider mb-1", children: "Current Question" }),
             /* @__PURE__ */ jsx16("p", { className: "text-base font-medium text-white leading-relaxed", children: currentQuestion })
-          ] })
-        ] }) }),
+              ]
+            })
+            ]
+          })
+        }),
         /* @__PURE__ */ jsx16("div", { className: "flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0", children: renderMainContent() }),
-        !isChatMode && /* @__PURE__ */ jsxs14("div", { className: "bg-gradient-to-br from-slate-900 to-slate-950 rounded-xl border border-slate-700/50 p-4 flex-shrink-0", style: { maxHeight: "200px" }, children: [
-          /* @__PURE__ */ jsxs14("div", { className: "flex items-center justify-between mb-3", children: [
-            /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-2", children: [
+          !isChatMode && /* @__PURE__ */ jsxs14("div", {
+            className: "bg-gradient-to-br from-slate-900 to-slate-950 rounded-xl border border-slate-700/50 p-4 flex-shrink-0", style: { maxHeight: "200px" }, children: [
+          /* @__PURE__ */ jsxs14("div", {
+              className: "flex items-center justify-between mb-3", children: [
+            /* @__PURE__ */ jsxs14("div", {
+                className: "flex items-center gap-2", children: [
               /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" }) }),
               /* @__PURE__ */ jsx16("h3", { className: "text-sm font-semibold text-slate-200", children: "Live Transcript" }),
               /* @__PURE__ */ jsx16("span", { className: "text-xs text-slate-500", children: isEditingTranscript ? "(Editing)" : "(Real-time)" })
-            ] }),
-            /* @__PURE__ */ jsx16("div", { className: "flex items-center gap-2", children: !isEditingTranscript ? /* @__PURE__ */ jsxs14(
-              "button",
-              {
-                onClick: () => setIsEditingTranscript(true),
-                className: "text-xs px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors flex items-center gap-1",
-                title: "Edit transcript",
-                children: [
-                  /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
-                  "Edit"
                 ]
-              }
-            ) : /* @__PURE__ */ jsxs14(Fragment8, { children: [
-              /* @__PURE__ */ jsx16(
-                "button",
-                {
-                  onClick: () => {
-                    setIsEditingTranscript(false);
-                    setEditableTranscript(transcript);
-                  },
-                  className: "text-xs px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors",
-                  children: "Cancel"
-                }
-              ),
-              /* @__PURE__ */ jsxs14(
-                "button",
-                {
-                  onClick: handleSendCorrection,
-                  className: "text-xs px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center gap-1",
-                  title: "Send correction to AI",
+              }),
+            /* @__PURE__ */ jsx16("div", {
+                className: "flex items-center gap-2", children: !isEditingTranscript ? /* @__PURE__ */ jsxs14(
+                  "button",
+                  {
+                    onClick: () => setIsEditingTranscript(true),
+                    className: "text-xs px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors flex items-center gap-1",
+                    title: "Edit transcript",
+                    children: [
+                  /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
+                      "Edit"
+                    ]
+                  }
+                ) : /* @__PURE__ */ jsxs14(Fragment8, {
                   children: [
+              /* @__PURE__ */ jsx16(
+                    "button",
+                    {
+                      onClick: () => {
+                        setIsEditingTranscript(false);
+                        setEditableTranscript(transcript);
+                      },
+                      className: "text-xs px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors",
+                      children: "Cancel"
+                    }
+                  ),
+              /* @__PURE__ */ jsxs14(
+                    "button",
+                    {
+                      onClick: handleSendCorrection,
+                      className: "text-xs px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center gap-1",
+                      title: "Send correction to AI",
+                      children: [
                     /* @__PURE__ */ jsx16("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5 13l4 4L19 7" }) }),
-                    "Apply"
+                        "Apply"
+                      ]
+                    }
+                  )
                   ]
-                }
-              )
-            ] }) })
-          ] }),
+                })
+              })
+              ]
+            }),
           /* @__PURE__ */ jsx16(
-            "div",
-            {
-              ref: transcriptRef,
-              className: "overflow-y-auto h-32 bg-slate-950/50 rounded-lg p-3 border border-slate-700/50",
-              children: isEditingTranscript ? /* @__PURE__ */ jsx16(
-                "textarea",
-                {
-                  value: editableTranscript,
-                  onChange: (e) => setEditableTranscript(e.target.value),
-                  className: "w-full h-full bg-transparent text-slate-300 text-sm resize-none focus:outline-none",
-                  placeholder: "Transcript will appear here as you speak..."
-                }
-              ) : /* @__PURE__ */ jsx16("div", { className: "text-slate-300 text-sm whitespace-pre-wrap font-mono leading-relaxed", children: transcript || /* @__PURE__ */ jsx16("span", { className: "text-slate-500 italic", children: "Transcript will appear here as you speak..." }) })
-            }
-          ),
-          isEditingTranscript && /* @__PURE__ */ jsx16("p", { className: "text-xs text-slate-500 mt-2", children: '\u{1F4A1} Tip: Edit your response and click "Apply" to note corrections' })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs14("div", { className: `bg-slate-950/80 backdrop-blur-sm border-l border-slate-700/50 flex flex-col transition-all duration-300 ${isSidePanelCollapsed ? "w-0" : "w-full md:w-96"} overflow-hidden`, children: [
-        /* @__PURE__ */ jsx16("div", { className: "p-6 border-b border-slate-700/50 flex-shrink-0 bg-gradient-to-r from-slate-900 to-slate-800", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsx16("div", { className: "bg-blue-600/20 p-2 rounded-lg", children: /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" }) }) }),
-          /* @__PURE__ */ jsx16("h2", { className: "text-lg font-bold text-white", children: "Interview Tools" })
-        ] }) }),
-        /* @__PURE__ */ jsxs14("div", { className: "flex-1 overflow-y-auto p-6 space-y-6", children: [
-          /* @__PURE__ */ jsxs14("div", { className: "bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/50", children: [
-            /* @__PURE__ */ jsxs14("div", { className: "flex items-center justify-between mb-3", children: [
-              /* @__PURE__ */ jsx16("span", { className: "text-sm font-semibold text-slate-300", children: "Progress" }),
-              /* @__PURE__ */ jsxs14("span", { className: "text-xs text-slate-400", children: [
-                questions.length,
-                " questions"
-              ] })
-            ] }),
-            /* @__PURE__ */ jsx16("div", { className: "w-full bg-slate-700/50 rounded-full h-2.5 mb-2", children: /* @__PURE__ */ jsx16(
               "div",
               {
-                className: "bg-gradient-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all duration-500",
-                style: { width: `${timeLeft / INTERVIEW_DURATION * 100}%` }
+                ref: transcriptRef,
+                className: "overflow-y-auto h-32 bg-slate-950/50 rounded-lg p-3 border border-slate-700/50",
+                children: isEditingTranscript ? /* @__PURE__ */ jsx16(
+                  "textarea",
+                  {
+                    value: editableTranscript,
+                    onChange: (e) => setEditableTranscript(e.target.value),
+                    className: "w-full h-full bg-transparent text-slate-300 text-sm resize-none focus:outline-none",
+                    placeholder: "Transcript will appear here as you speak..."
+                  }
+                ) : /* @__PURE__ */ jsx16("div", { className: "text-slate-300 text-sm whitespace-pre-wrap font-mono leading-relaxed", children: transcript || /* @__PURE__ */ jsx16("span", { className: "text-slate-500 italic", children: "Transcript will appear here as you speak..." }) })
               }
-            ) }),
-            /* @__PURE__ */ jsxs14("p", { className: "text-xs text-slate-400 mt-2", children: [
-              Math.round((1 - timeLeft / INTERVIEW_DURATION) * 100),
-              "% Complete"
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs14("div", { className: "bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/50", children: [
-            /* @__PURE__ */ jsxs14("label", { htmlFor: "notes", className: "flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3", children: [
+            ),
+              isEditingTranscript && /* @__PURE__ */ jsx16("p", { className: "text-xs text-slate-500 mt-2", children: '\u{1F4A1} Tip: Edit your response and click "Apply" to note corrections' })
+            ]
+          })
+        ]
+      }),
+      /* @__PURE__ */ jsxs14("div", {
+        className: `bg-slate-950/80 backdrop-blur-sm border-l border-slate-700/50 flex flex-col transition-all duration-300 ${isSidePanelCollapsed ? "w-0" : "w-full md:w-96"} overflow-hidden`, children: [
+        /* @__PURE__ */ jsx16("div", {
+          className: "p-6 border-b border-slate-700/50 flex-shrink-0 bg-gradient-to-r from-slate-900 to-slate-800", children: /* @__PURE__ */ jsxs14("div", {
+            className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ jsx16("div", { className: "bg-blue-600/20 p-2 rounded-lg", children: /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" }) }) }),
+          /* @__PURE__ */ jsx16("h2", { className: "text-lg font-bold text-white", children: "Interview Tools" })
+            ]
+          })
+        }),
+        /* @__PURE__ */ jsxs14("div", {
+          className: "flex-1 overflow-y-auto p-6 space-y-6", children: [
+          /* @__PURE__ */ jsxs14("div", {
+            className: "bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/50", children: [
+            /* @__PURE__ */ jsxs14("div", {
+              className: "flex items-center justify-between mb-3", children: [
+              /* @__PURE__ */ jsx16("span", { className: "text-sm font-semibold text-slate-300", children: "Progress" }),
+              /* @__PURE__ */ jsxs14("span", {
+                className: "text-xs text-slate-400", children: [
+                  questions.length,
+                  " questions"
+                ]
+              })
+              ]
+            }),
+            /* @__PURE__ */ jsx16("div", {
+              className: "w-full bg-slate-700/50 rounded-full h-2.5 mb-2", children: /* @__PURE__ */ jsx16(
+                "div",
+                {
+                  className: "bg-gradient-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all duration-500",
+                  style: { width: `${timeLeft / INTERVIEW_DURATION * 100}%` }
+                }
+              )
+            }),
+            /* @__PURE__ */ jsxs14("p", {
+              className: "text-xs text-slate-400 mt-2", children: [
+                Math.round((1 - timeLeft / INTERVIEW_DURATION) * 100),
+                "% Complete"
+              ]
+            })
+            ]
+          }),
+          /* @__PURE__ */ jsxs14("div", {
+            className: "bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/50", children: [
+            /* @__PURE__ */ jsxs14("label", {
+              htmlFor: "notes", className: "flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3", children: [
               /* @__PURE__ */ jsx16("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
-              "My Notes"
-            ] }),
+                "My Notes"
+              ]
+            }),
             /* @__PURE__ */ jsx16(
               "textarea",
               {
@@ -5966,44 +6127,65 @@ Interviewer: ${fullOutput}`);
                 placeholder: "Jot down your thoughts, key points, or reminders here..."
               }
             ),
-            /* @__PURE__ */ jsxs14("p", { className: "text-xs text-slate-500 mt-2", children: [
-              notes.length,
-              " characters"
-            ] })
-          ] }),
-          /* @__PURE__ */ jsx16("div", { className: "bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-4 rounded-xl border border-blue-500/20", children: /* @__PURE__ */ jsxs14("div", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ jsxs14("p", {
+              className: "text-xs text-slate-500 mt-2", children: [
+                notes.length,
+                " characters"
+              ]
+            })
+            ]
+          }),
+          /* @__PURE__ */ jsx16("div", {
+            className: "bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-4 rounded-xl border border-blue-500/20", children: /* @__PURE__ */ jsxs14("div", {
+              className: "flex items-start gap-2", children: [
             /* @__PURE__ */ jsx16("svg", { className: "w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx16("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
-            /* @__PURE__ */ jsxs14("div", { children: [
+            /* @__PURE__ */ jsxs14("div", {
+                children: [
               /* @__PURE__ */ jsx16("h3", { className: "text-sm font-semibold text-blue-300 mb-2", children: "Interview Tips" }),
-              /* @__PURE__ */ jsxs14("ul", { className: "text-xs text-slate-400 space-y-1.5", children: [
-                /* @__PURE__ */ jsxs14("li", { className: "flex items-start gap-2", children: [
+              /* @__PURE__ */ jsxs14("ul", {
+                  className: "text-xs text-slate-400 space-y-1.5", children: [
+                /* @__PURE__ */ jsxs14("li", {
+                    className: "flex items-start gap-2", children: [
                   /* @__PURE__ */ jsx16("span", { className: "text-blue-400", children: "\u2022" }),
                   /* @__PURE__ */ jsx16("span", { children: "Speak clearly and at a steady pace" })
-                ] }),
-                /* @__PURE__ */ jsxs14("li", { className: "flex items-start gap-2", children: [
+                    ]
+                  }),
+                /* @__PURE__ */ jsxs14("li", {
+                    className: "flex items-start gap-2", children: [
                   /* @__PURE__ */ jsx16("span", { className: "text-blue-400", children: "\u2022" }),
                   /* @__PURE__ */ jsx16("span", { children: "Take your time to think before answering" })
-                ] }),
-                /* @__PURE__ */ jsxs14("li", { className: "flex items-start gap-2", children: [
+                    ]
+                  }),
+                /* @__PURE__ */ jsxs14("li", {
+                    className: "flex items-start gap-2", children: [
                   /* @__PURE__ */ jsx16("span", { className: "text-blue-400", children: "\u2022" }),
                   /* @__PURE__ */ jsx16("span", { children: "Use the STAR method for behavioral questions" })
-                ] })
-              ] })
-            ] })
-          ] }) })
-        ] })
-      ] })
-    ] })
-  ] });
+                    ]
+                  })
+                  ]
+                })
+                ]
+              })
+              ]
+            })
+          })
+          ]
+        })
+        ]
+      })
+      ]
+    })
+    ]
+  });
 };
 var InterviewScreen_default = InterviewScreen;
 
 // components/PlaybackScreen.tsx
-import { useState as useState18, useEffect as useEffect16 } from "react";
+import { useState as useState19, useEffect as useEffect17 } from "react";
 
 // components/FeedbackPanel.tsx
 import { jsx as jsx17, jsxs as jsxs15 } from "react/jsx-runtime";
-var getApiErrorDetails2 = (error) => {
+var getApiErrorDetails = (error) => {
   const defaultMessage = "Sorry, an error occurred while generating feedback. Please try again later.";
   const rateLimitMessage = "The AI service is currently experiencing high demand. Retrying...";
   const quotaMessage = "You have reached the daily limit for the evaluation model. To try again, please start a new interview and select a different evaluation model on the setup screen.";
@@ -6047,8 +6229,10 @@ var RatingCircle = ({ rating }) => {
     colorClass = "text-red-400";
   else if (rating < 8)
     colorClass = "text-yellow-400";
-  return /* @__PURE__ */ jsxs15("div", { className: "relative w-32 h-32", children: [
-    /* @__PURE__ */ jsxs15("svg", { className: "w-full h-full", viewBox: "0 0 100 100", children: [
+  return /* @__PURE__ */ jsxs15("div", {
+    className: "relative w-32 h-32", children: [
+    /* @__PURE__ */ jsxs15("svg", {
+      className: "w-full h-full", viewBox: "0 0 100 100", children: [
       /* @__PURE__ */ jsx17("circle", { className: "text-slate-700", strokeWidth: "10", stroke: "currentColor", fill: "transparent", r: "45", cx: "50", cy: "50" }),
       /* @__PURE__ */ jsx17(
         "circle",
@@ -6065,28 +6249,40 @@ var RatingCircle = ({ rating }) => {
           cy: "50"
         }
       )
-    ] }),
-    /* @__PURE__ */ jsxs15("div", { className: "absolute inset-0 flex flex-col items-center justify-center", children: [
+      ]
+    }),
+    /* @__PURE__ */ jsxs15("div", {
+      className: "absolute inset-0 flex flex-col items-center justify-center", children: [
       /* @__PURE__ */ jsx17("span", { className: `text-4xl font-bold ${colorClass}`, children: rating.toFixed(1) }),
       /* @__PURE__ */ jsx17("span", { className: "text-sm text-slate-400", children: "/ 10" })
-    ] })
-  ] });
+      ]
+    })
+    ]
+  });
 };
-var MetricBar = ({ metric }) => /* @__PURE__ */ jsxs15("div", { children: [
-  /* @__PURE__ */ jsxs15("div", { className: "flex justify-between items-baseline mb-1", children: [
+var MetricBar = ({ metric }) => /* @__PURE__ */ jsxs15("div", {
+  children: [
+  /* @__PURE__ */ jsxs15("div", {
+    className: "flex justify-between items-baseline mb-1", children: [
     /* @__PURE__ */ jsx17("span", { className: "text-sm font-medium text-slate-300", children: metric.name }),
-    /* @__PURE__ */ jsxs15("span", { className: "text-sm font-bold text-slate-100", children: [
-      metric.rating,
-      "/10"
-    ] })
-  ] }),
+    /* @__PURE__ */ jsxs15("span", {
+      className: "text-sm font-bold text-slate-100", children: [
+        metric.rating,
+        "/10"
+      ]
+    })
+    ]
+  }),
   /* @__PURE__ */ jsx17("div", { className: "w-full bg-slate-700 rounded-full h-2.5", children: /* @__PURE__ */ jsx17("div", { className: "bg-blue-500 h-2.5 rounded-full", style: { width: `${metric.rating * 10}%` } }) }),
-  /* @__PURE__ */ jsxs15("p", { className: "text-xs text-slate-400 mt-1.5 italic", children: [
-    '"',
-    metric.reasoning,
-    '"'
-  ] })
-] });
+  /* @__PURE__ */ jsxs15("p", {
+    className: "text-xs text-slate-400 mt-1.5 italic", children: [
+      '"',
+      metric.reasoning,
+      '"'
+    ]
+  })
+  ]
+});
 var RecommendationBadge = ({ recommendation }) => {
   let bgColor, textColor, icon;
   switch (recommendation) {
@@ -6107,35 +6303,47 @@ var RecommendationBadge = ({ recommendation }) => {
       icon = /* @__PURE__ */ jsx17(ThumbsDownIcon, {});
       break;
   }
-  return /* @__PURE__ */ jsxs15("div", { className: `p-3 rounded-lg flex items-center gap-3 ${bgColor}`, children: [
+  return /* @__PURE__ */ jsxs15("div", {
+    className: `p-3 rounded-lg flex items-center gap-3 ${bgColor}`, children: [
     /* @__PURE__ */ jsx17("div", { className: textColor, children: icon }),
-    /* @__PURE__ */ jsxs15("div", { children: [
+    /* @__PURE__ */ jsxs15("div", {
+      children: [
       /* @__PURE__ */ jsx17("h4", { className: "font-semibold text-slate-200", children: "Recommendation" }),
       /* @__PURE__ */ jsx17("p", { className: `font-bold ${textColor}`, children: recommendation })
-    ] })
-  ] });
+      ]
+    })
+    ]
+  });
 };
 var FeedbackPanel = ({ feedback, isLoading, error, loadingMessage }) => {
   if (isLoading) {
-    return /* @__PURE__ */ jsxs15("div", { children: [
+    return /* @__PURE__ */ jsxs15("div", {
+      children: [
       /* @__PURE__ */ jsx17("h3", { className: "text-lg font-semibold text-slate-200 mb-2", children: "Generating AI Feedback..." }),
-      /* @__PURE__ */ jsxs15("div", { className: "flex items-center gap-2 text-slate-400", children: [
+      /* @__PURE__ */ jsxs15("div", {
+        className: "flex items-center gap-2 text-slate-400", children: [
         /* @__PURE__ */ jsx17("div", { className: "w-4 h-4 border-2 border-slate-500 border-t-slate-300 rounded-full animate-spin" }),
         /* @__PURE__ */ jsx17("span", { children: loadingMessage })
-      ] })
-    ] });
+        ]
+      })
+      ]
+    });
   }
   if (error) {
-    return /* @__PURE__ */ jsxs15("div", { children: [
+    return /* @__PURE__ */ jsxs15("div", {
+      children: [
       /* @__PURE__ */ jsx17("h3", { className: "text-lg font-semibold text-red-400 mb-2", children: "Error" }),
       /* @__PURE__ */ jsx17("p", { className: "text-red-400/90", children: error })
-    ] });
+      ]
+    });
   }
   if (!feedback) {
-    return /* @__PURE__ */ jsxs15("div", { children: [
+    return /* @__PURE__ */ jsxs15("div", {
+      children: [
       /* @__PURE__ */ jsx17("h3", { className: "text-lg font-semibold text-slate-300 mb-2", children: "No Feedback Available" }),
       /* @__PURE__ */ jsx17("p", { className: "text-slate-400/90", children: "Could not generate feedback for this interview." })
-    ] });
+      ]
+    });
   }
   const {
     overallRating = 0,
@@ -6145,45 +6353,73 @@ var FeedbackPanel = ({ feedback, isLoading, error, loadingMessage }) => {
     strengths = [],
     areasForImprovement = []
   } = feedback;
-  return /* @__PURE__ */ jsxs15("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsxs15("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-6 items-center bg-slate-950/50 p-4 rounded-lg", children: [
-      /* @__PURE__ */ jsxs15("div", { className: "flex flex-col items-center justify-center text-center md:col-span-1", children: [
+  return /* @__PURE__ */ jsxs15("div", {
+    className: "space-y-6", children: [
+    /* @__PURE__ */ jsxs15("div", {
+      className: "grid grid-cols-1 md:grid-cols-3 gap-6 items-center bg-slate-950/50 p-4 rounded-lg", children: [
+      /* @__PURE__ */ jsxs15("div", {
+        className: "flex flex-col items-center justify-center text-center md:col-span-1", children: [
         /* @__PURE__ */ jsx17("h4", { className: "text-lg font-semibold text-slate-200 mb-2", children: "Overall Score" }),
         /* @__PURE__ */ jsx17(RatingCircle, { rating: overallRating }),
-        /* @__PURE__ */ jsxs15("p", { className: "text-sm text-slate-400 mt-2 italic", children: [
-          '"',
-          overallReasoning,
-          '"'
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs15("div", { className: "md:col-span-2 space-y-4", children: [
+        /* @__PURE__ */ jsxs15("p", {
+          className: "text-sm text-slate-400 mt-2 italic", children: [
+            '"',
+            overallReasoning,
+            '"'
+          ]
+        })
+        ]
+      }),
+      /* @__PURE__ */ jsxs15("div", {
+        className: "md:col-span-2 space-y-4", children: [
         /* @__PURE__ */ jsx17(RecommendationBadge, { recommendation }),
         /* @__PURE__ */ jsx17("div", { className: "space-y-3", children: metrics.map((metric, i) => /* @__PURE__ */ jsx17(MetricBar, { metric }, metric.name || i)) })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs15("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
-      /* @__PURE__ */ jsxs15("div", { className: "bg-slate-950/50 p-4 rounded-lg", children: [
-        /* @__PURE__ */ jsxs15("div", { className: "flex items-center gap-3 mb-3", children: [
+        ]
+      })
+      ]
+    }),
+    /* @__PURE__ */ jsxs15("div", {
+      className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+      /* @__PURE__ */ jsxs15("div", {
+        className: "bg-slate-950/50 p-4 rounded-lg", children: [
+        /* @__PURE__ */ jsxs15("div", {
+          className: "flex items-center gap-3 mb-3", children: [
           /* @__PURE__ */ jsx17("div", { className: "text-green-400", children: /* @__PURE__ */ jsx17(ThumbsUpIcon, {}) }),
           /* @__PURE__ */ jsx17("h4", { className: "text-lg font-semibold text-slate-200", children: "Strengths" })
-        ] }),
-        /* @__PURE__ */ jsx17("ul", { className: "space-y-2", children: strengths.length > 0 ? strengths.map((strength, i) => /* @__PURE__ */ jsxs15("li", { className: "flex items-start gap-2.5", children: [
+          ]
+        }),
+        /* @__PURE__ */ jsx17("ul", {
+          className: "space-y-2", children: strengths.length > 0 ? strengths.map((strength, i) => /* @__PURE__ */ jsxs15("li", {
+            className: "flex items-start gap-2.5", children: [
           /* @__PURE__ */ jsx17("div", { className: "text-green-500 pt-1 flex-shrink-0", children: /* @__PURE__ */ jsx17(SimpleCheckIcon, {}) }),
           /* @__PURE__ */ jsx17("span", { className: "text-slate-300 text-sm", children: strength })
-        ] }, i)) : /* @__PURE__ */ jsx17("li", { className: "text-slate-400 text-sm", children: "No specific strengths were identified." }) })
-      ] }),
-      /* @__PURE__ */ jsxs15("div", { className: "bg-slate-950/50 p-4 rounded-lg", children: [
-        /* @__PURE__ */ jsxs15("div", { className: "flex items-center gap-3 mb-3", children: [
+            ]
+          }, i)) : /* @__PURE__ */ jsx17("li", { className: "text-slate-400 text-sm", children: "No specific strengths were identified." })
+        })
+        ]
+      }),
+      /* @__PURE__ */ jsxs15("div", {
+        className: "bg-slate-950/50 p-4 rounded-lg", children: [
+        /* @__PURE__ */ jsxs15("div", {
+          className: "flex items-center gap-3 mb-3", children: [
           /* @__PURE__ */ jsx17("div", { className: "text-yellow-400", children: /* @__PURE__ */ jsx17(LightbulbIcon, {}) }),
           /* @__PURE__ */ jsx17("h4", { className: "text-lg font-semibold text-slate-200", children: "Areas for Improvement" })
-        ] }),
-        /* @__PURE__ */ jsx17("ul", { className: "space-y-2", children: areasForImprovement.length > 0 ? areasForImprovement.map((area, i) => /* @__PURE__ */ jsxs15("li", { className: "flex items-start gap-2.5", children: [
+          ]
+        }),
+        /* @__PURE__ */ jsx17("ul", {
+          className: "space-y-2", children: areasForImprovement.length > 0 ? areasForImprovement.map((area, i) => /* @__PURE__ */ jsxs15("li", {
+            className: "flex items-start gap-2.5", children: [
           /* @__PURE__ */ jsx17("div", { className: "text-yellow-500 pt-1 flex-shrink-0", children: /* @__PURE__ */ jsx17(LightbulbIcon, {}) }),
           /* @__PURE__ */ jsx17("span", { className: "text-slate-300 text-sm", children: area })
-        ] }, i)) : /* @__PURE__ */ jsx17("li", { className: "text-slate-400 text-sm", children: "No specific areas for improvement were identified." }) })
-      ] })
-    ] })
-  ] });
+            ]
+          }, i)) : /* @__PURE__ */ jsx17("li", { className: "text-slate-400 text-sm", children: "No specific areas for improvement were identified." })
+        })
+        ]
+      })
+      ]
+    })
+    ]
+  });
 };
 var FeedbackPanel_default = FeedbackPanel;
 
@@ -6191,20 +6427,26 @@ var FeedbackPanel_default = FeedbackPanel;
 import { jsx as jsx18, jsxs as jsxs16 } from "react/jsx-runtime";
 var MalpracticeReportPanel = ({ report }) => {
   if (!report) {
-    return /* @__PURE__ */ jsxs16("div", { className: "bg-green-500/10 p-4 rounded-lg border border-green-500/20", children: [
+    return /* @__PURE__ */ jsxs16("div", {
+      className: "bg-green-500/10 p-4 rounded-lg border border-green-500/20", children: [
       /* @__PURE__ */ jsx18("h3", { className: "text-lg font-semibold text-green-300", children: "Malpractice Report" }),
       /* @__PURE__ */ jsx18("p", { className: "text-green-300/80 mt-2 text-sm", children: "No malpractice activities were detected during the interview." })
-    ] });
+      ]
+    });
   }
   const reportEntries = report.split("\n").filter((line) => line.trim() !== "");
-  return /* @__PURE__ */ jsxs16("div", { className: "bg-red-900/20 p-4 rounded-lg border border-red-500/30", children: [
-    /* @__PURE__ */ jsxs16("div", { className: "flex items-center gap-3 mb-3", children: [
+  return /* @__PURE__ */ jsxs16("div", {
+    className: "bg-red-900/20 p-4 rounded-lg border border-red-500/30", children: [
+    /* @__PURE__ */ jsxs16("div", {
+      className: "flex items-center gap-3 mb-3", children: [
       /* @__PURE__ */ jsx18("div", { className: "text-red-400", children: /* @__PURE__ */ jsx18(AlertTriangleIcon, {}) }),
       /* @__PURE__ */ jsx18("h3", { className: "text-lg font-semibold text-red-300", children: "Malpractice Report" })
-    ] }),
+      ]
+    }),
     /* @__PURE__ */ jsx18("div", { className: "space-y-3 text-sm", children: reportEntries.map((entry, index) => /* @__PURE__ */ jsx18("div", { className: "p-3 bg-slate-950/50 rounded-md border border-slate-700/50", children: /* @__PURE__ */ jsx18("p", { className: "text-slate-300", children: entry }) }, index)) }),
     /* @__PURE__ */ jsx18("p", { className: "text-xs text-red-400/70 mt-4 italic", children: "Note: This report is generated based on automated detection and should be considered alongside the full interview context." })
-  ] });
+    ]
+  });
 };
 var MalpracticeReportPanel_default = MalpracticeReportPanel;
 
@@ -6219,17 +6461,17 @@ var TabButton = ({ title, active, onClick }) => /* @__PURE__ */ jsx19(
   }
 );
 var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeReport, qna, mode, settings, onFinishReview, modelSettings: modelSettings2 }) => {
-  const [activeTab, setActiveTab] = useState18("report");
-  const [feedback, setFeedback] = useState18(null);
-  const [isFeedbackLoading, setIsFeedbackLoading] = useState18(false);
-  const [feedbackError, setFeedbackError] = useState18("");
-  const [loadingMessage, setLoadingMessage] = useState18("Generating AI feedback...");
-  const [mediaUrl, setMediaUrl] = useState18(null);
+  const [activeTab, setActiveTab] = useState19("report");
+  const [feedback, setFeedback] = useState19(null);
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState19(false);
+  const [feedbackError, setFeedbackError] = useState19("");
+  const [loadingMessage, setLoadingMessage] = useState19("Generating AI feedback...");
+  const [mediaUrl, setMediaUrl] = useState19(null);
   const isVideo = mode === InterviewMode.VIDEO || mode === InterviewMode.LIVE_SHARE;
   const isChat = mode === InterviewMode.CHAT;
   const hasMedia = !!mediaBlob && !isChat;
   const hasTranscript = !!fullTranscript;
-  useEffect16(() => {
+  useEffect17(() => {
     if (mediaBlob) {
       const url = URL.createObjectURL(mediaBlob);
       setMediaUrl(url);
@@ -6252,7 +6494,7 @@ var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeRepor
       setLoadingMessage("Analyzing performance and preparing suggestions...");
       return await apiCall();
     } catch (error) {
-      const { type, message } = getApiErrorDetails2(error);
+      const { type, message } = getApiErrorDetails(error);
       if (type === "RATE_LIMIT" && retries > 0) {
         const waitTime = delay / 1e3;
         console.log(`Rate limit hit during feedback generation. Retrying in ${waitTime}s...`);
@@ -6263,7 +6505,7 @@ var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeRepor
       throw new Error(message);
     }
   }
-  useEffect16(() => {
+  useEffect17(() => {
     const getFeedback = async () => {
       setIsFeedbackLoading(true);
       setFeedbackError("");
@@ -6297,7 +6539,7 @@ var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeRepor
         setFeedback(feedbackData);
       } catch (e) {
         console.error("Error generating feedback after retries:", e);
-        const errorMessage = getApiErrorDetails2(e).message;
+        const errorMessage = getApiErrorDetails(e).message;
         setFeedbackError(errorMessage);
       } finally {
         setIsFeedbackLoading(false);
@@ -6306,64 +6548,88 @@ var PlaybackScreen = ({ interviewId, mediaBlob, fullTranscript, malpracticeRepor
     getFeedback();
   }, [interviewId, settings, modelSettings2.evaluation, malpracticeReport, qna]);
   const layoutClasses = hasMedia && hasTranscript ? "grid-cols-1 lg:grid-cols-2 gap-6" : "grid-cols-1";
-  return /* @__PURE__ */ jsx19("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-8", children: /* @__PURE__ */ jsxs17("div", { className: "w-full max-w-5xl", children: [
+  return /* @__PURE__ */ jsx19("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-8", children: /* @__PURE__ */ jsxs17("div", {
+      className: "w-full max-w-5xl", children: [
     /* @__PURE__ */ jsx19("h1", { className: "text-3xl font-bold text-center mb-6", children: "Interview Review" }),
-    /* @__PURE__ */ jsxs17("div", { className: `bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-2xl grid ${layoutClasses}`, children: [
-      hasMedia && mediaUrl && /* @__PURE__ */ jsxs17("div", { className: "w-full", children: [
-        /* @__PURE__ */ jsxs17("div", { className: "flex justify-between items-center mb-4", children: [
+    /* @__PURE__ */ jsxs17("div", {
+        className: `bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-2xl grid ${layoutClasses}`, children: [
+          hasMedia && mediaUrl && /* @__PURE__ */ jsxs17("div", {
+            className: "w-full", children: [
+        /* @__PURE__ */ jsxs17("div", {
+              className: "flex justify-between items-center mb-4", children: [
           /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold text-slate-200", children: isVideo ? "Video Recording" : "Audio Recording" }),
-          /* @__PURE__ */ jsxs17("button", { onClick: handleDownload, className: "flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors", children: [
+          /* @__PURE__ */ jsxs17("button", {
+                onClick: handleDownload, className: "flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors", children: [
             /* @__PURE__ */ jsx19("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", viewBox: "0 0 20 20", fill: "currentColor", children: /* @__PURE__ */ jsx19("path", { fillRule: "evenodd", d: "M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z", clipRule: "evenodd" }) }),
-            "Download"
-          ] })
-        ] }),
-        isVideo ? /* @__PURE__ */ jsx19("video", { src: mediaUrl, controls: true, autoPlay: true, className: "w-full rounded-lg" }) : /* @__PURE__ */ jsx19("audio", { src: mediaUrl, controls: true, autoPlay: true, className: "w-full" })
-      ] }),
-      hasTranscript && /* @__PURE__ */ jsxs17("div", { className: "w-full flex flex-col", children: [
-        /* @__PURE__ */ jsxs17("div", { className: "flex border-b border-slate-700 flex-shrink-0", children: [
+                  "Download"
+                ]
+              })
+              ]
+            }),
+              isVideo ? /* @__PURE__ */ jsx19("video", { src: mediaUrl, controls: true, autoPlay: true, className: "w-full rounded-lg" }) : /* @__PURE__ */ jsx19("audio", { src: mediaUrl, controls: true, autoPlay: true, className: "w-full" })
+            ]
+          }),
+          hasTranscript && /* @__PURE__ */ jsxs17("div", {
+            className: "w-full flex flex-col", children: [
+        /* @__PURE__ */ jsxs17("div", {
+              className: "flex border-b border-slate-700 flex-shrink-0", children: [
           /* @__PURE__ */ jsx19(TabButton, { title: "Full Report", active: activeTab === "report", onClick: () => setActiveTab("report") }),
           /* @__PURE__ */ jsx19(TabButton, { title: "Transcript", active: activeTab === "transcript", onClick: () => setActiveTab("transcript") })
-        ] }),
-        /* @__PURE__ */ jsxs17("div", { className: "flex-1 overflow-y-auto bg-slate-900 p-4 rounded-b-md border border-t-0 border-slate-700 min-h-[200px] max-h-[70vh]", children: [
-          activeTab === "transcript" && /* @__PURE__ */ jsxs17("div", { children: [
+              ]
+            }),
+        /* @__PURE__ */ jsxs17("div", {
+              className: "flex-1 overflow-y-auto bg-slate-900 p-4 rounded-b-md border border-t-0 border-slate-700 min-h-[200px] max-h-[70vh]", children: [
+                activeTab === "transcript" && /* @__PURE__ */ jsxs17("div", {
+                  children: [
             /* @__PURE__ */ jsx19("h2", { className: "text-xl font-semibold mb-4 text-slate-200", children: "Interview Transcript" }),
             /* @__PURE__ */ jsx19("pre", { className: "text-slate-300 whitespace-pre-wrap font-sans text-sm", children: fullTranscript })
-          ] }),
-          activeTab === "report" && /* @__PURE__ */ jsxs17("div", { className: "space-y-6", children: [
+                  ]
+                }),
+                activeTab === "report" && /* @__PURE__ */ jsxs17("div", {
+                  className: "space-y-6", children: [
             /* @__PURE__ */ jsx19(MalpracticeReportPanel_default, { report: malpracticeReport }),
             /* @__PURE__ */ jsx19(
-              FeedbackPanel_default,
-              {
-                feedback,
-                isLoading: isFeedbackLoading,
-                error: feedbackError,
-                loadingMessage
-              }
-            )
-          ] })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx19("div", { className: "text-center mt-8", children: /* @__PURE__ */ jsx19(
-      "button",
-      {
-        onClick: () => onFinishReview(interviewId, feedback, mediaBlob, fullTranscript, malpracticeReport),
-        className: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors",
-        children: "Finish Review & Save to History"
-      }
-    ) })
-  ] }) });
+                    FeedbackPanel_default,
+                    {
+                      feedback,
+                      isLoading: isFeedbackLoading,
+                      error: feedbackError,
+                      loadingMessage
+                    }
+                  )
+                  ]
+                })
+              ]
+            })
+            ]
+          })
+        ]
+      }),
+    /* @__PURE__ */ jsx19("div", {
+        className: "text-center mt-8", children: /* @__PURE__ */ jsx19(
+          "button",
+          {
+            onClick: () => onFinishReview(interviewId, feedback, mediaBlob, fullTranscript, malpracticeReport),
+            className: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors",
+            children: "Finish Review & Save to History"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var PlaybackScreen_default = PlaybackScreen;
 
 // components/HistoryScreen.tsx
-import { useState as useState19, useEffect as useEffect17, useMemo as useMemo6 } from "react";
+import { useState as useState20, useEffect as useEffect18, useMemo as useMemo6 } from "react";
 import { Fragment as Fragment9, jsx as jsx20, jsxs as jsxs18 } from "react/jsx-runtime";
 var CommentsPanel = ({ interviewId, currentUser }) => {
-  const [comments, setComments] = useState19([]);
-  const [newComment, setNewComment] = useState19("");
-  const [isLoading, setIsLoading] = useState19(false);
-  useEffect17(() => {
+  const [comments, setComments] = useState20([]);
+  const [newComment, setNewComment] = useState20("");
+  const [isLoading, setIsLoading] = useState20(false);
+  useEffect18(() => {
     const fetchComments = async () => {
       const fetchedComments = await getCommentsForInterview(interviewId);
       setComments(fetchedComments);
@@ -6389,19 +6655,29 @@ var CommentsPanel = ({ interviewId, currentUser }) => {
     }
     setIsLoading(false);
   };
-  return /* @__PURE__ */ jsxs18("div", { className: "bg-slate-950/50 p-4 rounded-lg", children: [
+  return /* @__PURE__ */ jsxs18("div", {
+    className: "bg-slate-950/50 p-4 rounded-lg", children: [
     /* @__PURE__ */ jsx20("h3", { className: "text-lg font-semibold text-slate-200 mb-4", children: "Team Comments" }),
-    /* @__PURE__ */ jsx20("div", { className: "space-y-4 max-h-60 overflow-y-auto pr-2", children: comments.length > 0 ? comments.map((comment) => /* @__PURE__ */ jsxs18("div", { className: "flex items-start gap-3", children: [
+    /* @__PURE__ */ jsx20("div", {
+      className: "space-y-4 max-h-60 overflow-y-auto pr-2", children: comments.length > 0 ? comments.map((comment) => /* @__PURE__ */ jsxs18("div", {
+        className: "flex items-start gap-3", children: [
       /* @__PURE__ */ jsx20("div", { className: "bg-slate-700 rounded-full p-2 mt-1", children: /* @__PURE__ */ jsx20(UserCircleIcon, { className: "h-5 w-5 text-slate-400" }) }),
-      /* @__PURE__ */ jsxs18("div", { children: [
-        /* @__PURE__ */ jsxs18("div", { className: "flex items-baseline gap-2", children: [
+      /* @__PURE__ */ jsxs18("div", {
+          children: [
+        /* @__PURE__ */ jsxs18("div", {
+            className: "flex items-baseline gap-2", children: [
           /* @__PURE__ */ jsx20("span", { className: "font-semibold text-slate-300", children: comment.users?.name || "User" }),
           /* @__PURE__ */ jsx20("span", { className: "text-xs text-slate-500", children: new Date(comment.created_at).toLocaleString() })
-        ] }),
+            ]
+          }),
         /* @__PURE__ */ jsx20("p", { className: "text-slate-300 text-sm", children: comment.comment_text })
-      ] })
-    ] }, comment.id)) : /* @__PURE__ */ jsx20("p", { className: "text-sm text-slate-400", children: "No comments yet." }) }),
-    /* @__PURE__ */ jsxs18("form", { onSubmit: handleSubmit, className: "mt-4 flex gap-2 items-start", children: [
+          ]
+        })
+        ]
+      }, comment.id)) : /* @__PURE__ */ jsx20("p", { className: "text-sm text-slate-400", children: "No comments yet." })
+    }),
+    /* @__PURE__ */ jsxs18("form", {
+      onSubmit: handleSubmit, className: "mt-4 flex gap-2 items-start", children: [
       /* @__PURE__ */ jsx20(
         "textarea",
         {
@@ -6414,8 +6690,10 @@ var CommentsPanel = ({ interviewId, currentUser }) => {
         }
       ),
       /* @__PURE__ */ jsx20("button", { type: "submit", disabled: isLoading || !newComment.trim(), className: "p-3 bg-blue-600 hover:bg-blue-500 rounded-md disabled:opacity-50", children: /* @__PURE__ */ jsx20(SendIcon, {}) })
-    ] })
-  ] });
+      ]
+    })
+    ]
+  });
 };
 var transformReportToFeedbackData = (report) => {
   if (!report)
@@ -6443,13 +6721,13 @@ var transformReportToFeedbackData = (report) => {
   };
 };
 var DetailView = ({ item, currentUser, onBack }) => {
-  const [report, setReport] = useState19(null);
-  const [isLoadingReport, setIsLoadingReport] = useState19(true);
-  const [reconstructedTranscript, setReconstructedTranscript] = useState19(null);
-  const [isLoadingTranscript, setIsLoadingTranscript] = useState19(true);
+  const [report, setReport] = useState20(null);
+  const [isLoadingReport, setIsLoadingReport] = useState20(true);
+  const [reconstructedTranscript, setReconstructedTranscript] = useState20(null);
+  const [isLoadingTranscript, setIsLoadingTranscript] = useState20(true);
   const { showToast } = useToast();
   const feedbackDataForPanel = useMemo6(() => transformReportToFeedbackData(report), [report]);
-  useEffect17(() => {
+  useEffect18(() => {
     const fetchReport = async () => {
       setIsLoadingReport(true);
       const fetchedReport = await getReportForInterview(item.id);
@@ -6458,7 +6736,7 @@ var DetailView = ({ item, currentUser, onBack }) => {
     };
     fetchReport();
   }, [item.id]);
-  useEffect17(() => {
+  useEffect18(() => {
     const fetchAndBuildTranscript = async () => {
       try {
         setIsLoadingTranscript(true);
@@ -6491,18 +6769,25 @@ Candidate: ${answer?.answer_text || "(No answer recorded)"}`;
       });
     }
   };
-  return /* @__PURE__ */ jsxs18("div", { className: "animate-fade-in", children: [
+  return /* @__PURE__ */ jsxs18("div", {
+    className: "animate-fade-in", children: [
     /* @__PURE__ */ jsx20("button", { onClick: onBack, className: "text-slate-400 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-6 inline-flex items-center gap-2", children: "\u2190 Back to History" }),
-    /* @__PURE__ */ jsxs18("div", { className: "bg-slate-800/80 p-6 rounded-lg border border-slate-700 space-y-6", children: [
-      /* @__PURE__ */ jsxs18("div", { children: [
+    /* @__PURE__ */ jsxs18("div", {
+      className: "bg-slate-800/80 p-6 rounded-lg border border-slate-700 space-y-6", children: [
+      /* @__PURE__ */ jsxs18("div", {
+        children: [
         /* @__PURE__ */ jsx20("h2", { className: "text-2xl font-bold text-slate-100", children: item.position }),
-        /* @__PURE__ */ jsxs18("p", { className: "text-slate-400", children: [
-          "Interview conducted on ",
-          new Date(item.created_at).toLocaleString()
-        ] })
-      ] }),
+        /* @__PURE__ */ jsxs18("p", {
+          className: "text-slate-400", children: [
+            "Interview conducted on ",
+            new Date(item.created_at).toLocaleString()
+          ]
+        })
+        ]
+      }),
       /* @__PURE__ */ jsx20("hr", { className: "border-slate-700" }),
-      /* @__PURE__ */ jsxs18("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs18("div", {
+        className: "space-y-6", children: [
         /* @__PURE__ */ jsx20(MalpracticeReportPanel_default, { report: item.malpractice_report || null }),
         /* @__PURE__ */ jsx20(
           FeedbackPanel_default,
@@ -6514,19 +6799,28 @@ Candidate: ${answer?.answer_text || "(No answer recorded)"}`;
           }
         ),
         /* @__PURE__ */ jsx20(CommentsPanel, { interviewId: item.id, currentUser }),
-        /* @__PURE__ */ jsxs18("div", { className: "bg-slate-950/50 p-4 rounded-lg", children: [
-          /* @__PURE__ */ jsxs18("div", { className: "flex justify-between items-center mb-2", children: [
+        /* @__PURE__ */ jsxs18("div", {
+          className: "bg-slate-950/50 p-4 rounded-lg", children: [
+          /* @__PURE__ */ jsxs18("div", {
+            className: "flex justify-between items-center mb-2", children: [
             /* @__PURE__ */ jsx20("h3", { className: "text-lg font-semibold text-slate-200", children: "Transcript" }),
-            !isLoadingTranscript && reconstructedTranscript && /* @__PURE__ */ jsxs18("button", { onClick: handleCopyTranscript, className: "flex items-center gap-2 text-sm text-slate-400 hover:text-white", children: [
+              !isLoadingTranscript && reconstructedTranscript && /* @__PURE__ */ jsxs18("button", {
+                onClick: handleCopyTranscript, className: "flex items-center gap-2 text-sm text-slate-400 hover:text-white", children: [
               /* @__PURE__ */ jsx20(DocumentDuplicateIcon, {}),
-              " Copy"
-            ] })
-          ] }),
+                  " Copy"
+                ]
+              })
+            ]
+          }),
           /* @__PURE__ */ jsx20("div", { className: "text-slate-300 whitespace-pre-wrap font-sans text-sm max-h-60 overflow-y-auto bg-slate-900 p-3 rounded-md", children: isLoadingTranscript ? /* @__PURE__ */ jsx20("p", { children: "Loading transcript..." }) : /* @__PURE__ */ jsx20("pre", { children: reconstructedTranscript }) })
-        ] })
-      ] })
-    ] })
-  ] });
+          ]
+        })
+        ]
+      })
+      ]
+    })
+    ]
+  });
 };
 var HistoryCard = ({ item, onViewReport, onDownload, isDownloading }) => {
   const { mode, difficulty, position, created_at, video_url } = item;
@@ -6549,54 +6843,68 @@ var HistoryCard = ({ item, onViewReport, onDownload, isDownloading }) => {
     month: "long",
     day: "numeric"
   });
-  return /* @__PURE__ */ jsxs18("div", { className: "bg-slate-800/80 p-5 rounded-lg border border-slate-700 hover:border-blue-500 transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4", children: [
-    /* @__PURE__ */ jsxs18("div", { className: "flex items-start gap-4 flex-1", children: [
+  return /* @__PURE__ */ jsxs18("div", {
+    className: "bg-slate-800/80 p-5 rounded-lg border border-slate-700 hover:border-blue-500 transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4", children: [
+    /* @__PURE__ */ jsxs18("div", {
+      className: "flex items-start gap-4 flex-1", children: [
       /* @__PURE__ */ jsx20("div", { className: "text-blue-400 mt-1", children: icon }),
-      /* @__PURE__ */ jsxs18("div", { children: [
+      /* @__PURE__ */ jsxs18("div", {
+        children: [
         /* @__PURE__ */ jsx20("h3", { className: "font-bold text-lg text-slate-100", children: position }),
-        /* @__PURE__ */ jsxs18("div", { className: "flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400 mt-1", children: [
+        /* @__PURE__ */ jsxs18("div", {
+          className: "flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400 mt-1", children: [
           /* @__PURE__ */ jsx20("span", { children: mode }),
           /* @__PURE__ */ jsx20("span", { className: "hidden sm:inline", children: "\u2022" }),
-          /* @__PURE__ */ jsxs18("span", { children: [
-            difficulty,
-            " Difficulty"
-          ] }),
+          /* @__PURE__ */ jsxs18("span", {
+            children: [
+              difficulty,
+              " Difficulty"
+            ]
+          }),
           /* @__PURE__ */ jsx20("span", { className: "hidden sm:inline", children: "\u2022" }),
           /* @__PURE__ */ jsx20("span", { children: formattedDate })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs18("div", { className: "w-full sm:w-auto flex-shrink-0 mt-4 sm:mt-0 flex flex-col sm:flex-row items-center gap-2", children: [
-      video_url && /* @__PURE__ */ jsx20(
-        "button",
-        {
-          onClick: () => onDownload(video_url, position),
-          disabled: isDownloading,
-          className: "w-full sm:w-auto text-center bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-wait",
-          children: isDownloading ? /* @__PURE__ */ jsxs18(Fragment9, { children: [
+          ]
+        })
+        ]
+      })
+      ]
+    }),
+    /* @__PURE__ */ jsxs18("div", {
+      className: "w-full sm:w-auto flex-shrink-0 mt-4 sm:mt-0 flex flex-col sm:flex-row items-center gap-2", children: [
+        video_url && /* @__PURE__ */ jsx20(
+          "button",
+          {
+            onClick: () => onDownload(video_url, position),
+            disabled: isDownloading,
+            className: "w-full sm:w-auto text-center bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors flex items-center justify-center gap-2 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-wait",
+            children: isDownloading ? /* @__PURE__ */ jsxs18(Fragment9, {
+              children: [
             /* @__PURE__ */ jsx20("div", { className: "w-4 h-4 border-2 border-slate-400 border-t-white rounded-full animate-spin" }),
-            "Downloading..."
-          ] }) : "Download Recording"
-        }
-      ),
+                "Downloading..."
+              ]
+            }) : "Download Recording"
+          }
+        ),
       /* @__PURE__ */ jsx20(
-        "button",
-        {
-          onClick: () => onViewReport(item),
-          className: "w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors",
-          children: "View Report"
-        }
-      )
-    ] })
-  ] });
+          "button",
+          {
+            onClick: () => onViewReport(item),
+            className: "w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors",
+            children: "View Report"
+          }
+        )
+      ]
+    })
+    ]
+  });
 };
 var HistoryScreen = ({ currentUser, onBackToHome }) => {
-  const [history, setHistory] = useState19([]);
-  const [isLoading, setIsLoading] = useState19(true);
-  const [selectedInterview, setSelectedInterview] = useState19(null);
-  const [downloadingId, setDownloadingId] = useState19(null);
+  const [history, setHistory] = useState20([]);
+  const [isLoading, setIsLoading] = useState20(true);
+  const [selectedInterview, setSelectedInterview] = useState20(null);
+  const [downloadingId, setDownloadingId] = useState20(null);
   const { showToast } = useToast();
-  useEffect17(() => {
+  useEffect18(() => {
     const fetchHistory = async () => {
       if (currentUser) {
         setIsLoading(true);
@@ -6636,33 +6944,43 @@ var HistoryScreen = ({ currentUser, onBackToHome }) => {
     if (selectedInterview) {
       return /* @__PURE__ */ jsx20(DetailView, { item: selectedInterview, currentUser, onBack: () => setSelectedInterview(null) });
     }
-    return /* @__PURE__ */ jsxs18(Fragment9, { children: [
-      /* @__PURE__ */ jsxs18("div", { className: "text-center mb-10", children: [
+    return /* @__PURE__ */ jsxs18(Fragment9, {
+      children: [
+      /* @__PURE__ */ jsxs18("div", {
+        className: "text-center mb-10", children: [
         /* @__PURE__ */ jsx20("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Interview History" }),
         /* @__PURE__ */ jsx20("p", { className: "text-slate-400 mt-4 text-lg", children: "Review your past interview sessions and track your progress." })
-      ] }),
-      isLoading ? /* @__PURE__ */ jsx20("div", { className: "flex justify-center items-center h-48", children: /* @__PURE__ */ jsx20("div", { className: "w-12 h-12 border-4 border-slate-600 border-t-blue-500 rounded-full animate-spin" }) }) : history.length > 0 ? /* @__PURE__ */ jsx20("div", { className: "space-y-4", children: history.map((item) => /* @__PURE__ */ jsx20(
-        HistoryCard,
-        {
-          item,
-          onViewReport: setSelectedInterview,
-          onDownload: handleDownloadFromHistory,
-          isDownloading: downloadingId === item.video_url
-        },
-        item.id
-      )) }) : /* @__PURE__ */ jsxs18("div", { className: "text-center bg-slate-800/50 p-10 rounded-lg border border-slate-700", children: [
+        ]
+      }),
+        isLoading ? /* @__PURE__ */ jsx20("div", { className: "flex justify-center items-center h-48", children: /* @__PURE__ */ jsx20("div", { className: "w-12 h-12 border-4 border-slate-600 border-t-blue-500 rounded-full animate-spin" }) }) : history.length > 0 ? /* @__PURE__ */ jsx20("div", {
+          className: "space-y-4", children: history.map((item) => /* @__PURE__ */ jsx20(
+            HistoryCard,
+            {
+              item,
+              onViewReport: setSelectedInterview,
+              onDownload: handleDownloadFromHistory,
+              isDownloading: downloadingId === item.video_url
+            },
+            item.id
+          ))
+        }) : /* @__PURE__ */ jsxs18("div", {
+          className: "text-center bg-slate-800/50 p-10 rounded-lg border border-slate-700", children: [
         /* @__PURE__ */ jsx20("h2", { className: "text-xl font-semibold text-slate-200", children: "No History Found" }),
         /* @__PURE__ */ jsx20("p", { className: "text-slate-400 mt-2", children: "You haven't completed any interviews yet. Go to the main page to start one!" })
-      ] }),
-      /* @__PURE__ */ jsx20("div", { className: "text-center mt-12", children: /* @__PURE__ */ jsx20(
-        "button",
-        {
-          onClick: onBackToHome,
-          className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-          children: "\u2190 Back to Home"
-        }
-      ) })
-    ] });
+          ]
+        }),
+      /* @__PURE__ */ jsx20("div", {
+          className: "text-center mt-12", children: /* @__PURE__ */ jsx20(
+            "button",
+            {
+              onClick: onBackToHome,
+              className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+              children: "\u2190 Back to Home"
+            }
+          )
+        })
+      ]
+    });
   };
   return /* @__PURE__ */ jsx20("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsx20("div", { className: "w-full max-w-4xl mx-auto", children: renderContent() }) });
 };
@@ -6671,13 +6989,17 @@ var HistoryScreen_default = HistoryScreen;
 // components/Card.tsx
 import { jsx as jsx21, jsxs as jsxs19 } from "react/jsx-runtime";
 var Card = ({ title, icon, children, className }) => {
-  return /* @__PURE__ */ jsxs19("div", { className: `bg-slate-800 p-6 rounded-lg border border-slate-700 ${className}`, children: [
-    /* @__PURE__ */ jsxs19("div", { className: "flex items-center gap-3 mb-4", children: [
+  return /* @__PURE__ */ jsxs19("div", {
+    className: `bg-slate-800 p-6 rounded-lg border border-slate-700 ${className}`, children: [
+    /* @__PURE__ */ jsxs19("div", {
+      className: "flex items-center gap-3 mb-4", children: [
       /* @__PURE__ */ jsx21("div", { className: "text-blue-400", children: icon }),
       /* @__PURE__ */ jsx21("h2", { className: "text-lg font-semibold text-slate-200", children: title })
-    ] }),
+      ]
+    }),
     /* @__PURE__ */ jsx21("div", { children })
-  ] });
+    ]
+  });
 };
 var Card_default = Card;
 
@@ -6691,7 +7013,8 @@ var tableData = [
   { tool: "CodeSignal", features: "Skill assessment and benchmarking against industry standards." },
   { tool: "Gainlo", features: "Connects applicants with experienced mock interviewers." }
 ];
-var BenefitCard = ({ videoSrc, title, children }) => /* @__PURE__ */ jsxs20("div", { className: "relative bg-slate-900 rounded-lg border border-slate-700 overflow-hidden group hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 h-80", children: [
+var BenefitCard = ({ videoSrc, title, children }) => /* @__PURE__ */ jsxs20("div", {
+  className: "relative bg-slate-900 rounded-lg border border-slate-700 overflow-hidden group hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 h-80", children: [
   /* @__PURE__ */ jsx22(
     "video",
     {
@@ -6705,53 +7028,78 @@ var BenefitCard = ({ videoSrc, title, children }) => /* @__PURE__ */ jsxs20("div
     videoSrc
   ),
   /* @__PURE__ */ jsx22("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" }),
-  /* @__PURE__ */ jsxs20("div", { className: "relative h-full flex flex-col justify-end p-6", children: [
+  /* @__PURE__ */ jsxs20("div", {
+    className: "relative h-full flex flex-col justify-end p-6", children: [
     /* @__PURE__ */ jsx22("h3", { className: "text-xl font-bold text-white mb-2 transition-colors duration-300", children: title }),
     /* @__PURE__ */ jsx22("p", { className: "text-slate-300 text-sm leading-relaxed", children })
-  ] })
-] });
+    ]
+  })
+  ]
+});
 var CommunityScreen = ({ onBackToHome }) => {
-  return /* @__PURE__ */ jsx22("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12 pb-20", children: /* @__PURE__ */ jsxs20("div", { className: "w-full max-w-5xl mx-auto", children: [
-    /* @__PURE__ */ jsxs20("div", { className: "text-center mb-16", children: [
+  return /* @__PURE__ */ jsx22("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12 pb-20", children: /* @__PURE__ */ jsxs20("div", {
+      className: "w-full max-w-5xl mx-auto", children: [
+    /* @__PURE__ */ jsxs20("div", {
+        className: "text-center mb-16", children: [
       /* @__PURE__ */ jsx22("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "AI: Redefining Hiring and Career Readiness" }),
       /* @__PURE__ */ jsx22("p", { className: "text-slate-400 mt-4 text-lg max-w-3xl mx-auto", children: "As AI integrates into hiring, understanding these tools is essential. Welcome to the intelligent hiring revolution\u2014faster, smarter, and more precise." })
-    ] }),
-    /* @__PURE__ */ jsxs20("section", { id: "why-ai", className: "mb-16", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs20("section", {
+        id: "why-ai", className: "mb-16", children: [
       /* @__PURE__ */ jsx22("h2", { className: "text-2xl font-bold text-slate-100 text-center mb-8", children: "Why AI in Recruitment?" }),
-      /* @__PURE__ */ jsxs20("div", { className: "grid md:grid-cols-3 gap-8", children: [
+      /* @__PURE__ */ jsxs20("div", {
+          className: "grid md:grid-cols-3 gap-8", children: [
         /* @__PURE__ */ jsx22(BenefitCard, { title: "Enhanced Efficiency", videoSrc: COMMUNITY_EFFICIENCY_VIDEO, children: "AI automates scheduling and initial screenings, reducing time-to-hire from weeks to days and freeing up teams to focus on the best candidates." }),
         /* @__PURE__ */ jsx22(BenefitCard, { title: "Reduced Bias", videoSrc: COMMUNITY_BIAS_VIDEO, children: "By using standardized assessments, AI focuses on skills and qualifications, helping to minimize unconscious bias and promote fair evaluation." }),
         /* @__PURE__ */ jsx22(BenefitCard, { title: "In-Depth Analysis", videoSrc: COMMUNITY_ANALYSIS_VIDEO, children: "Gain objective insights into candidate performance, analyzing everything from speech clarity and confidence to technical proficiency." })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs20("section", { id: "tools", className: "mb-16", children: [
+          ]
+        })
+        ]
+      }),
+    /* @__PURE__ */ jsxs20("section", {
+        id: "tools", className: "mb-16", children: [
       /* @__PURE__ */ jsx22("h2", { className: "text-2xl font-bold text-slate-100 text-center mb-8", children: "Top AI-Powered Tools for Interview Prep" }),
-      /* @__PURE__ */ jsx22("div", { className: "grid grid-cols-2 md:grid-cols-3 gap-6", children: tableData.map(({ tool, features }) => /* @__PURE__ */ jsxs20("div", { className: "bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-blue-500 hover:bg-slate-700/50 transition-all transform hover:-translate-y-1", children: [
+      /* @__PURE__ */ jsx22("div", {
+          className: "grid grid-cols-2 md:grid-cols-3 gap-6", children: tableData.map(({ tool, features }) => /* @__PURE__ */ jsxs20("div", {
+            className: "bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-blue-500 hover:bg-slate-700/50 transition-all transform hover:-translate-y-1", children: [
         /* @__PURE__ */ jsx22("h3", { className: "text-lg font-semibold text-slate-200", children: tool }),
         /* @__PURE__ */ jsx22("p", { className: "text-sm text-slate-400 mt-2", children: features })
-      ] }, tool)) })
-    ] }),
-    /* @__PURE__ */ jsxs20("section", { id: "challenges", children: [
+            ]
+          }, tool))
+        })
+        ]
+      }),
+    /* @__PURE__ */ jsxs20("section", {
+        id: "challenges", children: [
       /* @__PURE__ */ jsx22("h2", { className: "text-2xl font-bold text-slate-100 text-center mb-8", children: "Critical Challenges & Human Oversight" }),
-      /* @__PURE__ */ jsxs20("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs20("div", {
+          className: "space-y-6", children: [
         /* @__PURE__ */ jsx22(Card_default, { title: "Algorithmic Bias and Discrimination", icon: /* @__PURE__ */ jsx22(AlertTriangleIcon, {}), children: /* @__PURE__ */ jsx22("p", { className: "text-slate-400", children: "AI trained on historical data can perpetuate societal biases. Regular audits, diverse datasets, and crucial human oversight are necessary to ensure fairness and mitigate legal risks." }) }),
         /* @__PURE__ */ jsx22(Card_default, { title: "Loss of the Human Element", icon: /* @__PURE__ */ jsx22(AlertTriangleIcon, {}), children: /* @__PURE__ */ jsx22("p", { className: "text-slate-400", children: "An impersonal process can harm the candidate experience. Human judgment remains vital for assessing cultural fit, complex skills, and making final hiring decisions." }) }),
         /* @__PURE__ */ jsx22(Card_default, { title: "Ethical Boundaries", icon: /* @__PURE__ */ jsx22(AlertTriangleIcon, {}), children: /* @__PURE__ */ jsx22("p", { className: "text-slate-400", children: "The potential for cheating in asynchronous tests and a lack of transparency in AI decisions raise ethical questions that require clear guidelines and accountability." }) })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx22("div", { className: "text-center mt-16", children: /* @__PURE__ */ jsx22(
-      Link,
-      {
-        to: "/",
-        onClick: (e) => {
-          e.preventDefault();
-          onBackToHome();
-        },
-        className: "inline-block bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 px-6 rounded-lg border border-slate-600 transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+          ]
+        })
+        ]
+      }),
+    /* @__PURE__ */ jsx22("div", {
+        className: "text-center mt-16", children: /* @__PURE__ */ jsx22(
+          Link,
+          {
+            to: "/",
+            onClick: (e) => {
+              e.preventDefault();
+              onBackToHome();
+            },
+            className: "inline-block bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 px-6 rounded-lg border border-slate-600 transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var CommunityScreen_default = CommunityScreen;
 
@@ -6780,127 +7128,171 @@ var prepStrategies = [
   "Focus on Soft Skills: Adaptability and problem-solving are highly valued."
 ];
 var LearnScreen = ({ onBackToHome }) => {
-  return /* @__PURE__ */ jsx23("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs21("div", { className: "w-full max-w-5xl mx-auto", children: [
-    /* @__PURE__ */ jsxs21("div", { className: "text-center mb-12", children: [
+  return /* @__PURE__ */ jsx23("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs21("div", {
+      className: "w-full max-w-5xl mx-auto", children: [
+    /* @__PURE__ */ jsxs21("div", {
+        className: "text-center mb-12", children: [
       /* @__PURE__ */ jsx23("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Learn Center: Mastering the AI-Driven Career" }),
       /* @__PURE__ */ jsx23("p", { className: "text-slate-400 mt-4 text-lg max-w-3xl mx-auto", children: "Your guide to thriving in the modern job market. Here are the skills and strategies to succeed in AI-powered interviews." })
-    ] }),
-    /* @__PURE__ */ jsx23("section", { className: "mb-12", children: /* @__PURE__ */ jsx23(Card_default, { title: "AI Mock Interview Practice: The Modern Advantage", icon: /* @__PURE__ */ jsx23(BookOpenIcon, {}), children: /* @__PURE__ */ jsxs21("div", { className: "text-slate-400 space-y-3", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsx23("section", {
+        className: "mb-12", children: /* @__PURE__ */ jsx23(Card_default, {
+          title: "AI Mock Interview Practice: The Modern Advantage", icon: /* @__PURE__ */ jsx23(BookOpenIcon, {}), children: /* @__PURE__ */ jsxs21("div", {
+            className: "text-slate-400 space-y-3", children: [
       /* @__PURE__ */ jsx23("p", { children: "AI platforms provide an experience that is real-time, interactive, and adaptive, generating role-specific questions dynamically." }),
-      /* @__PURE__ */ jsxs21("ul", { className: "list-disc list-inside space-y-1 pl-2", children: [
-        /* @__PURE__ */ jsxs21("li", { children: [
+      /* @__PURE__ */ jsxs21("ul", {
+              className: "list-disc list-inside space-y-1 pl-2", children: [
+        /* @__PURE__ */ jsxs21("li", {
+                children: [
           /* @__PURE__ */ jsx23("strong", { className: "text-slate-300", children: "Adaptive Learning:" }),
-          " The system adjusts question complexity based on your skill level."
-        ] }),
-        /* @__PURE__ */ jsxs21("li", { children: [
+                  " The system adjusts question complexity based on your skill level."
+                ]
+              }),
+        /* @__PURE__ */ jsxs21("li", {
+                children: [
           /* @__PURE__ */ jsx23("strong", { className: "text-slate-300", children: "Communication Analysis:" }),
-          " Get feedback on your confidence, tone, fluency, and clarity."
-        ] }),
-        /* @__PURE__ */ jsxs21("li", { children: [
+                  " Get feedback on your confidence, tone, fluency, and clarity."
+                ]
+              }),
+        /* @__PURE__ */ jsxs21("li", {
+                children: [
           /* @__PURE__ */ jsx23("strong", { className: "text-slate-300", children: "Performance Tracking:" }),
-          " Receive step-by-step feedback to enhance your responses over time."
-        ] })
-      ] })
-    ] }) }) }),
-    /* @__PURE__ */ jsxs21("section", { className: "mb-12", children: [
+                  " Receive step-by-step feedback to enhance your responses over time."
+                ]
+              })
+              ]
+            })
+            ]
+          })
+        })
+      }),
+    /* @__PURE__ */ jsxs21("section", {
+        className: "mb-12", children: [
       /* @__PURE__ */ jsx23("h2", { className: "text-2xl font-bold text-slate-100 text-center mb-8", children: "Key Competencies to Develop" }),
       /* @__PURE__ */ jsx23("div", { className: "grid md:grid-cols-2 gap-8", children: competencies.map((comp) => /* @__PURE__ */ jsx23(Card_default, { title: comp.type, icon: /* @__PURE__ */ jsx23(AcademicCapIcon, {}), children: /* @__PURE__ */ jsx23("p", { className: "text-slate-400", children: comp.skills }) }, comp.type)) })
-    ] }),
-    /* @__PURE__ */ jsx23("section", { className: "mb-12", children: /* @__PURE__ */ jsxs21(Card_default, { title: "Preparing for AI Questions in Non-Tech Roles", icon: /* @__PURE__ */ jsx23(LightbulbIcon, {}), children: [
+        ]
+      }),
+    /* @__PURE__ */ jsx23("section", {
+        className: "mb-12", children: /* @__PURE__ */ jsxs21(Card_default, {
+          title: "Preparing for AI Questions in Non-Tech Roles", icon: /* @__PURE__ */ jsx23(LightbulbIcon, {}), children: [
       /* @__PURE__ */ jsx23("p", { className: "text-slate-400 mb-4", children: "Digital literacy is now a core expectation. Be ready to discuss your relationship with technology and AI." }),
-      /* @__PURE__ */ jsxs21("div", { className: "grid md:grid-cols-2 gap-6", children: [
-        /* @__PURE__ */ jsxs21("div", { children: [
+      /* @__PURE__ */ jsxs21("div", {
+            className: "grid md:grid-cols-2 gap-6", children: [
+        /* @__PURE__ */ jsxs21("div", {
+              children: [
           /* @__PURE__ */ jsx23("h4", { className: "font-semibold text-slate-200 mb-2", children: "Common Questions:" }),
           /* @__PURE__ */ jsx23("ul", { className: "list-disc list-inside space-y-1 text-slate-400 text-sm", children: techQuestions.map((q, i) => /* @__PURE__ */ jsx23("li", { children: q }, i)) })
-        ] }),
-        /* @__PURE__ */ jsxs21("div", { children: [
+              ]
+            }),
+        /* @__PURE__ */ jsxs21("div", {
+              children: [
           /* @__PURE__ */ jsx23("h4", { className: "font-semibold text-slate-200 mb-2", children: "Preparation Strategies:" }),
           /* @__PURE__ */ jsx23("ul", { className: "list-disc list-inside space-y-1 text-slate-400 text-sm", children: prepStrategies.map((s, i) => /* @__PURE__ */ jsx23("li", { children: s }, i)) })
-        ] })
-      ] })
-    ] }) }),
-    /* @__PURE__ */ jsx23("div", { className: "text-center mt-12", children: /* @__PURE__ */ jsx23(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+              ]
+            })
+            ]
+          })
+          ]
+        })
+      }),
+    /* @__PURE__ */ jsx23("div", {
+        className: "text-center mt-12", children: /* @__PURE__ */ jsx23(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var LearnScreen_default = LearnScreen;
 
 // components/FeaturesScreen.tsx
 import { jsx as jsx24, jsxs as jsxs22 } from "react/jsx-runtime";
 var FeaturesScreen = ({ onBackToHome }) => {
-  return /* @__PURE__ */ jsx24("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12 pb-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black", children: /* @__PURE__ */ jsxs22("div", { className: "w-full max-w-6xl mx-auto", children: [
-    /* @__PURE__ */ jsxs22("div", { className: "text-center mb-16", children: [
+  return /* @__PURE__ */ jsx24("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12 pb-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black", children: /* @__PURE__ */ jsxs22("div", {
+      className: "w-full max-w-6xl mx-auto", children: [
+    /* @__PURE__ */ jsxs22("div", {
+        className: "text-center mb-16", children: [
       /* @__PURE__ */ jsx24("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Our Features" }),
       /* @__PURE__ */ jsx24("p", { className: "text-slate-400 mt-4 text-lg max-w-3xl mx-auto", children: "Leverage cutting-edge AI to conduct comprehensive and insightful interviews for any role." })
-    ] }),
-    /* @__PURE__ */ jsxs22("div", { className: "space-y-16", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs22("div", {
+        className: "space-y-16", children: [
       /* @__PURE__ */ jsx24(
-        FeatureCard_default,
-        {
-          title: "Video Interview",
-          icon: /* @__PURE__ */ jsx24(VideoCameraIcon, {}),
-          media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ImageSlider_default, { images: HERO_IMAGES }) }),
-          children: /* @__PURE__ */ jsx24("p", { children: "Engage with candidates in a realistic, face-to-face interview simulation powered by our advanced AI. Assess verbal and non-verbal cues for a complete picture." })
-        }
-      ),
+          FeatureCard_default,
+          {
+            title: "Video Interview",
+            icon: /* @__PURE__ */ jsx24(VideoCameraIcon, {}),
+            media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ImageSlider_default, { images: HERO_IMAGES }) }),
+            children: /* @__PURE__ */ jsx24("p", { children: "Engage with candidates in a realistic, face-to-face interview simulation powered by our advanced AI. Assess verbal and non-verbal cues for a complete picture." })
+          }
+        ),
       /* @__PURE__ */ jsx24("hr", { className: "my-16 border-slate-800" }),
       /* @__PURE__ */ jsx24(
-        FeatureCard_default,
-        {
-          title: "Audio Interview",
-          icon: /* @__PURE__ */ jsx24(MicOnIcon, {}),
-          reverseLayout: true,
-          media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(AudioVisualizer_default, { isSpeaking: true }) }),
-          children: /* @__PURE__ */ jsx24("p", { children: "Conduct voice-only interviews perfect for initial screenings or roles where verbal communication is key. Our AI provides real-time transcription and analysis." })
-        }
-      ),
+          FeatureCard_default,
+          {
+            title: "Audio Interview",
+            icon: /* @__PURE__ */ jsx24(MicOnIcon, {}),
+            reverseLayout: true,
+            media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(AudioVisualizer_default, { isSpeaking: true }) }),
+            children: /* @__PURE__ */ jsx24("p", { children: "Conduct voice-only interviews perfect for initial screenings or roles where verbal communication is key. Our AI provides real-time transcription and analysis." })
+          }
+        ),
       /* @__PURE__ */ jsx24("hr", { className: "my-16 border-slate-800" }),
       /* @__PURE__ */ jsx24(
-        FeatureCard_default,
-        {
-          title: "Live Screen Sharing",
-          icon: /* @__PURE__ */ jsx24(ShareIcon, {}),
-          media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ImageSlider_default, { images: SCREEN_SHARE_IMAGES }) }),
-          children: /* @__PURE__ */ jsx24("p", { children: "Evaluate technical skills in real-time. Candidates can share their screen to tackle coding challenges, demonstrate software proficiency, or walk through portfolios." })
-        }
-      ),
+          FeatureCard_default,
+          {
+            title: "Live Screen Sharing",
+            icon: /* @__PURE__ */ jsx24(ShareIcon, {}),
+            media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ImageSlider_default, { images: SCREEN_SHARE_IMAGES }) }),
+            children: /* @__PURE__ */ jsx24("p", { children: "Evaluate technical skills in real-time. Candidates can share their screen to tackle coding challenges, demonstrate software proficiency, or walk through portfolios." })
+          }
+        ),
       /* @__PURE__ */ jsx24("hr", { className: "my-16 border-slate-800" }),
       /* @__PURE__ */ jsx24(
-        FeatureCard_default,
-        {
-          title: "Chat Interview",
-          icon: /* @__PURE__ */ jsx24(ChatBubbleIcon, {}),
-          reverseLayout: true,
-          media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ChatInterviewPlaceholder, {}) }),
-          children: /* @__PURE__ */ jsx24("p", { children: "A text-based interview format ideal for assessing written communication skills and for candidates in environments where video/audio is not feasible." })
-        }
-      ),
+          FeatureCard_default,
+          {
+            title: "Chat Interview",
+            icon: /* @__PURE__ */ jsx24(ChatBubbleIcon, {}),
+            reverseLayout: true,
+            media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ChatInterviewPlaceholder, {}) }),
+            children: /* @__PURE__ */ jsx24("p", { children: "A text-based interview format ideal for assessing written communication skills and for candidates in environments where video/audio is not feasible." })
+          }
+        ),
       /* @__PURE__ */ jsx24("hr", { className: "my-16 border-slate-800" }),
       /* @__PURE__ */ jsx24(
-        FeatureCard_default,
-        {
-          title: "Performance Tracking",
-          icon: /* @__PURE__ */ jsx24(ChartBarIcon, {}),
-          media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ImageSlider_default, { images: PERFORMANCE_TRACKING_IMAGES }) }),
-          children: /* @__PURE__ */ jsx24("p", { children: "Receive detailed, AI-generated reports after each interview. Our analytics cover technical proficiency, communication skills, confidence levels, and more, with data-driven insights to help you make the best hiring decisions." })
-        }
-      )
-    ] }),
-    /* @__PURE__ */ jsx24("div", { className: "text-center mt-16", children: /* @__PURE__ */ jsx24(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "inline-block bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 px-6 rounded-lg border border-slate-600 transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+          FeatureCard_default,
+          {
+            title: "Performance Tracking",
+            icon: /* @__PURE__ */ jsx24(ChartBarIcon, {}),
+            media: /* @__PURE__ */ jsx24(MediaContainer_default, { children: /* @__PURE__ */ jsx24(ImageSlider_default, { images: PERFORMANCE_TRACKING_IMAGES }) }),
+            children: /* @__PURE__ */ jsx24("p", { children: "Receive detailed, AI-generated reports after each interview. Our analytics cover technical proficiency, communication skills, confidence levels, and more, with data-driven insights to help you make the best hiring decisions." })
+          }
+        )
+        ]
+      }),
+    /* @__PURE__ */ jsx24("div", {
+        className: "text-center mt-16", children: /* @__PURE__ */ jsx24(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "inline-block bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 px-6 rounded-lg border border-slate-600 transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var FeaturesScreen_default = FeaturesScreen;
 
@@ -6913,55 +7305,77 @@ var PricingCard = ({ plan, onSelect, isCurrentPlan }) => {
   };
   const borderColor = plan.highlight ? highlightConfig[plan.highlight.color].border : "border-slate-700";
   const badgeBg = plan.highlight ? highlightConfig[plan.highlight.color].badge : "";
-  return /* @__PURE__ */ jsxs23("div", { className: `bg-slate-800 p-8 rounded-lg border-2 flex flex-col h-full ${borderColor}`, children: [
-    plan.highlight && /* @__PURE__ */ jsx25("div", { className: `absolute -top-3 left-1/2 -translate-x-1/2 ${badgeBg} text-white px-4 py-1 rounded-full text-sm font-semibold`, children: plan.highlight.text }),
+  return /* @__PURE__ */ jsxs23("div", {
+    className: `bg-slate-800 p-8 rounded-lg border-2 flex flex-col h-full ${borderColor}`, children: [
+      plan.highlight && /* @__PURE__ */ jsx25("div", { className: `absolute -top-3 left-1/2 -translate-x-1/2 ${badgeBg} text-white px-4 py-1 rounded-full text-sm font-semibold`, children: plan.highlight.text }),
     /* @__PURE__ */ jsx25("h3", { className: "text-2xl font-bold text-slate-100", children: plan.name }),
     /* @__PURE__ */ jsx25("p", { className: "text-slate-400 mt-2", children: plan.description }),
-    /* @__PURE__ */ jsxs23("div", { className: "my-6", children: [
-      /* @__PURE__ */ jsxs23("span", { className: "text-5xl font-bold text-white", children: [
-        "\u20B9",
-        plan.price
-      ] }),
+    /* @__PURE__ */ jsxs23("div", {
+        className: "my-6", children: [
+      /* @__PURE__ */ jsxs23("span", {
+          className: "text-5xl font-bold text-white", children: [
+            "\u20B9",
+            plan.price
+          ]
+        }),
       /* @__PURE__ */ jsx25("span", { className: "text-slate-400", children: "/mo" })
-    ] }),
-    /* @__PURE__ */ jsx25("ul", { className: "space-y-3 text-slate-300 flex-grow", children: plan.features.map((feature, index) => /* @__PURE__ */ jsxs23("li", { className: "flex items-center gap-3", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsx25("ul", {
+        className: "space-y-3 text-slate-300 flex-grow", children: plan.features.map((feature, index) => /* @__PURE__ */ jsxs23("li", {
+          className: "flex items-center gap-3", children: [
       /* @__PURE__ */ jsx25("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5 text-blue-400 flex-shrink-0", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx25("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5 13l4 4L19 7" }) }),
       /* @__PURE__ */ jsx25("span", { children: feature })
-    ] }, index)) }),
+          ]
+        }, index))
+      }),
     /* @__PURE__ */ jsx25(
-      "button",
-      {
-        onClick: () => onSelect(plan),
-        disabled: isCurrentPlan,
-        className: `w-full mt-8 font-bold py-3 px-4 rounded-lg transition-colors text-lg ${isCurrentPlan ? "bg-slate-700 cursor-not-allowed text-slate-400" : plan.ctaClass} disabled:opacity-50 disabled:cursor-not-allowed`,
-        children: isCurrentPlan ? "Current Plan" : plan.cta
-      }
-    )
-  ] });
+        "button",
+        {
+          onClick: () => onSelect(plan),
+          disabled: isCurrentPlan,
+          className: `w-full mt-8 font-bold py-3 px-4 rounded-lg transition-colors text-lg ${isCurrentPlan ? "bg-slate-700 cursor-not-allowed text-slate-400" : plan.ctaClass} disabled:opacity-50 disabled:cursor-not-allowed`,
+          children: isCurrentPlan ? "Current Plan" : plan.cta
+        }
+      )
+    ]
+  });
 };
 var PricingScreen = ({ onBackToHome, onSelectPlan, currentUser }) => {
-  return /* @__PURE__ */ jsx25("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12 pb-20", children: /* @__PURE__ */ jsxs23("div", { className: "w-full max-w-6xl mx-auto", children: [
-    /* @__PURE__ */ jsxs23("div", { className: "text-center mb-12", children: [
+  return /* @__PURE__ */ jsx25("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12 pb-20", children: /* @__PURE__ */ jsxs23("div", {
+      className: "w-full max-w-6xl mx-auto", children: [
+    /* @__PURE__ */ jsxs23("div", {
+        className: "text-center mb-12", children: [
       /* @__PURE__ */ jsx25("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Find the Right Plan for You" }),
       /* @__PURE__ */ jsx25("p", { className: "text-slate-400 mt-4 text-lg max-w-2xl mx-auto", children: "Choose the plan that fits your needs and unlock the full potential of AI-powered interviews." })
-    ] }),
-    /* @__PURE__ */ jsx25("div", { className: "grid md:grid-cols-3 gap-8 items-stretch", children: PLANS.map((plan) => /* @__PURE__ */ jsx25("div", { className: "relative", children: /* @__PURE__ */ jsx25(
-      PricingCard,
-      {
-        plan,
-        onSelect: onSelectPlan,
-        isCurrentPlan: false
-      }
-    ) }, plan.name)) }),
-    /* @__PURE__ */ jsx25("div", { className: "text-center mt-12", children: /* @__PURE__ */ jsx25(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+        ]
+      }),
+    /* @__PURE__ */ jsx25("div", {
+        className: "grid md:grid-cols-3 gap-8 items-stretch", children: PLANS.map((plan) => /* @__PURE__ */ jsx25("div", {
+          className: "relative", children: /* @__PURE__ */ jsx25(
+            PricingCard,
+            {
+              plan,
+              onSelect: onSelectPlan,
+              isCurrentPlan: false
+            }
+          )
+        }, plan.name))
+      }),
+    /* @__PURE__ */ jsx25("div", {
+        className: "text-center mt-12", children: /* @__PURE__ */ jsx25(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var PricingScreen_default = PricingScreen;
 
@@ -7011,7 +7425,7 @@ var CheckoutForm = ({ plan, currentUser, onConfirmPurchase }) => {
     };
     try {
       const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", function(response) {
+      rzp.on("payment.failed", function (response) {
         console.error("Razorpay Payment Failed:", response);
         let errorMessage = "An unknown error occurred.";
         if (response && response.error) {
@@ -7031,12 +7445,16 @@ var CheckoutForm = ({ plan, currentUser, onConfirmPurchase }) => {
       setIsProcessing(false);
     }
   };
-  return /* @__PURE__ */ jsxs24("div", { className: "bg-slate-800 p-8 rounded-lg border border-slate-700", children: [
+  return /* @__PURE__ */ jsxs24("div", {
+    className: "bg-slate-800 p-8 rounded-lg border border-slate-700", children: [
     /* @__PURE__ */ jsx26("h2", { className: "text-xl font-semibold mb-6", children: "Payment Details" }),
-    /* @__PURE__ */ jsxs24("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ jsxs24("div", { children: [
+    /* @__PURE__ */ jsxs24("div", {
+      className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs24("div", {
+        children: [
         /* @__PURE__ */ jsx26("label", { htmlFor: "cardName", className: "block text-sm font-medium text-slate-300 mb-2", children: "Name" }),
-        /* @__PURE__ */ jsxs24("div", { className: "relative", children: [
+        /* @__PURE__ */ jsxs24("div", {
+          className: "relative", children: [
           /* @__PURE__ */ jsx26("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx26(UserIcon, {}) }),
           /* @__PURE__ */ jsx26(
             "input",
@@ -7050,105 +7468,151 @@ var CheckoutForm = ({ plan, currentUser, onConfirmPurchase }) => {
               required: true
             }
           )
-        ] })
-      ] }),
+          ]
+        })
+        ]
+      }),
       /* @__PURE__ */ jsx26("div", { children: /* @__PURE__ */ jsx26("p", { className: "text-sm text-slate-400", children: "You will be redirected to Razorpay's secure checkout page to enter your payment details." }) }),
-      /* @__PURE__ */ jsx26("div", { className: "pt-2", children: /* @__PURE__ */ jsxs24("button", { onClick: handlePayment, disabled: isProcessing, className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:bg-slate-600 disabled:cursor-not-allowed disabled:shadow-none", children: [
-        isProcessing && /* @__PURE__ */ jsx26("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
+      /* @__PURE__ */ jsx26("div", {
+        className: "pt-2", children: /* @__PURE__ */ jsxs24("button", {
+          onClick: handlePayment, disabled: isProcessing, className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:bg-slate-600 disabled:cursor-not-allowed disabled:shadow-none", children: [
+            isProcessing && /* @__PURE__ */ jsx26("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
         /* @__PURE__ */ jsx26(LockClosedIcon, {}),
-        isProcessing ? "Processing..." : `Pay \u20B9${plan.price}`
-      ] }) })
-    ] })
-  ] });
+            isProcessing ? "Processing..." : `Pay \u20B9${plan.price}`
+          ]
+        })
+      })
+      ]
+    })
+    ]
+  });
 };
 var CheckoutScreen = ({ plan: selectedPlan, currentUser, onConfirmPurchase, onBack }) => {
   if (!selectedPlan) {
-    return /* @__PURE__ */ jsxs24("div", { className: "flex-1 flex flex-col items-center justify-center p-4", children: [
+    return /* @__PURE__ */ jsxs24("div", {
+      className: "flex-1 flex flex-col items-center justify-center p-4", children: [
       /* @__PURE__ */ jsx26("h2", { className: "text-2xl font-bold text-slate-100", children: "No Plan Selected" }),
       /* @__PURE__ */ jsx26("p", { className: "text-slate-400 mt-2", children: "Please go back to the pricing page to select a plan." }),
       /* @__PURE__ */ jsx26("button", { onClick: onBack, className: "mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]", children: "\u2190 Back to Pricing" })
-    ] });
+      ]
+    });
   }
-  return /* @__PURE__ */ jsx26("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs24("div", { className: "w-full max-w-5xl mx-auto", children: [
-    /* @__PURE__ */ jsxs24("div", { className: "text-center mb-10", children: [
+  return /* @__PURE__ */ jsx26("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs24("div", {
+      className: "w-full max-w-5xl mx-auto", children: [
+    /* @__PURE__ */ jsxs24("div", {
+        className: "text-center mb-10", children: [
       /* @__PURE__ */ jsx26("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Secure Checkout" }),
-      /* @__PURE__ */ jsxs24("p", { className: "text-slate-400 mt-4 text-lg", children: [
-        "You're upgrading to the ",
+      /* @__PURE__ */ jsxs24("p", {
+          className: "text-slate-400 mt-4 text-lg", children: [
+            "You're upgrading to the ",
         /* @__PURE__ */ jsx26("span", { className: "text-blue-400 font-semibold", children: selectedPlan.name }),
-        " plan. Complete your payment below."
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs24("div", { className: "grid lg:grid-cols-5 gap-8", children: [
+            " plan. Complete your payment below."
+          ]
+        })
+        ]
+      }),
+    /* @__PURE__ */ jsxs24("div", {
+        className: "grid lg:grid-cols-5 gap-8", children: [
       /* @__PURE__ */ jsx26("div", { className: "lg:col-span-3", children: /* @__PURE__ */ jsx26(CheckoutForm, { plan: selectedPlan, currentUser, onConfirmPurchase }) }),
-      /* @__PURE__ */ jsx26("div", { className: "lg:col-span-2", children: /* @__PURE__ */ jsxs24("div", { className: "bg-slate-800 p-6 rounded-lg border border-slate-700 sticky top-24", children: [
+      /* @__PURE__ */ jsx26("div", {
+          className: "lg:col-span-2", children: /* @__PURE__ */ jsxs24("div", {
+            className: "bg-slate-800 p-6 rounded-lg border border-slate-700 sticky top-24", children: [
         /* @__PURE__ */ jsx26("h2", { className: "text-xl font-semibold mb-4", children: "Order Summary" }),
-        /* @__PURE__ */ jsxs24("div", { className: "space-y-3", children: [
-          /* @__PURE__ */ jsxs24("div", { className: "flex justify-between", children: [
-            /* @__PURE__ */ jsxs24("span", { className: "text-slate-400", children: [
-              selectedPlan.name,
-              " Plan"
-            ] }),
-            /* @__PURE__ */ jsxs24("span", { className: "font-semibold", children: [
-              "\u20B9",
-              selectedPlan.price
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs24("div", { className: "flex justify-between text-slate-400", children: [
+        /* @__PURE__ */ jsxs24("div", {
+              className: "space-y-3", children: [
+          /* @__PURE__ */ jsxs24("div", {
+                className: "flex justify-between", children: [
+            /* @__PURE__ */ jsxs24("span", {
+                  className: "text-slate-400", children: [
+                    selectedPlan.name,
+                    " Plan"
+                  ]
+                }),
+            /* @__PURE__ */ jsxs24("span", {
+                  className: "font-semibold", children: [
+                    "\u20B9",
+                    selectedPlan.price
+                  ]
+                })
+                ]
+              }),
+          /* @__PURE__ */ jsxs24("div", {
+                className: "flex justify-between text-slate-400", children: [
             /* @__PURE__ */ jsx26("span", { children: "Taxes & Fees" }),
             /* @__PURE__ */ jsx26("span", { className: "font-semibold", children: "\u20B90.00" })
-          ] }),
+                ]
+              }),
           /* @__PURE__ */ jsx26("hr", { className: "border-slate-600 !my-4" }),
-          /* @__PURE__ */ jsxs24("div", { className: "flex justify-between font-bold text-lg", children: [
+          /* @__PURE__ */ jsxs24("div", {
+                className: "flex justify-between font-bold text-lg", children: [
             /* @__PURE__ */ jsx26("span", { children: "Total Due Today" }),
-            /* @__PURE__ */ jsxs24("span", { children: [
-              "\u20B9",
-              selectedPlan.price
-            ] })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsx26("ul", { className: "mt-6 space-y-2 text-sm", children: selectedPlan.features.map((feature, index) => /* @__PURE__ */ jsxs24("li", { className: "flex items-center gap-2 text-slate-400", children: [
+            /* @__PURE__ */ jsxs24("span", {
+                  children: [
+                    "\u20B9",
+                    selectedPlan.price
+                  ]
+                })
+                ]
+              })
+              ]
+            }),
+        /* @__PURE__ */ jsx26("ul", {
+              className: "mt-6 space-y-2 text-sm", children: selectedPlan.features.map((feature, index) => /* @__PURE__ */ jsxs24("li", {
+                className: "flex items-center gap-2 text-slate-400", children: [
           /* @__PURE__ */ jsx26("div", { className: "w-5 h-5 text-blue-400", children: /* @__PURE__ */ jsx26(SimpleCheckIcon, {}) }),
           /* @__PURE__ */ jsx26("span", { children: feature })
-        ] }, index)) })
-      ] }) })
-    ] }),
+                ]
+              }, index))
+            })
+            ]
+          })
+        })
+        ]
+      }),
     /* @__PURE__ */ jsx26("div", { className: "text-center mt-8", children: /* @__PURE__ */ jsx26("button", { onClick: onBack, className: "text-sm text-slate-400 hover:text-slate-200", children: "\u2190 Back to Pricing" }) })
-  ] }) });
+      ]
+    })
+  });
 };
 var CheckoutScreen_default = CheckoutScreen;
 
 // components/OrderSuccessScreen.tsx
 import { jsx as jsx27, jsxs as jsxs25 } from "react/jsx-runtime";
 var OrderSuccessScreen = ({ onBackToHome }) => {
-  return /* @__PURE__ */ jsx27("div", { className: "flex-1 flex flex-col items-center justify-center text-center p-4", children: /* @__PURE__ */ jsxs25("div", { className: "bg-slate-800 p-10 rounded-lg border border-slate-700 max-w-lg w-full", children: [
+  return /* @__PURE__ */ jsx27("div", {
+    className: "flex-1 flex flex-col items-center justify-center text-center p-4", children: /* @__PURE__ */ jsxs25("div", {
+      className: "bg-slate-800 p-10 rounded-lg border border-slate-700 max-w-lg w-full", children: [
     /* @__PURE__ */ jsx27("div", { className: "flex justify-center mb-6", children: /* @__PURE__ */ jsx27("div", { className: "h-20 w-20 bg-green-500/10 rounded-full flex items-center justify-center", children: /* @__PURE__ */ jsx27("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-10 w-10 text-green-400", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2, children: /* @__PURE__ */ jsx27("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M5 13l4 4L19 7" }) }) }) }),
     /* @__PURE__ */ jsx27("h1", { className: "text-3xl font-bold text-slate-100", children: "Purchase Successful!" }),
     /* @__PURE__ */ jsx27("p", { className: "text-slate-400 mt-3 mb-8", children: "Your plan has been upgraded. You can now access all the features of your new plan." }),
     /* @__PURE__ */ jsx27(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]",
-        children: "Go to Dashboard"
-      }
-    )
-  ] }) });
+        "button",
+        {
+          onClick: onBackToHome,
+          className: "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)]",
+          children: "Go to Dashboard"
+        }
+      )
+      ]
+    })
+  });
 };
 var OrderSuccessScreen_default = OrderSuccessScreen;
 
 // components/ContactScreen.tsx
-import { useState as useState21 } from "react";
+import { useState as useState22 } from "react";
 import { jsx as jsx28, jsxs as jsxs26 } from "react/jsx-runtime";
 var ContactScreen = ({ onBackToHome }) => {
-  const [formData, setFormData] = useState21({
+  const [formData, setFormData] = useState22({
     name: "",
     email: "",
     subject: "",
     message: ""
   });
-  const [errors, setErrors] = useState21({});
-  const [isSubmitting, setIsSubmitting] = useState21(false);
-  const [isSubmitted, setIsSubmitted] = useState21(false);
+  const [errors, setErrors] = useState22({});
+  const [isSubmitting, setIsSubmitting] = useState22(false);
+  const [isSubmitted, setIsSubmitted] = useState22(false);
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
@@ -7185,8 +7649,10 @@ var ContactScreen = ({ onBackToHome }) => {
     setIsSubmitted(false);
   };
   if (isSubmitted) {
-    return /* @__PURE__ */ jsxs26("div", { className: "flex-1 flex flex-col items-center justify-center text-center p-4", children: [
-      /* @__PURE__ */ jsxs26("div", { className: "bg-slate-800 p-10 rounded-lg border border-slate-700 max-w-lg w-full", children: [
+    return /* @__PURE__ */ jsxs26("div", {
+      className: "flex-1 flex flex-col items-center justify-center text-center p-4", children: [
+      /* @__PURE__ */ jsxs26("div", {
+        className: "bg-slate-800 p-10 rounded-lg border border-slate-700 max-w-lg w-full", children: [
         /* @__PURE__ */ jsx28("div", { className: "flex justify-center mb-6", children: /* @__PURE__ */ jsx28("div", { className: "h-20 w-20 bg-green-500/10 rounded-full flex items-center justify-center", children: /* @__PURE__ */ jsx28("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-10 w-10 text-green-400", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2, children: /* @__PURE__ */ jsx28("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M5 13l4 4L19 7" }) }) }) }),
         /* @__PURE__ */ jsx28("h1", { className: "text-3xl font-bold text-slate-100", children: "Thank You!" }),
         /* @__PURE__ */ jsx28("p", { className: "text-slate-400 mt-3 mb-8", children: "Your message has been sent successfully. Our team will get back to you shortly." }),
@@ -7198,150 +7664,193 @@ var ContactScreen = ({ onBackToHome }) => {
             children: "Send Another Message"
           }
         )
-      ] }),
-      /* @__PURE__ */ jsx28("div", { className: "text-center mt-8", children: /* @__PURE__ */ jsx28(
-        "button",
-        {
-          onClick: onBackToHome,
-          className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-          children: "\u2190 Back to Home"
-        }
-      ) })
-    ] });
+        ]
+      }),
+      /* @__PURE__ */ jsx28("div", {
+        className: "text-center mt-8", children: /* @__PURE__ */ jsx28(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    });
   }
-  return /* @__PURE__ */ jsx28("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs26("div", { className: "w-full max-w-3xl mx-auto", children: [
-    /* @__PURE__ */ jsxs26("div", { className: "text-center mb-10", children: [
+  return /* @__PURE__ */ jsx28("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs26("div", {
+      className: "w-full max-w-3xl mx-auto", children: [
+    /* @__PURE__ */ jsxs26("div", {
+        className: "text-center mb-10", children: [
       /* @__PURE__ */ jsx28("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Contact Us" }),
       /* @__PURE__ */ jsx28("p", { className: "text-slate-400 mt-4 text-lg", children: "We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible." })
-    ] }),
-    /* @__PURE__ */ jsx28("div", { className: "bg-slate-800 p-8 rounded-lg border border-slate-700", children: /* @__PURE__ */ jsxs26("form", { onSubmit: handleSubmit, className: "space-y-6", noValidate: true, children: [
-      /* @__PURE__ */ jsxs26("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
-        /* @__PURE__ */ jsxs26("div", { children: [
+        ]
+      }),
+    /* @__PURE__ */ jsx28("div", {
+        className: "bg-slate-800 p-8 rounded-lg border border-slate-700", children: /* @__PURE__ */ jsxs26("form", {
+          onSubmit: handleSubmit, className: "space-y-6", noValidate: true, children: [
+      /* @__PURE__ */ jsxs26("div", {
+            className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+        /* @__PURE__ */ jsxs26("div", {
+              children: [
           /* @__PURE__ */ jsx28("label", { htmlFor: "name", className: "block text-sm font-medium text-slate-300 mb-2", children: "Full Name" }),
-          /* @__PURE__ */ jsxs26("div", { className: "relative", children: [
+          /* @__PURE__ */ jsxs26("div", {
+                className: "relative", children: [
             /* @__PURE__ */ jsx28("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx28(UserIcon, {}) }),
             /* @__PURE__ */ jsx28(
-              "input",
-              {
-                type: "text",
-                id: "name",
-                value: formData.name,
-                onChange: handleChange,
-                className: `w-full bg-slate-700/50 border rounded-md py-2.5 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
-                placeholder: "Your Name"
-              }
-            )
-          ] }),
-          errors.name && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.name })
-        ] }),
-        /* @__PURE__ */ jsxs26("div", { children: [
+                  "input",
+                  {
+                    type: "text",
+                    id: "name",
+                    value: formData.name,
+                    onChange: handleChange,
+                    className: `w-full bg-slate-700/50 border rounded-md py-2.5 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
+                    placeholder: "Your Name"
+                  }
+                )
+                ]
+              }),
+                errors.name && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.name })
+              ]
+            }),
+        /* @__PURE__ */ jsxs26("div", {
+              children: [
           /* @__PURE__ */ jsx28("label", { htmlFor: "email", className: "block text-sm font-medium text-slate-300 mb-2", children: "Email Address" }),
-          /* @__PURE__ */ jsxs26("div", { className: "relative", children: [
+          /* @__PURE__ */ jsxs26("div", {
+                className: "relative", children: [
             /* @__PURE__ */ jsx28("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx28(AtSymbolIcon, {}) }),
             /* @__PURE__ */ jsx28(
-              "input",
-              {
-                type: "email",
-                id: "email",
-                value: formData.email,
-                onChange: handleChange,
-                className: `w-full bg-slate-700/50 border rounded-md py-2.5 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.email ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
-                placeholder: "you@example.com"
-              }
-            )
-          ] }),
-          errors.email && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.email })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs26("div", { children: [
+                  "input",
+                  {
+                    type: "email",
+                    id: "email",
+                    value: formData.email,
+                    onChange: handleChange,
+                    className: `w-full bg-slate-700/50 border rounded-md py-2.5 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.email ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
+                    placeholder: "you@example.com"
+                  }
+                )
+                ]
+              }),
+                errors.email && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.email })
+              ]
+            })
+            ]
+          }),
+      /* @__PURE__ */ jsxs26("div", {
+            children: [
         /* @__PURE__ */ jsx28("label", { htmlFor: "subject", className: "block text-sm font-medium text-slate-300 mb-2", children: "Subject" }),
-        /* @__PURE__ */ jsxs26("div", { className: "relative", children: [
+        /* @__PURE__ */ jsxs26("div", {
+              className: "relative", children: [
           /* @__PURE__ */ jsx28("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400", children: /* @__PURE__ */ jsx28(PencilIcon, {}) }),
           /* @__PURE__ */ jsx28(
-            "input",
+                "input",
+                {
+                  type: "text",
+                  id: "subject",
+                  value: formData.subject,
+                  onChange: handleChange,
+                  className: `w-full bg-slate-700/50 border rounded-md py-2.5 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.subject ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
+                  placeholder: "How can we help?"
+                }
+              )
+              ]
+            }),
+              errors.subject && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.subject })
+            ]
+          }),
+      /* @__PURE__ */ jsxs26("div", {
+            children: [
+        /* @__PURE__ */ jsx28("label", { htmlFor: "message", className: "block text-sm font-medium text-slate-300 mb-2", children: "Message" }),
+        /* @__PURE__ */ jsx28("div", {
+              className: "relative", children: /* @__PURE__ */ jsx28(
+                "textarea",
+                {
+                  id: "message",
+                  value: formData.message,
+                  onChange: handleChange,
+                  rows: 5,
+                  className: `w-full bg-slate-700/50 border rounded-md py-2.5 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.message ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
+                  placeholder: "Your message..."
+                }
+              )
+            }),
+              errors.message && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.message })
+            ]
+          }),
+      /* @__PURE__ */ jsxs26(
+            "button",
             {
-              type: "text",
-              id: "subject",
-              value: formData.subject,
-              onChange: handleChange,
-              className: `w-full bg-slate-700/50 border rounded-md py-2.5 pl-10 pr-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.subject ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
-              placeholder: "How can we help?"
+              type: "submit",
+              disabled: isSubmitting,
+              className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:bg-slate-600 disabled:cursor-not-allowed disabled:shadow-none",
+              children: [
+                isSubmitting && /* @__PURE__ */ jsx28("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
+                isSubmitting ? "Sending..." : "Send Message"
+              ]
             }
           )
-        ] }),
-        errors.subject && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.subject })
-      ] }),
-      /* @__PURE__ */ jsxs26("div", { children: [
-        /* @__PURE__ */ jsx28("label", { htmlFor: "message", className: "block text-sm font-medium text-slate-300 mb-2", children: "Message" }),
-        /* @__PURE__ */ jsx28("div", { className: "relative", children: /* @__PURE__ */ jsx28(
-          "textarea",
-          {
-            id: "message",
-            value: formData.message,
-            onChange: handleChange,
-            rows: 5,
-            className: `w-full bg-slate-700/50 border rounded-md py-2.5 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 ${errors.message ? "border-red-500 ring-red-500" : "border-slate-600 focus:ring-blue-500 focus:border-blue-500"}`,
-            placeholder: "Your message..."
-          }
-        ) }),
-        errors.message && /* @__PURE__ */ jsx28("p", { className: "mt-2 text-sm text-red-400", children: errors.message })
-      ] }),
-      /* @__PURE__ */ jsxs26(
-        "button",
-        {
-          type: "submit",
-          disabled: isSubmitting,
-          className: "w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.4)] hover:shadow-[0_0_16px_rgba(59,130,246,0.6)] disabled:bg-slate-600 disabled:cursor-not-allowed disabled:shadow-none",
-          children: [
-            isSubmitting && /* @__PURE__ */ jsx28("div", { className: "w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" }),
-            isSubmitting ? "Sending..." : "Send Message"
           ]
-        }
-      )
-    ] }) }),
-    /* @__PURE__ */ jsx28("div", { className: "text-center mt-8", children: /* @__PURE__ */ jsx28(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+        })
+      }),
+    /* @__PURE__ */ jsx28("div", {
+        className: "text-center mt-8", children: /* @__PURE__ */ jsx28(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var ContactScreen_default = ContactScreen;
 
 // components/PrivacyScreen.tsx
 import { jsx as jsx29, jsxs as jsxs27 } from "react/jsx-runtime";
 var PrivacyScreen = ({ onBackToHome }) => {
-  return /* @__PURE__ */ jsx29("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs27("div", { className: "w-full max-w-4xl mx-auto", children: [
-    /* @__PURE__ */ jsxs27("div", { className: "text-center mb-10", children: [
+  return /* @__PURE__ */ jsx29("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs27("div", {
+      className: "w-full max-w-4xl mx-auto", children: [
+    /* @__PURE__ */ jsxs27("div", {
+        className: "text-center mb-10", children: [
       /* @__PURE__ */ jsx29("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Privacy Policy" }),
       /* @__PURE__ */ jsx29("p", { className: "text-slate-400 mt-4 text-lg", children: "Last Updated: October 26, 2023" })
-    ] }),
-    /* @__PURE__ */ jsxs27("article", { className: "prose prose-invert prose-lg max-w-none text-slate-300 prose-headings:text-slate-100 prose-strong:text-slate-200 prose-a:text-blue-400", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs27("article", {
+        className: "prose prose-invert prose-lg max-w-none text-slate-300 prose-headings:text-slate-100 prose-strong:text-slate-200 prose-a:text-blue-400", children: [
       /* @__PURE__ */ jsx29("p", { children: "Your privacy is important to us. It is JD Labs' policy to respect your privacy regarding any information we may collect from you across our application, AI Interview Platform." }),
       /* @__PURE__ */ jsx29("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "1. Information We Collect" }),
       /* @__PURE__ */ jsx29("h3", { className: "text-xl font-semibold text-slate-200 mt-6 mb-3", children: "Personal Information" }),
       /* @__PURE__ */ jsx29("p", { children: "When you register for an account, we may ask for personal information, such as your name and email address." }),
       /* @__PURE__ */ jsx29("h3", { className: "text-xl font-semibold text-slate-200 mt-6 mb-3", children: "Interview Data" }),
       /* @__PURE__ */ jsx29("p", { children: "When you use our service to conduct an interview, we collect the data you provide, which may include:" }),
-      /* @__PURE__ */ jsxs27("ul", { className: "list-disc list-inside space-y-2 mb-4 pl-4", children: [
+      /* @__PURE__ */ jsxs27("ul", {
+          className: "list-disc list-inside space-y-2 mb-4 pl-4", children: [
         /* @__PURE__ */ jsx29("li", { children: "Video and audio recordings of your interview sessions." }),
         /* @__PURE__ */ jsx29("li", { children: "Transcripts of the interview conversation." }),
         /* @__PURE__ */ jsx29("li", { children: "Text responses you type in chat interviews." }),
         /* @__PURE__ */ jsx29("li", { children: "Job descriptions or URLs you provide for context." })
-      ] }),
+          ]
+        }),
       /* @__PURE__ */ jsx29("h3", { className: "text-xl font-semibold text-slate-200 mt-6 mb-3", children: "API Keys" }),
       /* @__PURE__ */ jsx29("p", { children: "This application requires you to provide your own API key for third-party AI services (e.g., Google Gemini). We do not store your API key on our servers. The key is stored locally in your browser's memory for the duration of your session and is used to make direct calls to the AI provider's API from your browser." }),
       /* @__PURE__ */ jsx29("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "2. How We Use Your Information" }),
       /* @__PURE__ */ jsx29("p", { children: "We use the information we collect in various ways, including to:" }),
-      /* @__PURE__ */ jsxs27("ul", { className: "list-disc list-inside space-y-2 mb-4 pl-4", children: [
+      /* @__PURE__ */ jsxs27("ul", {
+          className: "list-disc list-inside space-y-2 mb-4 pl-4", children: [
         /* @__PURE__ */ jsx29("li", { children: "Provide, operate, and maintain our application." }),
         /* @__PURE__ */ jsx29("li", { children: "Process your interview data to generate AI-powered feedback and analysis." }),
         /* @__PURE__ */ jsx29("li", { children: "Improve, personalize, and expand our application." }),
         /* @__PURE__ */ jsx29("li", { children: "Communicate with you, either directly or through one of our partners, for customer service, to provide you with updates and other information relating to the app." })
-      ] }),
+          ]
+        }),
       /* @__PURE__ */ jsx29("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "3. Data Sharing and Disclosure" }),
       /* @__PURE__ */ jsx29("p", { children: "Your interview data (transcripts, recordings) is sent to third-party AI providers (like Google) to generate questions and feedback. Their use of your data is governed by their respective privacy policies. We do not share your personal information with third parties for marketing purposes." }),
       /* @__PURE__ */ jsx29("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "4. Data Security" }),
@@ -7352,28 +7861,38 @@ var PrivacyScreen = ({ onBackToHome }) => {
       /* @__PURE__ */ jsx29("p", { children: "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes." }),
       /* @__PURE__ */ jsx29("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "7. Contact Us" }),
       /* @__PURE__ */ jsx29("p", { children: "If you have any questions about this Privacy Policy, please contact us through the Contact page." })
-    ] }),
-    /* @__PURE__ */ jsx29("div", { className: "text-center mt-12", children: /* @__PURE__ */ jsx29(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+        ]
+      }),
+    /* @__PURE__ */ jsx29("div", {
+        className: "text-center mt-12", children: /* @__PURE__ */ jsx29(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var PrivacyScreen_default = PrivacyScreen;
 
 // components/TermsScreen.tsx
 import { jsx as jsx30, jsxs as jsxs28 } from "react/jsx-runtime";
 var TermsScreen = ({ onBackToHome }) => {
-  return /* @__PURE__ */ jsx30("div", { className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs28("div", { className: "w-full max-w-4xl mx-auto", children: [
-    /* @__PURE__ */ jsxs28("div", { className: "text-center mb-10", children: [
+  return /* @__PURE__ */ jsx30("div", {
+    className: "flex-1 flex flex-col items-center justify-start p-4 sm:p-6 pt-12", children: /* @__PURE__ */ jsxs28("div", {
+      className: "w-full max-w-4xl mx-auto", children: [
+    /* @__PURE__ */ jsxs28("div", {
+        className: "text-center mb-10", children: [
       /* @__PURE__ */ jsx30("h1", { className: "text-3xl md:text-4xl font-bold text-slate-100", children: "Terms and Conditions" }),
       /* @__PURE__ */ jsx30("p", { className: "text-slate-400 mt-4 text-lg", children: "Last Updated: October 26, 2023" })
-    ] }),
-    /* @__PURE__ */ jsxs28("article", { className: "prose prose-invert prose-lg max-w-none text-slate-300 prose-headings:text-slate-100 prose-strong:text-slate-200 prose-a:text-blue-400", children: [
+        ]
+      }),
+    /* @__PURE__ */ jsxs28("article", {
+        className: "prose prose-invert prose-lg max-w-none text-slate-300 prose-headings:text-slate-100 prose-strong:text-slate-200 prose-a:text-blue-400", children: [
       /* @__PURE__ */ jsx30("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "1. Acceptance of Terms" }),
       /* @__PURE__ */ jsx30("p", { children: 'By accessing and using the AI Interview Platform ("Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.' }),
       /* @__PURE__ */ jsx30("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "2. Description of Service" }),
@@ -7394,16 +7913,21 @@ var TermsScreen = ({ onBackToHome }) => {
       /* @__PURE__ */ jsx30("p", { children: "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide notice of any changes by posting the new Terms and Conditions on this page." }),
       /* @__PURE__ */ jsx30("h2", { className: "text-2xl font-bold text-slate-100 mt-8 mb-4", children: "10. Contact Us" }),
       /* @__PURE__ */ jsx30("p", { children: "If you have any questions about these Terms, please contact us through our Contact page." })
-    ] }),
-    /* @__PURE__ */ jsx30("div", { className: "text-center mt-12", children: /* @__PURE__ */ jsx30(
-      "button",
-      {
-        onClick: onBackToHome,
-        className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
-        children: "\u2190 Back to Home"
-      }
-    ) })
-  ] }) });
+        ]
+      }),
+    /* @__PURE__ */ jsx30("div", {
+        className: "text-center mt-12", children: /* @__PURE__ */ jsx30(
+          "button",
+          {
+            onClick: onBackToHome,
+            className: "text-slate-400 hover:text-white font-semibold py-2 px-6 rounded-lg transition-colors",
+            children: "\u2190 Back to Home"
+          }
+        )
+      })
+      ]
+    })
+  });
 };
 var TermsScreen_default = TermsScreen;
 
@@ -7418,15 +7942,15 @@ var modelSettings = {
   questionGeneration: "gemini-2.5-flash"
 };
 var App = () => {
-  const [currentUser, setCurrentUser] = useState22(null);
-  const [activeInterviewId, setActiveInterviewId] = useState22(null);
-  const [interviewSettings, setInterviewSettings] = useState22(null);
-  const [interviewResult, setInterviewResult] = useState22(null);
-  const [selectedPlan, setSelectedPlan] = useState22(null);
+  const [currentUser, setCurrentUser] = useState23(null);
+  const [activeInterviewId, setActiveInterviewId] = useState23(null);
+  const [interviewSettings, setInterviewSettings] = useState23(null);
+  const [interviewResult, setInterviewResult] = useState23(null);
+  const [selectedPlan, setSelectedPlan] = useState23(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
-  useEffect18(() => {
+  useEffect19(() => {
     console.log("\u{1F680} [App] Initializing authentication...");
     const checkSession = async () => {
       console.log("\u{1F50D} [App] Checking for existing session...");
@@ -7571,7 +8095,7 @@ var App = () => {
       navigate("/success");
     }
   }, [currentUser, selectedPlan, navigate]);
-  useEffect18(() => {
+  useEffect19(() => {
     if (location.pathname === "/interview" && !activeInterviewId) {
       navigate("/");
     }
@@ -7579,9 +8103,12 @@ var App = () => {
       navigate("/");
     }
   }, [location.pathname, activeInterviewId, interviewResult, navigate]);
-  return /* @__PURE__ */ jsxs29("div", { className: "min-h-screen flex flex-col bg-slate-900", children: [
+  return /* @__PURE__ */ jsxs29("div", {
+    className: "min-h-screen flex flex-col bg-slate-900", children: [
     /* @__PURE__ */ jsx31(Header_default, { currentUser, onLogout: handleLogout }),
-    /* @__PURE__ */ jsx31("main", { className: "flex-1 flex flex-col", children: /* @__PURE__ */ jsxs29(Routes, { children: [
+    /* @__PURE__ */ jsx31("main", {
+      className: "flex-1 flex flex-col", children: /* @__PURE__ */ jsxs29(Routes, {
+        children: [
       /* @__PURE__ */ jsx31(Route, { path: "/", element: /* @__PURE__ */ jsx31(SetupScreen_default, { onStartInterview: handleStartInterview, modelSettings, currentUser, onLoginRequired: () => navigate("/login") }) }),
       /* @__PURE__ */ jsx31(Route, { path: "/login", element: /* @__PURE__ */ jsx31(LoginScreen_default, { onSwitchToRegister: () => navigate("/register") }) }),
       /* @__PURE__ */ jsx31(Route, { path: "/register", element: /* @__PURE__ */ jsx31(RegisterScreen_default, { onSwitchToLogin: () => navigate("/login"), onBackToSetup: () => navigate("/") }) }),
@@ -7595,11 +8122,14 @@ var App = () => {
       /* @__PURE__ */ jsx31(Route, { path: "/checkout", element: /* @__PURE__ */ jsx31(CheckoutScreen_default, { plan: selectedPlan, currentUser, onConfirmPurchase: handleConfirmPurchase, onBack: () => navigate("/pricing") }) }),
       /* @__PURE__ */ jsx31(Route, { path: "/success", element: /* @__PURE__ */ jsx31(OrderSuccessScreen_default, { onBackToHome: () => navigate("/") }) }),
       /* @__PURE__ */ jsx31(Route, { path: "/history", element: /* @__PURE__ */ jsx31(HistoryScreen_default, { currentUser, onBackToHome: () => navigate("/") }) }),
-      activeInterviewId && interviewSettings && /* @__PURE__ */ jsx31(Route, { path: "/interview", element: /* @__PURE__ */ jsx31(InterviewScreen_default, { interviewId: activeInterviewId, settings: interviewSettings, modelSettings, onEndInterview: handleEndInterview }) }),
-      interviewResult && interviewSettings && /* @__PURE__ */ jsx31(Route, { path: "/review", element: /* @__PURE__ */ jsx31(PlaybackScreen_default, { ...interviewResult, settings: interviewSettings, onFinishReview: handleFinishReview, modelSettings, mode: interviewSettings.mode }) })
-    ] }) }),
+          activeInterviewId && interviewSettings && /* @__PURE__ */ jsx31(Route, { path: "/interview", element: /* @__PURE__ */ jsx31(InterviewScreen_default, { interviewId: activeInterviewId, settings: interviewSettings, modelSettings, onEndInterview: handleEndInterview }) }),
+          interviewResult && interviewSettings && /* @__PURE__ */ jsx31(Route, { path: "/review", element: /* @__PURE__ */ jsx31(PlaybackScreen_default, { ...interviewResult, settings: interviewSettings, onFinishReview: handleFinishReview, modelSettings, mode: interviewSettings.mode }) })
+        ]
+      })
+    }),
     /* @__PURE__ */ jsx31(Footer_default, { onNavigate: (view) => navigate(`/${view}`) })
-  ] });
+    ]
+  });
 };
 var App_default = App;
 

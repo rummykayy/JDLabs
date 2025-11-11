@@ -1,0 +1,16 @@
+FROM alpine:latest
+
+# Install dependencies
+RUN apk add --no-cache wget bash
+
+# Create data directory
+WORKDIR /data
+
+# Download and install Piper TTS
+RUN wget https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz && \
+    tar -xzf piper_linux_x86_64.tar.gz && \
+    chmod +x piper && \
+    rm piper_linux_x86_64.tar.gz
+
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]

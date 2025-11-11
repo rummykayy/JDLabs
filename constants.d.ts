@@ -1,0 +1,42 @@
+import React from 'react';
+import type { Plan, Job } from './types';
+export declare const AtSymbolIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const LockClosedIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const UserIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const PencilIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const BriefcaseIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const GlobeIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const SignalIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const ClockIcon: React.FC<{
+    className?: string;
+}>;
+export declare const ScalesIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const ChartBarIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const AlertTriangleIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const BookOpenIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const AcademicCapIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const LightbulbIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const SimpleCheckIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const CreditCardIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const ThumbsUpIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const ThumbsDownIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const MicOffIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const MicOnIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const SendIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const SettingsIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const UserCircleIcon: React.FC<{
+    className?: string;
+}>;
+export declare const UsersIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const ShareIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const DocumentDuplicateIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const EnvelopeIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const VideoCameraIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const ChatBubbleIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const TargetIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const GoogleIcon: () => import("react/jsx-runtime").JSX.Element;
+export declare const TRENDING_JOBS_DATA: Job[];
+export declare const AI_VOICES: string[];
+export declare const DEFAULT_AI_VOICE = "Zephyr";
+export declare const PLANS: Plan[];
+//# sourceMappingURL=constants.d.ts.map

@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "esModuleInterop": true,
+        "outDir": "./dist/server",
+        "rootDir": "./src",
+        "strict": true,
+        "composite": false,
+        "declaration": false,
+        "declarationMap": false,
+        "sourceMap": true,
+        "skipLibCheck": true,
+        "baseUrl": "./src/server",
+        "paths": {
+            "@/*": [
+                "./*"
+            ]
+        }
+    },
+    "include": [
+        "src/server/**/*",
+        "src/shared/**/*"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules",
+        "**/*.test.ts"
+    ]
+}
